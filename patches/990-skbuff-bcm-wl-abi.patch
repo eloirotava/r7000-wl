@@ -1,0 +1,53 @@
+From: Eloi Rotava <eloi@rotava.com>
+Subject: [PATCH] skbuff: layout compativel com o nucleo binario do wl Broadcom
+
+O nucleo do wl (wlc_*/phy, objetos do DD-WRT 7.14.164.18) acessa
+sk_buff por offset fixo (len 0x94, data 0xe8, cb 0x30, priority 0xb4,
+pktc_flags 0x74, ...).  Insere os campos/padding da Broadcom na cabeca
+da struct e move tstamp para que esses offsets batam em ARM32.
+scripts/check-skb-abi.py confere o resultado com pahole.
+
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -887,10 +887,18 @@
+ 
+ 	struct sock		*sk;
+ 
+-	union {
+-		ktime_t		tstamp;
+-		u64		skb_mstamp_ns; /* earliest departure time */
+-	};
++	/*
++	 * r7000-wl: campos/padding para casar com a ABI de sk_buff que o
++	 * nucleo binario do wl Broadcom (wlc_*, 7.14.164.18) acessa por
++	 * offset fixo.  Offsets em ARM32.  tstamp foi movido para depois
++	 * do bloco Broadcom.
++	 */
++	unsigned char		pktc_cb[8];		/* 0x10 */
++	unsigned char		ctf_pppoe_cb[8];	/* 0x18 */
++	void			*ctfmap;		/* 0x20 */
++	void			*bcm_sk;		/* 0x24 */
++	void			*bcm_dev;		/* 0x28 */
++	__u32			bcm_pad0;		/* 0x2c */
+ 	/*
+ 	 * This is the control buffer. It is free to use for every
+ 	 * layer. Please put your private variables there. If you
+@@ -913,6 +921,18 @@
+ #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
+ 	unsigned long		 _nfct;
+ #endif
++	void			*bcm_sp;		/* 0x6c */
++	void			*ctfpool;		/* 0x70 */
++	__u32			pktc_flags;		/* 0x74 */
++	void			*ctf_ipc_txif;		/* 0x78 */
++	__u32			napt_idx;		/* 0x7c */
++	__u32			napt_flags;		/* 0x80 */
++	__u32			bcm_pad1;		/* 0x84 */
++	union {
++		ktime_t		tstamp;			/* 0x88 */
++		u64		skb_mstamp_ns; /* earliest departure time */
++	};
++	__u32			bcm_pad2;		/* 0x90 */
+ 	unsigned int		len,
+ 				data_len;
+ 	__u16			mac_len,
