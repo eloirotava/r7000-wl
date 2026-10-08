@@ -205,8 +205,8 @@ void wl_event_sync(struct wl_info *wl, char *ifname, wlc_event_t *e)
 
 void wl_dump_ver(struct wl_info *wl, struct bcmstrbuf *b)
 {
-	bcm_bprintf(b, "wl%d: %s %s version %s\n", WLPUB_UNIT(wl->pub),
-		__DATE__, __TIME__, WL_VERSION_STR);
+	bcm_bprintf(b, "wl%d: r7000-wl version %s\n", WLPUB_UNIT(wl->pub),
+		WL_VERSION_STR);
 }
 
 void wl_txflowcontrol(struct wl_info *wl, struct wl_if *wlif, bool state,

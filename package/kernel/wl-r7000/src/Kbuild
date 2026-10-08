@@ -28,7 +28,7 @@ wl-y += $(BRCM)/shared/linux_osl.o \
 # + Makefile do kernel 4.4 do DD-WRT): os structs inline tem que bater
 WLFLAGS := $(shell cat $(src)/wlflags.txt)
 WLFLAGS += -DHNDCTF -DCTFPOOL -DCTFMAP -DPKTC -DCTF_PPPOE
-WLFLAGS += -DBCMDRIVER -Dlinux -DDMA -DBCM47XX_CA9
+WLFLAGS += -DBCMDRIVER -Dlinux -DDMA -DBCM47XX_CA9=
 
 ccflags-y := $(WLFLAGS) \
 	-include $(src)/osl_compat.h \
@@ -48,6 +48,8 @@ ccflags-y := $(WLFLAGS) \
 BRCM_OBJS := $(filter $(BRCM)/%,$(wl-y))
 $(foreach o,$(BRCM_OBJS),$(eval CFLAGS_$(o) += -w))
 ccflags-y += -Werror=incompatible-pointer-types -Werror=int-conversion
+# headers Broadcom incluidos pelos nossos arquivos
+ccflags-y += -Wno-empty-body
 
 # o shim e quem implementa o redirecionamento de dma_sync_* (osl_compat.h)
 CFLAGS_shim.o += -DWL_SHIM_NO_DMA_REDIRECT
