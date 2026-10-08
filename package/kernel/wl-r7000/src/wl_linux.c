@@ -79,6 +79,27 @@ struct wl_info {
 
 static uint wl_units;
 
+/*
+ * O nucleo binario acessa sk_buff por offset fixo (ABI do kernel 4.4
+ * do DD-WRT).  O kernel precisa do patch 990-skbuff-bcm-wl-abi.
+ */
+#define WL_SKB_AT(f, off) \
+	static_assert(offsetof(struct sk_buff, f) == (off), \
+		"sk_buff." #f " fora do offset do nucleo wl")
+WL_SKB_AT(next, 0x00);
+WL_SKB_AT(prev, 0x04);
+WL_SKB_AT(pktc_cb, 0x10);
+WL_SKB_AT(cb, 0x30);
+WL_SKB_AT(ctfpool, 0x70);
+WL_SKB_AT(pktc_flags, 0x74);
+WL_SKB_AT(len, 0x94);
+WL_SKB_AT(data_len, 0x98);
+WL_SKB_AT(priority, 0xb4);
+WL_SKB_AT(tail, 0xdc);
+WL_SKB_AT(end, 0xe0);
+WL_SKB_AT(head, 0xe4);
+WL_SKB_AT(data, 0xe8);
+
 #define WL_LOCK(wl)	spin_lock_bh(&(wl)->lock)
 #define WL_UNLOCK(wl)	spin_unlock_bh(&(wl)->lock)
 
@@ -680,6 +701,9 @@ static int wl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 		goto err_disable;
 	}
 
+	dev_info(&pdev->dev, "wl%u: dominio PCI %d, slot %u\n", wl_units,
+		pci_domain_nr(pdev->bus), PCI_SLOT(pdev->devfn));
+
 	wl->pdev = pdev;
 	wl->unit = wl_units;
 	wl->irq = pdev->irq;
@@ -781,7 +805,21 @@ static struct pci_driver wl_pci_driver = {
 	.remove		= wl_pci_remove,
 };
 
-module_pci_driver(wl_pci_driver);
+extern void wl_nvram_free(void);
+
+static int __init wl_module_init(void)
+{
+	return pci_register_driver(&wl_pci_driver);
+}
+
+static void __exit wl_module_exit(void)
+{
+	pci_unregister_driver(&wl_pci_driver);
+	wl_nvram_free();
+}
+
+module_init(wl_module_init);
+module_exit(wl_module_exit);
 
 MODULE_DESCRIPTION("Broadcom wl (nucleo 7.14) para OpenWrt/R7000");
 MODULE_LICENSE("Proprietary");

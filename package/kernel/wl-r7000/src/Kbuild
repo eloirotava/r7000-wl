@@ -1,0 +1,45 @@
+# wl (Broadcom 7.14.164.18) para Linux 6.12 / ARM32
+#
+# brcm/ = arvore brcm/arm do DD-WRT (scripts/fetch-brcm.sh)
+# core/wl_core.o = nucleo binario juntado (scripts/prep-core.sh)
+
+obj-m := wl.o
+
+BRCM := brcm
+
+wl-y := wl_linux.o shim.o osl_nvram.o core/wl_core.o
+
+wl-y += $(BRCM)/shared/linux_osl.o \
+	$(BRCM)/shared/siutils.o \
+	$(BRCM)/shared/aiutils.o \
+	$(BRCM)/shared/sbutils.o \
+	$(BRCM)/shared/hndpmu.o \
+	$(BRCM)/shared/hnddma.o \
+	$(BRCM)/shared/bcmutils.o \
+	$(BRCM)/shared/bcmsrom.o \
+	$(BRCM)/shared/bcmotp.o \
+	$(BRCM)/shared/nicpci.o \
+	$(BRCM)/shared/pcie_core.o \
+	$(BRCM)/shared/bcmevent.o \
+	$(BRCM)/shared/bcmxtlv.o \
+	$(BRCM)/shared/bcmwifi/src/bcmwifi_channels.o
+
+# mesmas flags com que o nucleo foi compilado (wlconfig_lx_router_apsta
+# + Makefile do kernel 4.4 do DD-WRT): os structs inline tem que bater
+WLFLAGS := $(shell cat $(src)/wlflags.txt)
+WLFLAGS += -DHNDCTF -DCTFPOOL -DCTFMAP -DPKTC -DCTF_PPPOE
+WLFLAGS += -DBCMDRIVER -Dlinux -DDMA
+
+ccflags-y := $(WLFLAGS) \
+	-I$(src) \
+	-I$(src)/$(BRCM)/include \
+	-I$(src)/$(BRCM)/common/include \
+	-I$(src)/$(BRCM)/shared \
+	-I$(src)/$(BRCM)/shared/bcmwifi/include \
+	-I$(src)/$(BRCM)/wl/clm/include \
+	-I$(src)/$(BRCM)/wl/ppr/include \
+	-I$(src)/$(BRCM)/wl/dump/include \
+	-I$(src)/$(BRCM)/wl/iocv/include
+
+# codigo Broadcom antigo: silencia avisos, nao queremos -Werror aqui
+ccflags-y += -w

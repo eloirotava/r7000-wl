@@ -1,0 +1,10 @@
+brcm/
+core/
+*.o
+*.ko
+*.mod
+*.mod.c
+*.cmd
+*.undef
+Module.symvers
+modules.order
