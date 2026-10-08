@@ -6,3 +6,6 @@ CONFIG_SDK=y
 CONFIG_PACKAGE_kmod-nf-conntrack=y
 CONFIG_PACKAGE_kmod-wl-r7000=m
 CONFIG_PACKAGE_kmod-netconsole=m
+CONFIG_PACKAGE_kmod-wireguard=y
+CONFIG_PACKAGE_wireguard-tools=y
+CONFIG_PACKAGE_luci=y
