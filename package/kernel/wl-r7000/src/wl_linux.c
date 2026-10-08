@@ -27,6 +27,7 @@
 #include <wlioctl.h>
 
 #include "wl_abi.h"
+#include "wl_shim.h"
 
 #define WL_DRV_NAME	"wl"
 #define WL_VERSION_STR	"7.14.164.18 (r692288)"
@@ -78,7 +79,6 @@ struct wl_info {
 };
 
 static uint wl_units;
-extern struct device *wl_dma_dev;	/* shim.c */
 
 /*
  * O nucleo binario acessa sk_buff por offset fixo (ABI do kernel 4.4
@@ -807,8 +807,6 @@ static struct pci_driver wl_pci_driver = {
 	.probe		= wl_pci_probe,
 	.remove		= wl_pci_remove,
 };
-
-extern void wl_nvram_free(void);
 
 static int __init wl_module_init(void)
 {

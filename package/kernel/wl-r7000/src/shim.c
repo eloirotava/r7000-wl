@@ -15,6 +15,8 @@
 #include <linux/dma-mapping.h>
 #include <linux/string.h>
 
+#include "wl_shim.h"
+
 /*
  * kmalloc() inline do 4.4 com tamanho constante vira
  * kmem_cache_alloc(kmalloc_caches[idx], flags).  Cada "cache" aqui e so

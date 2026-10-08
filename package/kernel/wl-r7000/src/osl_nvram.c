@@ -13,6 +13,8 @@
 #include <linux/spinlock.h>
 #include <linux/bcm47xx_nvram.h>
 
+#include "wl_shim.h"
+
 static int pcidom_offset = 1;
 module_param(pcidom_offset, int, 0444);
 MODULE_PARM_DESC(pcidom_offset, "soma ao dominio PCI em chaves pci/N/... (padrao 1)");
