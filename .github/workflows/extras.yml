@@ -1,0 +1,76 @@
+name: extras
+
+# kmod-wireguard do kernel exato do R7000 (sk_buff alterado: o kmod oficial
+# nao casa) + wstunnel soft-float (o BCM4708 nao tem VFP: binarios armv7/armv6
+# oficiais dao "Illegal instruction")
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/extras.yml'
+  workflow_dispatch:
+
+env:
+  RELEASE: openwrt-25.12-r7000-2
+  WSTUNNEL: v10.6.2
+
+jobs:
+  extras:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dependencias
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential gawk gettext libncurses-dev \
+            python3-setuptools rsync unzip zlib1g-dev file wget zstd
+
+      - name: SDK da release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "$RELEASE" -p 'openwrt-sdk-*' -O sdk.tar.zst
+          mkdir sdk && tar -I zstd -xf sdk.tar.zst -C sdk --strip-components=1
+
+      - name: Compila kmod-wireguard
+        run: |
+          cd sdk
+          ./scripts/feeds update base
+          ./scripts/feeds install -p base linux || true
+          make defconfig
+          echo 'CONFIG_PACKAGE_kmod-wireguard=m' >> .config
+          make defconfig
+          make package/linux/compile -j$(nproc) 2>&1 | tail -20
+          find bin -name 'kmod-wireguard*' -o -name 'kmod-udptunnel*' -o -name 'kmod-crypto-lib-chacha20poly1305*' | head -20
+
+      - name: wstunnel soft-float (armv7-unknown-linux-musleabi)
+        run: |
+          export STAGING_DIR=$PWD/sdk/staging_dir
+          TC=$(ls -d $PWD/sdk/staging_dir/toolchain-*)
+          CC=$(ls $TC/bin/arm-openwrt-linux-muslgnueabi-gcc)
+          rustup target add armv7-unknown-linux-musleabi
+          git clone --depth 1 -b "$WSTUNNEL" https://github.com/erebe/wstunnel
+          cd wstunnel
+          export CC_armv7_unknown_linux_musleabi=$CC
+          export AR_armv7_unknown_linux_musleabi=$(ls $TC/bin/arm-openwrt-linux-muslgnueabi-ar)
+          export CARGO_TARGET_ARMV7_UNKNOWN_LINUX_MUSLEABI_LINKER=$CC
+          export CFLAGS_armv7_unknown_linux_musleabi="-mfloat-abi=soft"
+          cargo build --release --target armv7-unknown-linux-musleabi
+          mkdir -p ../out
+          B=target/armv7-unknown-linux-musleabi/release/wstunnel
+          $TC/bin/arm-openwrt-linux-muslgnueabi-strip -o ../out/wstunnel $B
+          file ../out/wstunnel
+          readelf -A ../out/wstunnel | grep -iE 'FP|abi' || true
+
+      - name: Artefatos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r7000-extras
+          path: |
+            sdk/bin/targets/*/*/packages/kmod-*.apk
+            out/wstunnel
+          if-no-files-found: warn
