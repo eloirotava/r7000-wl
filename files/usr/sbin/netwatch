@@ -1,0 +1,35 @@
+#!/bin/sh
+# netwatch: reinicia o roteador se ficar sem internet por LIMITE segundos.
+# O wl nao carrega no boot, entao o reboot volta a um estado limpo.
+
+LIMITE=${NETWATCH_LIMITE:-300}	# 5 min sem resposta -> reboot
+CARENCIA=${NETWATCH_CARENCIA:-300}	# nao age nos primeiros 5 min apos o boot
+INTERVALO=30
+ALVOS="1.1.1.1 8.8.8.8"
+
+log() { logger -t netwatch "$*"; }
+
+tem_net() {
+	gw=$(ip route show default 2>/dev/null | awk '/default/ {print $3; exit}')
+	for a in $ALVOS $gw; do
+		ping -c 1 -W 3 "$a" >/dev/null 2>&1 && return 0
+	done
+	return 1
+}
+
+log "iniciado: limite ${LIMITE}s, carencia ${CARENCIA}s"
+ultimo_ok=$(cut -d. -f1 /proc/uptime)
+
+while :; do
+	agora=$(cut -d. -f1 /proc/uptime)
+	if tem_net; then
+		ultimo_ok=$agora
+	elif [ "$agora" -ge "$CARENCIA" ] && [ $((agora - ultimo_ok)) -ge "$LIMITE" ]; then
+		log "sem internet ha $((agora - ultimo_ok))s: reiniciando"
+		sync
+		reboot
+		sleep 60
+		reboot -f
+	fi
+	sleep $INTERVALO
+done
