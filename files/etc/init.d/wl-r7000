@@ -1,0 +1,104 @@
+#!/bin/sh /etc/rc.common
+# wl (Broadcom 7.14, BCM4360) no R7000: carrega o driver, configura os
+# radios de /etc/config/wl-r7000 (AP, WPA2-PSK/AES), poe na bridge e
+# sobe um nas (autenticador WPA do DD-WRT) por radio.
+
+START=96
+STOP=10
+USE_PROCD=1
+
+FAILS=/etc/wl-r7000.fails
+
+log() { logger -t wl-r7000 "$*"; }
+
+guard_check() {
+	local max stable n
+	config_get max guard max_fails 3
+	config_get stable guard stable_secs 600
+	n=$(cat "$FAILS" 2>/dev/null || echo 0)
+	if [ "$n" -ge "$max" ]; then
+		log "wl desativado: $n boots sem estabilizar (apague $FAILS para tentar de novo)"
+		return 1
+	fi
+	echo $((n + 1)) > "$FAILS"; sync
+	# estavel por stable_secs: zera o contador
+	( sleep "$stable"; echo 0 > "$FAILS"; sync ) > /dev/null 2>&1 &
+	return 0
+}
+
+load_wl() {
+	local d
+	for d in /sys/bus/pci/drivers/bcma-pci-bridge/*:*; do
+		[ -e "$d" ] || continue
+		case "$(cat "$d/vendor"):$(cat "$d/device")" in
+		0x14e4:0x43a0|0x14e4:0x43a1|0x14e4:0x43a2|0x14e4:0x4360)
+			echo "$(basename "$d")" > /sys/bus/pci/drivers/bcma-pci-bridge/unbind ;;
+		esac
+	done
+	grep -q '^wl ' /proc/modules || insmod wl || return 1
+}
+
+radio_up() {
+	local r=$1 enabled chanspec ssid key bridge W="wl -i $1"
+	config_get_bool enabled "$r" enabled 0
+	config_get chanspec "$r" chanspec
+	config_get ssid "$r" ssid
+	config_get key "$r" key
+	config_get bridge "$r" bridge br-lan
+	[ "$enabled" = 1 ] || return 0
+	[ -d "/sys/class/net/$r" ] || { log "$r: interface nao existe"; return 1; }
+	if [ ${#key} -lt 8 ]; then
+		log "$r: senha WPA2 com menos de 8 caracteres, radio nao sobe"
+		return 1
+	fi
+
+	ip link set "$r" up
+	$W down
+	$W ap 1
+	$W infra 1
+	[ -n "$chanspec" ] && $W chanspec "$chanspec"
+	$W wsec 4
+	$W wpa_auth 128
+	$W up
+	$W ssid "$ssid"
+	[ -n "$bridge" ] && ip link set "$r" master "$bridge"
+
+	cat >> /var/run/wl-nvram.conf <<-EOT
+	${r}_ifname=$r
+	${r}_mode=ap
+	${r}_akm=psk2
+	${r}_crypto=aes
+	${r}_ssid=$ssid
+	${r}_wpa_gtk_rekey=3600
+	EOT
+
+	procd_open_instance "nas-$r"
+	procd_set_param env LD_LIBRARY_PATH=/usr/lib/ddwrt WL_NVRAM=/var/run/wl-nvram.conf
+	procd_set_param command /usr/sbin/nas -P "/var/run/nas.$r.pid" -H 34954 \
+		-l "${bridge:-$r}" -i "$r" -A -m 128 -k "$key" -s "$ssid" -w 4 -g 3600
+	procd_set_param respawn
+	procd_close_instance
+	log "$r: AP '$ssid' no canal $chanspec"
+}
+
+start_service() {
+	config_load wl-r7000
+	guard_check || return 0
+	load_wl || { log "falha ao carregar o wl"; return 1; }
+	printf 'lan_ifname=br-lan\n' > /var/run/wl-nvram.conf
+	config_foreach radio_up radio
+}
+
+stop_service() {
+	local r
+	for r in wl0 wl1; do
+		[ -d "/sys/class/net/$r" ] || continue
+		ip link set "$r" nomaster 2>/dev/null
+		wl -i "$r" down 2>/dev/null
+		ip link set "$r" down
+	done
+}
+
+service_triggers() {
+	procd_add_reload_trigger wl-r7000
+}

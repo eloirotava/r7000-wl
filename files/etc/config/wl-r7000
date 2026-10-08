@@ -1,0 +1,19 @@
+# Radios BCM4360 com o driver wl (Broadcom 7.14) - ver /etc/init.d/wl-r7000
+config radio 'wl0'
+	option enabled '0'
+	option chanspec '6'
+	option ssid 'OpenWrt-R7000'
+	option key ''
+	option bridge 'br-lan'
+
+config radio 'wl1'
+	option enabled '0'
+	option chanspec '36l'
+	option ssid 'OpenWrt-R7000-5G'
+	option key ''
+	option bridge 'br-lan'
+
+# depois de max_fails boots seguidos sem ficar estavel, o wl nao carrega
+config guard 'guard'
+	option max_fails '3'
+	option stable_secs '600'
