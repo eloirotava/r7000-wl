@@ -333,22 +333,32 @@ void wl_free_timer(struct wl_info *wl, struct wl_timer *wt)
 
 /* ---------------- rx / tx ---------------- */
 
+/*
+ * Com PKTC o nucleo entrega cadeias (numpkt > 1) ligadas por PKTCLINK
+ * no pktc_cb: cada elo e desligado e entregue a pilha separadamente.
+ */
 void wl_sendup(struct wl_info *wl, struct wl_if *wlif, void *p, int numpkt)
 {
 	struct net_device *dev = wlif ? wlif->dev : wl->dev;
 	struct sk_buff *skb;
+	void *next;
 
-	if (wlif && !wlif->registered) {
-		PKTFREE(wl->osh, p, FALSE);
-		return;
+	for (; p; p = next) {
+		next = PKTCLINK(p);
+		PKTSETCLINK(p, NULL);
+
+		if (wlif && !wlif->registered) {
+			PKTFREE(wl->osh, p, FALSE);
+			continue;
+		}
+
+		skb = PKTTONATIVE(wl->osh, p);
+		skb->dev = dev;
+		skb->protocol = eth_type_trans(skb, dev);
+		dev->stats.rx_packets++;
+		dev->stats.rx_bytes += skb->len;
+		netif_rx(skb);
 	}
-
-	skb = PKTTONATIVE(wl->osh, p);
-	skb->dev = dev;
-	skb->protocol = eth_type_trans(skb, dev);
-	dev->stats.rx_packets++;
-	dev->stats.rx_bytes += skb->len;
-	netif_rx(skb);
 }
 
 static netdev_tx_t wl_start_xmit(struct sk_buff *skb, struct net_device *dev)
