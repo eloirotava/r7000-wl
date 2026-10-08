@@ -65,6 +65,7 @@ jobs:
         run: |
           VMLINUX=$(ls openwrt/build_dir/target-*/linux-bcm53xx_generic/linux-6.12.*/vmlinux)
           echo "$VMLINUX"
+          set -o pipefail
           pahole -C sk_buff "$VMLINUX" | tee skb-pahole.txt
           python3 scripts/check-skb-abi.py skb-pahole.txt | tee skb-abi.txt
 

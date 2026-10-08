@@ -16,7 +16,7 @@ ESPERADO = {
     "tail": 0xdc, "end": 0xe0, "head": 0xe4, "data": 0xe8,
 }
 
-campo = re.compile(r"^\s*[^/;]*?[\s\*](\w+)(?:\[\d+\])?(?::\d+)?;\s*/\*\s*(\d+)")
+campo = re.compile(r"^\s*[^/;]*?[\s\*](\w+)(?:\[\d+\])?(?::\d+)?(?:\s+__attribute__\(\(.*?\)\))?;\s*/\*\s*(\d+)")
 achado = {}
 for linha in open(sys.argv[1]):
     m = campo.match(linha)

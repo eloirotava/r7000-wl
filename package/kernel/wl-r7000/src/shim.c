@@ -118,6 +118,7 @@ int isdefault = 1;
 int isac66;
 int isac68;
 int isbuffalo;
+int isbuffalowxr;
 
 /* handle do CTF do DD-WRT: NULL = CTF desligado */
 void *kcih;

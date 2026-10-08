@@ -91,6 +91,10 @@ int nvram_init(void *sih)
 	return 0;
 }
 
+void nvram_exit(void *sih)
+{
+}
+
 int nvram_match(const char *name, const char *match)
 {
 	const char *val = nvram_get(name);
