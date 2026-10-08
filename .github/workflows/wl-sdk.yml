@@ -8,6 +8,7 @@ on:
     paths:
       - 'package/**'
       - 'scripts/**'
+      - 'tools/**'
       - '.github/workflows/wl-sdk.yml'
   workflow_dispatch:
 
@@ -58,6 +59,15 @@ jobs:
           make package/wl-r7000/compile V=s -j$(nproc) 2>&1 | tee ../build.log | tail -40
           make package/linux/compile -j$(nproc) 2>&1 | tail -15 || true
 
+      - name: libnvram substituto (para o nas do DD-WRT)
+        run: |
+          export STAGING_DIR=$PWD/sdk/staging_dir
+          CC=$(ls sdk/staging_dir/toolchain-*/bin/arm-openwrt-linux-muslgnueabi-gcc)
+          mkdir -p out
+          $CC -shared -fPIC -O2 -Wall -Wl,-soname,libnvram.so \
+            -o out/libnvram.so tools/libnvram-shim/nvram.c
+          file out/libnvram.so
+
       - name: Resumo
         if: always()
         run: |
@@ -75,5 +85,6 @@ jobs:
             sdk/build_dir/target-*/linux-*/wl-r7000/wl.ko
             sdk/bin/targets/*/*/packages/kmod-wl-r7000*
             sdk/bin/targets/*/*/packages/kmod-netconsole*
+            out/libnvram.so
             sdk/bin/packages/*/*/kmod-wl-r7000*
           if-no-files-found: warn
