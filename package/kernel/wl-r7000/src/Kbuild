@@ -43,8 +43,11 @@ ccflags-y := $(WLFLAGS) \
 	-I$(src)/$(BRCM)/wl/dump/include \
 	-I$(src)/$(BRCM)/wl/iocv/include
 
-# codigo Broadcom antigo: silencia avisos, nao queremos -Werror aqui
-ccflags-y += -w
+# codigo Broadcom antigo: silencia os avisos, mas tipos de ponteiro e
+# int<->ponteiro errados sao bugs reais no 6.x (refcount_t, kernel_read...)
+BRCM_OBJS := $(filter $(BRCM)/%,$(wl-y))
+$(foreach o,$(BRCM_OBJS),$(eval CFLAGS_$(o) += -w))
+ccflags-y += -Werror=incompatible-pointer-types -Werror=int-conversion
 
 # o shim e quem implementa o redirecionamento de dma_sync_* (osl_compat.h)
 CFLAGS_shim.o += -DWL_SHIM_NO_DMA_REDIRECT

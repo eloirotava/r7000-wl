@@ -19,4 +19,12 @@ rm -rf "$dst"
 mkdir -p "$(dirname "$dst")"
 mv "$tmp/$SUB" "$dst"
 rm -rf "$tmp"
+
+# correcoes da arvore Broadcom para o 6.x (package/kernel/wl-r7000/brcm-patches)
+here=$(cd "$(dirname "$0")/.." && pwd)
+for p in "$here"/package/kernel/wl-r7000/brcm-patches/*.patch; do
+	[ -e "$p" ] || continue
+	echo "aplicando $(basename "$p")"
+	patch -d "$dst" -p1 --no-backup-if-mismatch < "$p"
+done
 du -sh "$dst"
