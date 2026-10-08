@@ -50,9 +50,13 @@ jobs:
           ./scripts/feeds install kmod-nf-conntrack || true
           make defconfig
           echo 'CONFIG_PACKAGE_kmod-wl-r7000=m' >> .config
+          # netconsole: oops do wl sai por UDP e sobrevive ao reboot
+          ./scripts/feeds install -p base linux || true
+          echo 'CONFIG_PACKAGE_kmod-netconsole=m' >> .config
           make defconfig
           set -o pipefail
           make package/wl-r7000/compile V=s -j$(nproc) 2>&1 | tee ../build.log | tail -40
+          make package/linux/compile -j$(nproc) 2>&1 | tail -15 || true
 
       - name: Resumo
         if: always()
@@ -70,5 +74,6 @@ jobs:
             build.log
             sdk/build_dir/target-*/linux-*/wl-r7000/wl.ko
             sdk/bin/targets/*/*/packages/kmod-wl-r7000*
+            sdk/bin/targets/*/*/packages/kmod-netconsole*
             sdk/bin/packages/*/*/kmod-wl-r7000*
           if-no-files-found: warn
