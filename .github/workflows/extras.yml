@@ -43,7 +43,12 @@ jobs:
           make defconfig
           echo 'CONFIG_PACKAGE_kmod-wireguard=m' >> .config
           make defconfig
-          grep -E 'kmod-(wireguard|udptunnel)' .config
+          ls package/feeds/base | head -30 || true
+          grep -ln 'KernelPackage/wireguard' -r feeds/base/package/kernel/linux/modules/ || true
+          grep -E 'WIREGUARD|CONFIG_TUN=|ALL_KMODS' .config build_dir/target-*/linux-*/linux-*/.config 2>/dev/null | head
+          grep -c 'config PACKAGE_kmod-' tmp/.config-package.in || true
+          grep -E 'PACKAGE_kmod-(wireguard|tun)' tmp/.config-package.in || true
+          grep -E 'kmod-(wireguard|udptunnel|tun)' .config || true
           make package/linux/compile -j$(nproc) V=s 2>&1 | grep -iE 'wireguard|udptunnel|error' | head -40
           ls bin/targets/*/*/packages | head -50
           find bin -name 'kmod-wireguard*' -o -name 'kmod-udptunnel*' -o -name 'kmod-crypto-lib-chacha20poly1305*' | head -20
