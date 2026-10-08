@@ -66,7 +66,8 @@ jobs:
           mkdir -p out
           $CC -shared -fPIC -O2 -Wall -Wl,-soname,libnvram.so \
             -o out/libnvram.so tools/libnvram-shim/nvram.c
-          file out/libnvram.so
+          $CC -O2 -Wall -o out/wlcountry tools/wlcountry/wlcountry.c
+          file out/libnvram.so out/wlcountry
 
       - name: Resumo
         if: always()
@@ -86,5 +87,6 @@ jobs:
             sdk/bin/targets/*/*/packages/kmod-wl-r7000*
             sdk/bin/targets/*/*/packages/kmod-netconsole*
             out/libnvram.so
+            out/wlcountry
             sdk/bin/packages/*/*/kmod-wl-r7000*
           if-no-files-found: warn
