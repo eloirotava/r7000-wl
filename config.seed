@@ -4,3 +4,4 @@ CONFIG_TARGET_bcm53xx_generic_DEVICE_netgear_r7000=y
 CONFIG_KERNEL_DEBUG_INFO=y
 CONFIG_SDK=y
 CONFIG_PACKAGE_kmod-nf-conntrack=y
+CONFIG_PACKAGE_kmod-wl-r7000=m

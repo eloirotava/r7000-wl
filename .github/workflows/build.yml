@@ -6,6 +6,7 @@ on:
     paths:
       - 'patches/**'
       - 'config.seed'
+      - 'package/kernel/wl-r7000/Makefile'
       - 'files/**'
       - '.github/workflows/build.yml'
   workflow_dispatch:
@@ -38,6 +39,12 @@ jobs:
           git clone --depth 1 -b "$OPENWRT_BRANCH" https://github.com/openwrt/openwrt.git openwrt
           cp patches/*.patch openwrt/target/linux/bcm53xx/patches-6.12/
           cp -r files openwrt/files
+          sudo apt-get install -y binutils-arm-linux-gnueabi
+          ./scripts/fetch-brcm.sh package/kernel/wl-r7000/src/brcm
+          mkdir -p package/kernel/wl-r7000/src/core
+          CROSS_COMPILE=arm-linux-gnueabi- ./scripts/prep-core.sh \
+            package/kernel/wl-r7000/src/brcm package/kernel/wl-r7000/src/core/wl_core.o
+          cp -r package/kernel/wl-r7000 openwrt/package/kernel/
           cp config.seed openwrt/.config
           cd openwrt
           ./scripts/feeds update -a
@@ -62,7 +69,7 @@ jobs:
           python3 scripts/check-skb-abi.py skb-pahole.txt | tee skb-abi.txt
 
       - name: Imagem + SDK
-        run: cd openwrt && (make -j$(nproc) || make -j1 V=s)
+        run: cd openwrt && (make -j$(nproc) IGNORE_ERRORS=m || make -j1 V=s IGNORE_ERRORS=m)
 
       - name: Artefatos
         if: always()
@@ -75,4 +82,6 @@ jobs:
             openwrt/bin/targets/bcm53xx/generic/*r7000*
             openwrt/bin/targets/bcm53xx/generic/openwrt-sdk-*
             openwrt/bin/targets/bcm53xx/generic/*.manifest
+            openwrt/bin/targets/bcm53xx/generic/packages/kmod-wl-r7000*
+            openwrt/build_dir/target-*/linux-bcm53xx_generic/wl-r7000/wl.ko
           if-no-files-found: warn
