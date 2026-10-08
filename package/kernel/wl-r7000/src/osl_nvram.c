@@ -86,6 +86,62 @@ char *nvram_get(const char *name)
 	return val;
 }
 
+int nvram_init(void *sih)
+{
+	return 0;
+}
+
+int nvram_match(const char *name, const char *match)
+{
+	const char *val = nvram_get(name);
+
+	return val && match && !strcmp(val, match);
+}
+
+/*
+ * Todas as variaveis "nome=valor\0...\0\0".  O initvars_flash() do
+ * bcmsrom.c filtra por "pci/<dominio>/<slot>/" (radios sem SROM, caso
+ * do R7000): aplica o mesmo pcidom_offset, so que ao contrario.
+ */
+int nvram_getall(char *buf, int count)
+{
+	size_t len = 0, off = 0, n;
+	const char *p, *end;
+	char key[96];
+	char *nv;
+
+	nv = bcm47xx_nvram_get_contents(&len);
+	if (!nv)
+		return -ENODEV;
+
+	end = nv + len;
+	for (p = nv; p < end && *p; p += strlen(p) + 1) {
+		const char *src = p;
+		unsigned int dom;
+		int k;
+
+		if (pcidom_offset && !strncmp(p, "pci/", 4) &&
+		    sscanf(p + 4, "%u%n", &dom, &k) == 1 && p[4 + k] == '/' &&
+		    dom >= pcidom_offset) {
+			snprintf(key, sizeof(key), "pci/%u", dom - pcidom_offset);
+			n = strlen(key);
+			if (off + n + strlen(p + 4 + k) + 2 > count)
+				break;
+			memcpy(buf + off, key, n);
+			off += n;
+			src = p + 4 + k;
+		}
+		n = strlen(src) + 1;
+		if (off + n + 1 > count)
+			break;
+		memcpy(buf + off, src, n);
+		off += n;
+	}
+	buf[off] = '\0';
+	bcm47xx_nvram_release_contents(nv);
+	return 0;
+}
+
 void wl_nvram_free(void)
 {
 	struct nv_entry *e;

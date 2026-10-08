@@ -64,4 +64,21 @@ static inline void pci_unmap_sg(struct pci_dev *pdev, struct scatterlist *sg,
  */
 extern unsigned int ns_acp_win_size;
 
+/* virt_to_dma() saiu do ARM; e so usado com device NULL (ver shim.c) */
+#ifndef virt_to_dma
+#define virt_to_dma(dev, va)	((dma_addr_t)virt_to_phys(va))
+#endif
+
+struct device;
+extern void wl_dma_sync_for_device(struct device *dev, dma_addr_t addr,
+	size_t size, enum dma_data_direction dir);
+extern void wl_dma_sync_for_cpu(struct device *dev, dma_addr_t addr,
+	size_t size, enum dma_data_direction dir);
+#ifndef WL_SHIM_NO_DMA_REDIRECT
+#define dma_sync_single_for_device(d, a, s, dir) \
+	wl_dma_sync_for_device((struct device *)(d), a, s, dir)
+#define dma_sync_single_for_cpu(d, a, s, dir) \
+	wl_dma_sync_for_cpu((struct device *)(d), a, s, dir)
+#endif
+
 #endif /* _OSL_COMPAT_H_ */

@@ -12,6 +12,8 @@
 #include <linux/module.h>
 #include <linux/slab.h>
 #include <linux/netdevice.h>
+#include <linux/dma-mapping.h>
+#include <linux/string.h>
 
 /*
  * kmalloc() inline do 4.4 com tamanho constante vira
@@ -100,4 +102,44 @@ int igsc_interface_rtport_del(void *igsc, void *ifp)
 int igsc_sdb_interface_del(void *igsc, void *ifp)
 {
 	return 0;
+}
+
+/* ARM removeu __memzero (o nucleo 4.4 ainda chama) */
+void __memzero(void *p, size_t n)
+{
+	memset(p, 0, n);
+}
+
+/*
+ * Flags de placa que o DD-WRT acrescentou no siutils.c (mascaras de
+ * GPIO por modelo).  isdefault = comportamento original da Broadcom.
+ */
+int isdefault = 1;
+int isac66;
+int isac68;
+int isbuffalo;
+
+/* handle do CTF do DD-WRT: NULL = CTF desligado */
+void *kcih;
+
+/*
+ * osl_cache_flush/inv chamam dma_sync_*() com device NULL, o que no
+ * 6.x quebra.  osl_compat.h redireciona essas chamadas para ca.
+ */
+struct device *wl_dma_dev;
+
+void wl_dma_sync_for_device(struct device *dev, dma_addr_t addr, size_t size,
+	enum dma_data_direction dir)
+{
+	dev = dev ?: wl_dma_dev;
+	if (dev)
+		dma_sync_single_for_device(dev, addr, size, dir);
+}
+
+void wl_dma_sync_for_cpu(struct device *dev, dma_addr_t addr, size_t size,
+	enum dma_data_direction dir)
+{
+	dev = dev ?: wl_dma_dev;
+	if (dev)
+		dma_sync_single_for_cpu(dev, addr, size, dir);
 }

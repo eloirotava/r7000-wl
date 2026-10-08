@@ -45,3 +45,6 @@ ccflags-y := $(WLFLAGS) \
 
 # codigo Broadcom antigo: silencia avisos, nao queremos -Werror aqui
 ccflags-y += -w
+
+# o shim e quem implementa o redirecionamento de dma_sync_* (osl_compat.h)
+CFLAGS_shim.o += -DWL_SHIM_NO_DMA_REDIRECT

@@ -78,6 +78,7 @@ struct wl_info {
 };
 
 static uint wl_units;
+extern struct device *wl_dma_dev;	/* shim.c */
 
 /*
  * O nucleo binario acessa sk_buff por offset fixo (ABI do kernel 4.4
@@ -759,6 +760,8 @@ static int wl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 	wlif->registered = true;
 
 	pci_set_drvdata(pdev, wl);
+	if (!wl_dma_dev)
+		wl_dma_dev = &pdev->dev;
 	wl_units++;
 
 	netdev_info(wl->dev, "Broadcom BCM%04x 802.11 Wireless Controller %s\n",
