@@ -70,14 +70,14 @@ jobs:
         run: |
           S=$PWD/package/kernel/wl-r7000/src
           set -o pipefail
-          make -C linux-$KVER M=$S -j$(nproc) KBUILD_MODPOST_WARN=1 modules 2>&1 | tee build.log
+          make -k -C linux-$KVER M=$S -j$(nproc) KBUILD_MODPOST_WARN=1 modules 2>&1 | tee build.log
           ls -la $S/wl.ko
 
       - name: Resumo
         if: always()
         run: |
           S=package/kernel/wl-r7000/src
-          echo "== erros de compilacao"; grep -E 'error:' build.log | sort | uniq -c | sort -rn | head -40 || true
+          echo "== erros de compilacao"; grep -E 'error:' build.log | sed -E 's#.*/src/##' | sort | uniq -c | sort -rn | head -80 || true
           echo "== modpost indefinidos"; grep -E 'undefined!' build.log | sed -E 's/.*"(.*)".*/\1/' | sort -u > undef.txt || true; wc -l < undef.txt; cat undef.txt
           echo "== GPL-only"; grep -iE 'GPL-only' build.log | head -40 || true
 

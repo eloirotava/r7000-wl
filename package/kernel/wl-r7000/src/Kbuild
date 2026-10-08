@@ -33,6 +33,7 @@ WLFLAGS += -DBCMDRIVER -Dlinux -DDMA -DBCM47XX_CA9
 ccflags-y := $(WLFLAGS) \
 	-include $(src)/osl_compat.h \
 	-I$(src) \
+	-I$(src)/compat \
 	-I$(src)/$(BRCM)/include \
 	-I$(src)/$(BRCM)/common/include \
 	-I$(src)/$(BRCM)/shared \
