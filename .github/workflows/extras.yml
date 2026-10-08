@@ -43,7 +43,9 @@ jobs:
           make defconfig
           echo 'CONFIG_PACKAGE_kmod-wireguard=m' >> .config
           make defconfig
-          make package/linux/compile -j$(nproc) 2>&1 | tail -20
+          grep -E 'kmod-(wireguard|udptunnel)' .config
+          make package/linux/compile -j$(nproc) V=s 2>&1 | grep -iE 'wireguard|udptunnel|error' | head -40
+          ls bin/targets/*/*/packages | head -50
           find bin -name 'kmod-wireguard*' -o -name 'kmod-udptunnel*' -o -name 'kmod-crypto-lib-chacha20poly1305*' | head -20
 
       - name: wstunnel soft-float (armv7-unknown-linux-musleabi)
