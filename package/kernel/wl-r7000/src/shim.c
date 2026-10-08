@@ -52,6 +52,12 @@ void *wl___kmalloc(size_t size, gfp_t flags)
 	return kmalloc(size, flags);
 }
 
+/* sem janela ACP no mainline (ver osl_compat.h) */
+unsigned int ns_acp_win_size;
+
+/* lock da WAR de leitura PCIe x L2 (so ativa se PHYS_OFFSET == 0x80000000) */
+DEFINE_SPINLOCK(l2x0_reg_lock);
+
 /* WAR de PCIe gen2 do 4360 que vive no arch do kernel Broadcom */
 void do_4360_pcie2_war(void)
 {

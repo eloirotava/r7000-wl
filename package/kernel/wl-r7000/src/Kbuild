@@ -28,9 +28,10 @@ wl-y += $(BRCM)/shared/linux_osl.o \
 # + Makefile do kernel 4.4 do DD-WRT): os structs inline tem que bater
 WLFLAGS := $(shell cat $(src)/wlflags.txt)
 WLFLAGS += -DHNDCTF -DCTFPOOL -DCTFMAP -DPKTC -DCTF_PPPOE
-WLFLAGS += -DBCMDRIVER -Dlinux -DDMA
+WLFLAGS += -DBCMDRIVER -Dlinux -DDMA -DBCM47XX_CA9
 
 ccflags-y := $(WLFLAGS) \
+	-include $(src)/osl_compat.h \
 	-I$(src) \
 	-I$(src)/$(BRCM)/include \
 	-I$(src)/$(BRCM)/common/include \

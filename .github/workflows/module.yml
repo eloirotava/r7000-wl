@@ -29,9 +29,9 @@ jobs:
           sudo apt-get install -y gcc-arm-linux-gnueabi binutils-arm-linux-gnueabi \
             bc bison flex libssl-dev libelf-dev cpio
 
-      - name: Cache do kernel
+      - name: Cache do kernel (restore)
         id: kcache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: linux-${{ env.KVER }}
           key: kernel-${{ env.KVER }}-${{ hashFiles('patches/990-skbuff-bcm-wl-abi.patch', 'kernel/northstar.config') }}-v1
@@ -47,6 +47,14 @@ jobs:
           ./scripts/kconfig/merge_config.sh -m .config ../kernel/northstar.config
           make olddefconfig
           make -j$(nproc) zImage modules 2>&1 | tail -20
+
+      # salva ja aqui: o job do modulo pode falhar e o kernel nao muda
+      - name: Cache do kernel (save)
+        if: steps.kcache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: linux-${{ env.KVER }}
+          key: ${{ steps.kcache.outputs.cache-primary-key }}
 
       - name: Config efetiva
         run: grep -E 'CONFIG_(NF_CONNTRACK|SKB_EXTENSIONS|NET_XGRESS|ARM_HEAVY_MB|BCM47XX_NVRAM|PCIE_IPROC_BCMA|NET_SWITCHDEV|IP_VS|NF_TABLES)=' linux-$KVER/.config || true
