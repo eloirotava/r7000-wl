@@ -100,9 +100,6 @@ WL_SKB_AT(tail, 0xdc);
 WL_SKB_AT(end, 0xe0);
 WL_SKB_AT(head, 0xe4);
 WL_SKB_AT(data, 0xe8);
-/* wl_skb_clear_bcm() zera 0x10..0x30 e 0x6c..0x88 */
-WL_SKB_AT(bcm_sp, 0x6c);
-WL_SKB_AT(tstamp, 0x88);
 
 #define WL_LOCK(wl)	spin_lock_bh(&(wl)->lock)
 #define WL_UNLOCK(wl)	spin_unlock_bh(&(wl)->lock)
@@ -373,10 +370,17 @@ void wl_sendup(struct wl_info *wl, struct wl_if *wlif, void *p, int numpkt)
  */
 static inline void wl_skb_clear_bcm(struct sk_buff *skb)
 {
-	memset(skb->pktc_cb, 0,
-	       offsetof(struct sk_buff, cb) - offsetof(struct sk_buff, pktc_cb));
-	memset(&skb->bcm_sp, 0,
-	       offsetof(struct sk_buff, tstamp) - offsetof(struct sk_buff, bcm_sp));
+	memset(skb->pktc_cb, 0, sizeof(skb->pktc_cb));
+	memset(skb->ctf_pppoe_cb, 0, sizeof(skb->ctf_pppoe_cb));
+	skb->ctfmap = NULL;
+	skb->bcm_sk = NULL;
+	skb->bcm_dev = NULL;
+	skb->bcm_sp = NULL;
+	skb->ctfpool = NULL;
+	skb->pktc_flags = 0;
+	skb->ctf_ipc_txif = NULL;
+	skb->napt_idx = 0;
+	skb->napt_flags = 0;
 }
 
 static netdev_tx_t wl_start_xmit(struct sk_buff *skb, struct net_device *dev)
