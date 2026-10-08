@@ -183,15 +183,12 @@ void wl_down(struct wl_info *wl)
 		if (wlif->registered)
 			netif_tx_stop_all_queues(wlif->dev);
 
-	wlc_down(wl->wlc);
-
 	/*
-	 * O DPC pode estar esperando o lock; ele ve pub->up == 0 e sai.
-	 * Soltamos o lock so para deixa-lo terminar.
+	 * Chamado com WL_LOCK (BH desligado): tasklet_kill() nao pode ser
+	 * usado aqui.  O DPC que vier depois ve pub->up == 0 e sai; quem
+	 * desliga de vez (wl_close/remove) mata o tasklet fora do lock.
 	 */
-	WL_UNLOCK(wl);
-	tasklet_kill(&wl->dpc_tasklet);
-	WL_LOCK(wl);
+	wlc_down(wl->wlc);
 }
 
 void wl_event(struct wl_info *wl, char *ifname, wlc_event_t *e)
@@ -453,6 +450,7 @@ static int wl_close(struct net_device *dev)
 	WL_LOCK(wl);
 	wl_down(wl);
 	WL_UNLOCK(wl);
+	tasklet_kill(&wl->dpc_tasklet);
 	return 0;
 }
 
@@ -492,8 +490,10 @@ static void wl_set_rx_mode(struct net_device *dev)
 }
 
 /*
- * SIOCDEVPRIVATE: interface do utilitario `wl` (wl_ioctl_t).
- * O buffer vai para o kernel antes de pegar o lock.
+ * SIOCDEVPRIVATE: interface do utilitario `wl` (wl_ioctl_t), como no
+ * wl_ioctl() original: buffer de pelo menos WLC_IOCTL_MAXLEN (o nucleo
+ * pode escrever alem de len), erro BCME_* guardado em pub->bcmerror e
+ * convertido por osl_error().
  */
 static int wl_siocdevprivate(struct net_device *dev, struct ifreq *ifr,
 	void __user *data, int cmd)
@@ -502,7 +502,8 @@ static int wl_siocdevprivate(struct net_device *dev, struct ifreq *ifr,
 	struct wl_info *wl = wlif->wl;
 	wl_ioctl_t ioc;
 	void *buf = NULL;
-	int err, bcmerr;
+	size_t alloc = 0;
+	int bcmerr;
 
 	if (cmd != SIOCDEVPRIVATE)
 		return -EOPNOTSUPP;
@@ -510,11 +511,10 @@ static int wl_siocdevprivate(struct net_device *dev, struct ifreq *ifr,
 		return -EPERM;
 	if (copy_from_user(&ioc, data, sizeof(ioc)))
 		return -EFAULT;
-	if (ioc.len > WL_IOCTL_MAXLEN)
-		ioc.len = WL_IOCTL_MAXLEN;
 
-	if (ioc.buf && ioc.len) {
-		buf = kmalloc(ioc.len, GFP_KERNEL);
+	if (ioc.buf) {
+		alloc = max_t(size_t, ioc.len, WLC_IOCTL_MAXLEN_ABI);
+		buf = kzalloc(alloc, GFP_KERNEL);
 		if (!buf)
 			return -ENOMEM;
 		if (copy_from_user(buf, (void __user *)ioc.buf, ioc.len)) {
@@ -529,11 +529,15 @@ static int wl_siocdevprivate(struct net_device *dev, struct ifreq *ifr,
 	WL_UNLOCK(wl);
 	mutex_unlock(&wl->perimeter);
 
-	err = bcmerr ? -EINVAL : 0;
-	if (!bcmerr && buf && copy_to_user((void __user *)ioc.buf, buf, ioc.len))
-		err = -EFAULT;
-	kfree(buf);
-	return err;
+	if (buf) {
+		if (copy_to_user((void __user *)ioc.buf, buf, ioc.len) && !bcmerr)
+			bcmerr = BCME_BADADDR;
+		kfree(buf);
+	}
+
+	if (bcmerr)
+		WLPUB_BCMERROR(wl->pub) = bcmerr;
+	return osl_error(bcmerr);
 }
 
 static const struct net_device_ops wl_netdev_ops = {

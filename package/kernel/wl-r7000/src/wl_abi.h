@@ -28,6 +28,10 @@ typedef struct wl_rxsts wl_rxsts_t;	/* opaco */
 #define WLPUB_UNIT(pub)			(*(uint *)((uint8 *)(pub) + 0x0c))
 #define WLPUB_UP(pub)			(*(volatile bool *)((uint8 *)(pub) + 0x18))
 #define WLPUB_HW_UP(pub)		(*(volatile bool *)((uint8 *)(pub) + 0x20))
+/* ultimo erro BCME_*: o utilitario wl le pela iovar "bcmerror" */
+#define WLPUB_BCMERROR(pub)		(*(int *)((uint8 *)(pub) + 0x68))
+
+#define WLC_IOCTL_MAXLEN_ABI		8192
 
 /* bustype (bcmdevs.h) */
 #ifndef PCI_BUS
