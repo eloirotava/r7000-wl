@@ -39,8 +39,9 @@ load_wl() {
 }
 
 radio_up() {
-	local r=$1 enabled chanspec ssid key bridge W="wl -i $1"
+	local r=$1 enabled country chanspec ssid key bridge W="wl -i $1"
 	config_get_bool enabled "$r" enabled 0
+	config_get country "$r" country
 	config_get chanspec "$r" chanspec
 	config_get ssid "$r" ssid
 	config_get key "$r" key
@@ -56,6 +57,8 @@ radio_up() {
 	$W down
 	$W ap 1
 	$W infra 1
+	# pais/revisao do CLM: a rev 0 do BR (nvram) nao tem 80 MHz
+	[ -n "$country" ] && wlcountry "$r" "$country" > /dev/null
 	[ -n "$chanspec" ] && $W chanspec "$chanspec"
 	$W wsec 4
 	$W wpa_auth 128

@@ -1,6 +1,7 @@
 # Radios BCM4360 com o driver wl (Broadcom 7.14) - ver /etc/init.d/wl-r7000
 config radio 'wl0'
 	option enabled '0'
+	option country 'BR/2'
 	option chanspec '6'
 	option ssid 'OpenWrt-R7000'
 	option key ''
@@ -8,7 +9,9 @@ config radio 'wl0'
 
 config radio 'wl1'
 	option enabled '0'
-	option chanspec '36l'
+	# BR/2: revisao do CLM com 80 MHz (a BR/0 da nvram so vai ate 40)
+	option country 'BR/2'
+	option chanspec '36/80'
 	option ssid 'OpenWrt-R7000-5G'
 	option key ''
 	option bridge 'br-lan'

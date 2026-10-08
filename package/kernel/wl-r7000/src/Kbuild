@@ -47,6 +47,9 @@ ccflags-y := $(WLFLAGS) \
 # int<->ponteiro errados sao bugs reais no 6.x (refcount_t, kernel_read...)
 BRCM_OBJS := $(filter $(BRCM)/%,$(wl-y))
 $(foreach o,$(BRCM_OBJS),$(eval CFLAGS_$(o) += -w))
+# o codigo Broadcom usa "uint8 data[1]" como array flexivel (bcm_write_tlv
+# etc.): o FORTIFY do 6.x acusa memcpy alem do campo.  So nesses objetos.
+$(foreach o,$(BRCM_OBJS),$(eval CFLAGS_$(o) += -D__NO_FORTIFY))
 ccflags-y += -Werror=incompatible-pointer-types -Werror=int-conversion
 # headers Broadcom incluidos pelos nossos arquivos
 ccflags-y += -Wno-empty-body
