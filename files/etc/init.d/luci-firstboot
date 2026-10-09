@@ -1,0 +1,18 @@
+#!/bin/sh /etc/rc.common
+# O LuCI nao entra na imagem (o defconfig do build o descarta); vem do
+# repositorio oficial no primeiro boot com internet. E so espaco de usuario,
+# entao casa com o nosso kernel. Depois de instalado, o servico se desliga.
+START=99
+USE_PROCD=1
+
+start_service() {
+	[ -e /www/luci-static/resources/luci.js ] && { /etc/init.d/luci-firstboot disable; return 0; }
+	procd_open_instance
+	procd_set_param command /bin/sh -c '
+		until apk update >/dev/null 2>&1 && apk add luci uhttpd-mod-ucode luci-proto-wireguard; do sleep 60; done
+		sh /etc/r7000-luci-netgear.sh 2>/dev/null || true
+		/etc/init.d/rpcd restart; /etc/init.d/uhttpd restart
+		/etc/init.d/luci-firstboot disable
+		logger -t luci-firstboot "LuCI instalado"'
+	procd_close_instance
+}

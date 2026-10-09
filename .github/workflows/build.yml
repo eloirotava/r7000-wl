@@ -48,16 +48,11 @@ jobs:
           cp config.seed openwrt/.config
           cd openwrt
           ./scripts/feeds update -a
-          # so o necessario: com "install -a" algum pacote quebrado dos feeds
-          # derrubava o luci-base do .config
-          ./scripts/feeds install luci luci-base luci-mod-admin-full \
-            luci-theme-bootstrap luci-proto-wireguard rpcd-mod-luci
+          ./scripts/feeds install -a
           make defconfig
           grep -E 'r7000|DEBUG_INFO|CONFIG_SDK' .config
-          grep -E 'PACKAGE_(luci|luci-base|uhttpd|rpcd|ucode|libucode|lua)[= ]' .config || true
-          L=$(grep -n 'config PACKAGE_luci-base$' tmp/.config-package.in | cut -d: -f1); awk -v l=$L 'NR<l && /^(menu|if|endif|endmenu|source|\tmenu|\tif)/{print NR": "$0}' tmp/.config-package.in | tail -8; sed -n "$((L-12)),$((L))p" tmp/.config-package.in; grep -rn 'PACKAGE_luci-base' tmp/.config-package.in | head || true
           # falha cedo se o defconfig derrubou o que tem de ir na imagem
-          for p in kmod-wl-r7000 kmod-wireguard luci-base uhttpd-mod-ucode; do
+          for p in kmod-wl-r7000 kmod-wireguard uhttpd-mod-ucode; do
             grep -q "^CONFIG_PACKAGE_$p=y" .config || { echo "falta $p"; exit 1; }
           done
 

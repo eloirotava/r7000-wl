@@ -20,4 +20,6 @@ z=$(uci show firewall | grep -m1 "\.name='lan'" | cut -d. -f2)
 	uci add_list firewall.$z.network=wg11
 	uci commit firewall
 }
+# guardado para o luci-firstboot reaplicar depois que o LuCI chegar
+cp /etc/uci-defaults/90-r7000-luci-netgear /etc/r7000-luci-netgear.sh 2>/dev/null
 exit 0
