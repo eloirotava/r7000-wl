@@ -54,6 +54,8 @@ jobs:
           ./scripts/feeds uninstall luci-app-weechat
           make defconfig
           grep -E 'r7000|DEBUG_INFO|CONFIG_SDK' .config
+          grep -E 'PACKAGE_(luci|luci-base|uhttpd|rpcd|ucode|libucode|lua)[= ]' .config || true
+          awk '/^config PACKAGE_luci-base$/,/^$/' tmp/.config-package.in | head -40 || true
           # falha cedo se o defconfig derrubou o que tem de ir na imagem
           for p in kmod-wl-r7000 kmod-wireguard luci-base uhttpd-mod-ucode; do
             grep -q "^CONFIG_PACKAGE_$p=y" .config || { echo "falta $p"; exit 1; }
