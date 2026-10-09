@@ -49,6 +49,9 @@ jobs:
           cd openwrt
           ./scripts/feeds update -a
           ./scripts/feeds install -a
+          # luci-app-weechat tem dependencia recursiva no feed e derruba o
+          # Kconfig dos pacotes (o defconfig perde o luci)
+          ./scripts/feeds uninstall luci-app-weechat
           make defconfig
           grep -E 'r7000|DEBUG_INFO|CONFIG_SDK' .config
           # falha cedo se o defconfig derrubou o que tem de ir na imagem
