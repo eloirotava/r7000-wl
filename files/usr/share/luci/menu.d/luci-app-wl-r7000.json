@@ -1,0 +1,14 @@
+{
+	"admin/network/wl-r7000": {
+		"title": "Wifi R7000",
+		"order": 15,
+		"action": {
+			"type": "view",
+			"path": "wl-r7000"
+		},
+		"depends": {
+			"acl": [ "luci-app-wl-r7000" ],
+			"uci": { "wl-r7000": true }
+		}
+	}
+}

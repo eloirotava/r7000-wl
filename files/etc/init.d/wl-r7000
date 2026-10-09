@@ -115,6 +115,12 @@ stop_service() {
 	done
 }
 
+# salvar pelo LuCI (ou uci commit + reload_config) refaz os radios do zero
+reload_service() {
+	stop
+	start
+}
+
 service_triggers() {
 	procd_add_reload_trigger wl-r7000
 }

@@ -1,0 +1,14 @@
+{
+	"luci-app-wl-r7000": {
+		"description": "Wifi do R7000 (driver wl da Broadcom)",
+		"read": {
+			"file": {
+				"/usr/sbin/wl": [ "exec" ]
+			},
+			"uci": [ "wl-r7000" ]
+		},
+		"write": {
+			"uci": [ "wl-r7000" ]
+		}
+	}
+}
