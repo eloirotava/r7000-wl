@@ -48,10 +48,10 @@ jobs:
           cp config.seed openwrt/.config
           cd openwrt
           ./scripts/feeds update -a
-          ./scripts/feeds install -a
-          # luci-app-weechat tem dependencia recursiva no feed e derruba o
-          # Kconfig dos pacotes (o defconfig perde o luci)
-          ./scripts/feeds uninstall luci-app-weechat
+          # so o necessario: com "install -a" algum pacote quebrado dos feeds
+          # derrubava o luci-base do .config
+          ./scripts/feeds install luci luci-base luci-mod-admin-full \
+            luci-theme-bootstrap luci-proto-wireguard rpcd-mod-luci
           make defconfig
           grep -E 'r7000|DEBUG_INFO|CONFIG_SDK' .config
           grep -E 'PACKAGE_(luci|luci-base|uhttpd|rpcd|ucode|libucode|lua)[= ]' .config || true
