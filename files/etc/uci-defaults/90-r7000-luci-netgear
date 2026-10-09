@@ -1,0 +1,23 @@
+# LuCI servido sob /netgear: e assim que br.rotava.com/netgear/ repassa para
+# o roteador (wg .11) sem reescrever nada. /cgi-bin/luci segue valendo na LAN.
+uci -q batch <<U
+set luci.main.mediaurlbase=/netgear/luci-static/bootstrap
+set luci.main.resourcebase=/netgear/luci-static/resources
+set luci.main.ubuspath=/netgear/ubus/
+commit luci
+delete uhttpd.main.lua_prefix
+delete uhttpd.main.ucode_prefix
+add_list uhttpd.main.ucode_prefix=/netgear/cgi-bin/luci=/usr/share/ucode/luci/uhttpd.uc
+add_list uhttpd.main.ucode_prefix=/cgi-bin/luci=/usr/share/ucode/luci/uhttpd.uc
+set uhttpd.main.ubus_prefix=/netgear/ubus
+set uhttpd.main.rfc1918_filter=0
+commit uhttpd
+U
+ln -sfn /www /www/netgear
+# wg11 (configurado a parte, a chave nao vem na imagem) entra na zona lan
+z=$(uci show firewall | grep -m1 "\.name='lan'" | cut -d. -f2)
+[ -n "$z" ] && ! uci -q get firewall.$z.network | grep -qw wg11 && {
+	uci add_list firewall.$z.network=wg11
+	uci commit firewall
+}
+exit 0

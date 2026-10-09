@@ -51,6 +51,10 @@ jobs:
           ./scripts/feeds install -a
           make defconfig
           grep -E 'r7000|DEBUG_INFO|CONFIG_SDK' .config
+          # falha cedo se o defconfig derrubou o que tem de ir na imagem
+          for p in kmod-wl-r7000 kmod-wireguard luci-base uhttpd-mod-ucode; do
+            grep -q "^CONFIG_PACKAGE_$p=y" .config || { echo "falta $p"; exit 1; }
+          done
 
       - name: Download
         run: cd openwrt && make download -j8
@@ -60,6 +64,31 @@ jobs:
           cd openwrt
           make -j$(nproc) toolchain/install || make -j1 V=s toolchain/install
           make -j$(nproc) target/linux/compile || make -j1 V=s target/linux/compile
+
+      - name: Espaco de usuario do wifi e wstunnel em files/
+        run: |
+          sudo apt-get install -y squashfs-tools
+          ./scripts/fetch-ddwrt-userland.sh openwrt/files
+          export STAGING_DIR=$PWD/openwrt/staging_dir
+          TC=$(ls -d $PWD/openwrt/staging_dir/toolchain-arm_*)
+          CC=$TC/bin/arm-openwrt-linux-muslgnueabi-gcc
+          $CC -shared -fPIC -O2 -Wall -Wl,-soname,libnvram.so \
+            -o openwrt/files/usr/lib/ddwrt/libnvram.so tools/libnvram-shim/nvram.c
+          $CC -O2 -Wall -o openwrt/files/usr/sbin/wlcountry tools/wlcountry/wlcountry.c
+          # wstunnel soft-float: o BCM4708 nao tem VFP
+          rustup target add armv7-unknown-linux-musleabi
+          git clone --depth 1 -b v10.6.2 https://github.com/erebe/wstunnel /tmp/wstunnel
+          (cd /tmp/wstunnel &&
+            CC_armv7_unknown_linux_musleabi=$CC \
+            AR_armv7_unknown_linux_musleabi=$TC/bin/arm-openwrt-linux-muslgnueabi-ar \
+            CARGO_TARGET_ARMV7_UNKNOWN_LINUX_MUSLEABI_LINKER=$CC \
+            CFLAGS_armv7_unknown_linux_musleabi=-mfloat-abi=soft \
+            cargo build --release --target armv7-unknown-linux-musleabi)
+          mkdir -p openwrt/files/usr/bin
+          $TC/bin/arm-openwrt-linux-muslgnueabi-strip \
+            -o openwrt/files/usr/bin/wstunnel \
+            /tmp/wstunnel/target/armv7-unknown-linux-musleabi/release/wstunnel
+          file openwrt/files/usr/sbin/* openwrt/files/usr/bin/* openwrt/files/usr/lib/ddwrt/*
 
       - name: Confere ABI do sk_buff (pahole)
         run: |
