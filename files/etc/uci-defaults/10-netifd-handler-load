@@ -1,0 +1,8 @@
+# netifd 25.12: o handler_load (/lib/netifd/utils.uc) le a saida do "dump"
+# com while (!f.error()), que e o ultimo erro global do fs: com dois ou mais
+# handlers .sh (mac80211 + broadcom) o netifd entra em loop no boot e a rede
+# toda cai.  Passa a ler ate o fim do arquivo.
+f=/lib/netifd/utils.uc
+grep -q 'while (!f.error()) {' $f || exit 0
+sed -i 's|while (!f.error()) {|for (let line = f.read("line"); length(line); line = f.read("line")) {|; s|let data = trim(f.read("line"));|let data = trim(line);|' $f
+exit 0

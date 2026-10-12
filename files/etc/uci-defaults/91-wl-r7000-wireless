@@ -1,0 +1,29 @@
+#!/bin/sh
+# radios do wl no /etc/config/wireless padrao (type broadcom), migrando o
+# que houver no antigo /etc/config/wl-r7000
+[ -s /etc/config/wireless ] && grep -q "'broadcom'" /etc/config/wireless && exit 0
+touch /etc/config/wireless
+for r in wl0 wl1; do
+	n=${r#wl}
+	band=2g; ch=6; ht=HT20
+	[ $n = 1 ] && { band=5g; ch=36; ht=VHT80; }
+	cs=$(uci -q get wl-r7000.$r.chanspec); [ -n "$cs" ] && { ch=${cs%%/*}; [ "${cs#*/}" = 80 ] && ht=VHT80; }
+	uci batch <<-EOT
+	set wireless.radio$n=wifi-device
+	set wireless.radio$n.type=broadcom
+	set wireless.radio$n.ifname=$r
+	set wireless.radio$n.band=$band
+	set wireless.radio$n.channel=$ch
+	set wireless.radio$n.htmode=$ht
+	set wireless.radio$n.country=$(uci -q get wl-r7000.$r.country || echo BR/2)
+	set wireless.radio$n.disabled=$([ "$(uci -q get wl-r7000.$r.enabled)" = 1 ] && echo 0 || echo 1)
+	set wireless.default_radio$n=wifi-iface
+	set wireless.default_radio$n.device=radio$n
+	set wireless.default_radio$n.network=lan
+	set wireless.default_radio$n.mode=ap
+	set wireless.default_radio$n.ssid=$(uci -q get wl-r7000.$r.ssid || echo OpenWrt-R7000)
+	set wireless.default_radio$n.encryption=psk2
+	EOT
+	k=$(uci -q get wl-r7000.$r.key); [ -n "$k" ] && uci set wireless.default_radio$n.key="$k" || uci set wireless.default_radio$n.encryption=none
+done
+uci commit wireless

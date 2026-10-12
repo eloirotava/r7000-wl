@@ -1,0 +1,6 @@
+# netconsole (oops do wl -> 192.168.1.113:6666, a .12) quando a lan sobe;
+# o modulo vem do SDK e fica em /root/netconsole.ko
+[ "$ACTION" = ifup ] && [ "$INTERFACE" = lan ] || exit 0
+[ -f /root/netconsole.ko ] || exit 0
+grep -q '^netconsole ' /proc/modules && exit 0
+insmod /root/netconsole.ko "netconsole=6666@192.168.1.1/br-lan,6666@192.168.1.113/6a:c4:9f:5a:5f:b1" && dmesg -n 8
