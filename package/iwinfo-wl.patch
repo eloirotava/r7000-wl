@@ -1,0 +1,70 @@
+diff -ru a/iwinfo_wl.c b/iwinfo_wl.c
+--- a/iwinfo_wl.c	2026-10-12 15:00:57.885963727 -0300
++++ b/iwinfo_wl.c	2026-10-12 15:01:52.159404441 -0300
+@@ -144,9 +144,57 @@
+ 	return wl_ioctl(ifname, WLC_GET_CHANNEL, buf, sizeof(buf));
+ }
+ 
++/* chanspec do 7.x (formato d11ac): banda 0xc000, largura 0x3800, canal
++ * (centro, em 40/80) nos 8 bits de baixo */
++static int wl_get_chanspec(const char *ifname, uint32_t *cs)
++{
++	char buf[256];
++
++	memset(buf, 0, sizeof(buf));
++	if (wl_iovar(ifname, "chanspec", NULL, 0, buf, sizeof(buf)))
++		return -1;
++
++	memcpy(cs, buf, sizeof(*cs));
++	return 0;
++}
++
+ static int wl_get_center_chan1(const char *ifname, int *buf)
+ {
++	uint32_t cs;
++
++	if (wl_get_chanspec(ifname, &cs))
++		return -1;
++
++	*buf = cs & 0xff;
++	return 0;
++}
++
++static int wl_get_htmode(const char *ifname, int *buf)
++{
++	uint32_t cs;
++	int vht = 0;
++
++	if (wl_get_chanspec(ifname, &cs))
++		return -1;
++
++	vht = ((cs & 0xc000) == 0xc000);
++
++	switch (cs & 0x3800)
++	{
++	case 0x1000: *buf = vht ? IWINFO_HTMODE_VHT20 : IWINFO_HTMODE_HT20; break;
++	case 0x1800: *buf = vht ? IWINFO_HTMODE_VHT40 : IWINFO_HTMODE_HT40; break;
++	case 0x2000: *buf = IWINFO_HTMODE_VHT80; break;
++	case 0x2800: *buf = IWINFO_HTMODE_VHT160; break;
++	default: return -1;
++	}
++
++	return 0;
++}
++
++static int wl_get_survey(const char *ifname, char *buf, int *len)
++{
+ 	/* Not Supported */
++	*len = 0;
+ 	return -1;
+ }
+ 
+@@ -760,6 +808,8 @@
+ 	.mbssid_support   = wl_get_mbssid_support,
+ 	.hwmodelist       = wl_get_hwmodelist,
+ 	.htmodelist       = wl_get_htmodelist,
++	.htmode          = wl_get_htmode,
++	.survey          = wl_get_survey,
+ 	.mode             = wl_get_mode,
+ 	.ssid             = wl_get_ssid,
+ 	.bssid            = wl_get_bssid,
