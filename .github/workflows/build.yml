@@ -50,13 +50,14 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
           # libiwinfo com o backend wl (Broadcom) do proprio iwinfo + htmode,
-          # center_chan1 e survey (o rpcd chama sem checar NULL); release
+          # center_chan1, survey (o rpcd chama sem checar NULL), scan, canais,
+          # potencia e clientes direto nos ioctls do wl (sem wext); release
           # acima do oficial para o apk do luci-firstboot nao trocar
           P=package/network/utils/iwinfo
           [ -d $P ] || P=$(readlink -f package/feeds/base/iwinfo)
           mkdir -p $P/patches
           cp ../package/iwinfo-wl.patch $P/patches/900-wl-htmode.patch
-          sed -i 's/BACKENDS="nl80211"/BACKENDS="nl80211 wl"/; s/^PKG_RELEASE:=.*/PKG_RELEASE:=90/' $P/Makefile
+          sed -i 's/BACKENDS="nl80211"/BACKENDS="nl80211 wl"/; s/^PKG_RELEASE:=.*/PKG_RELEASE:=91/' $P/Makefile
           grep -E 'BACKENDS|^PKG_RELEASE' $P/Makefile
           make defconfig
           grep -E 'r7000|DEBUG_INFO|CONFIG_SDK' .config

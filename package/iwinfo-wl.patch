@@ -1,7 +1,16 @@
-diff -ru a/iwinfo_wl.c b/iwinfo_wl.c
---- a/iwinfo_wl.c	2026-10-12 15:00:57.885963727 -0300
-+++ b/iwinfo_wl.c	2026-10-12 15:01:52.159404441 -0300
-@@ -144,9 +144,57 @@
+diff --git a/iwinfo_wl.c b/iwinfo_wl.c
+index 9ec78cd..da4e6c4 100644
+--- a/iwinfo_wl.c
++++ b/iwinfo_wl.c
+@@ -21,6 +21,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ 
++#include <unistd.h>
+ #include "iwinfo.h"
+ #include "api/broadcom.h"
+ 
+@@ -144,9 +145,57 @@ static int wl_get_channel(const char *ifname, int *buf)
  	return wl_ioctl(ifname, WLC_GET_CHANNEL, buf, sizeof(buf));
  }
  
@@ -20,7 +29,7 @@ diff -ru a/iwinfo_wl.c b/iwinfo_wl.c
 +}
 +
  static int wl_get_center_chan1(const char *ifname, int *buf)
- {
++{
 +	uint32_t cs;
 +
 +	if (wl_get_chanspec(ifname, &cs))
@@ -53,13 +62,242 @@ diff -ru a/iwinfo_wl.c b/iwinfo_wl.c
 +}
 +
 +static int wl_get_survey(const char *ifname, char *buf, int *len)
-+{
+ {
  	/* Not Supported */
 +	*len = 0;
  	return -1;
  }
  
-@@ -760,6 +808,8 @@
+@@ -156,15 +205,43 @@ static int wl_get_center_chan2(const char *ifname, int *buf)
+ 	return -1;
+ }
+ 
++/* sem wext neste kernel: frequencia, potencia, qualidade, scan e canais
++ * vao direto nos ioctls do wl */
++#define WLC_SCAN			50
++#define WLC_SCAN_RESULTS		51
++#define WLC_GET_VALID_CHANNELS		217
++
++static int wl_ch2mhz(int ch)
++{
++	if (ch == 14)
++		return 2484;
++	return (ch < 14) ? 2407 + ch * 5 : 5000 + ch * 5;
++}
++
+ static int wl_get_frequency(const char *ifname, int *buf)
+ {
+-	return wext_ops.frequency(ifname, buf);
++	int ch = 0;
++
++	if (wl_get_channel(ifname, &ch) || ch <= 0)
++		return -1;
++
++	*buf = wl_ch2mhz(ch);
++	return 0;
+ }
+ 
+ static int wl_get_txpower(const char *ifname, int *buf)
+ {
+-	/* WLC_GET_VAR "qtxpower" */
+-	return wext_ops.txpower(ifname, buf);
++	char tmp[64];
++	uint32_t q;
++
++	memset(tmp, 0, sizeof(tmp));
++	if (wl_iovar(ifname, "qtxpower", NULL, 0, tmp, sizeof(tmp)))
++		return -1;
++
++	/* quartos de dBm; bit 31 = override */
++	memcpy(&q, tmp, sizeof(q));
++	*buf = (q & 0xff) / 4;
++	return 0;
+ }
+ 
+ static int wl_get_bitrate(const char *ifname, int *buf)
+@@ -250,12 +327,20 @@ static int wl_get_noise(const char *ifname, int *buf)
+ 
+ static int wl_get_quality(const char *ifname, int *buf)
+ {
+-	return wext_ops.quality(ifname, buf);
++	int sig;
++
++	if (wl_get_signal(ifname, &sig))
++		return -1;
++
++	sig += 110;
++	*buf = sig < 0 ? 0 : (sig > 70 ? 70 : sig);
++	return 0;
+ }
+ 
+ static int wl_get_quality_max(const char *ifname, int *buf)
+ {
+-	return wext_ops.quality_max(ifname, buf);
++	*buf = 70;
++	return 0;
+ }
+ 
+ static int wl_get_encryption(const char *ifname, char *buf)
+@@ -424,11 +509,20 @@ static void wl_get_assoclist_cb(const char *ifname,
+ 	if (!wl_iovar(ifname, "sta_info", e->mac, 6, &sta, sizeof(sta)) &&
+ 		(sta.ver >= 2))
+ 	{
++		/* o wl_sta_info_t daqui usa rateset de 255 taxas; o driver 7.x usa
++		 * 16, entao do rateset em diante os campos vem por offset (ver 5) */
++		const uint8_t *r = (const uint8_t *)&sta;
++		uint32_t v;
++
+ 		e->inactive     = sta.idle * 1000;
+-		e->rx_packets   = sta.rx_ucast_pkts;
+-		e->tx_packets   = sta.tx_pkts;
+-		e->rx_rate.rate = sta.rx_rate;
+-		e->tx_rate.rate = sta.tx_rate;
++		e->is_authenticated = !!(sta.flags & 0x08);
++		e->is_authorized    = !!(sta.flags & 0x20);
++		e->is_wme           = !!(sta.flags & 0x02);
++		memcpy(&v, r + 44, 4); e->connected_time = v;
++		memcpy(&v, r + 52, 4); e->tx_packets = v;
++		memcpy(&v, r + 60, 4); e->rx_packets = v;
++		memcpy(&v, r + 68, 4); e->tx_rate.rate = v;
++		memcpy(&v, r + 72, 4); e->rx_rate.rate = v;
+ 
+ 		/* ToDo: 11n */
+ 		e->rx_rate.mcs = -1;
+@@ -534,14 +628,113 @@ static int wl_get_txpwrlist(const char *ifname, char *buf, int *len)
+ 	return 0;
+ }
+ 
++/* wl_bss_info_t versao 109 (driver 7.x), por offset */
++static void wl_scan_entry(uint8_t *b, uint32_t blen, struct iwinfo_scanlist_entry *e)
++{
++	uint16_t cap, ieoff;
++	uint32_t ielen, i;
++	int16_t rssi;
++	int sig;
++
++	memset(e, 0, sizeof(*e));
++	memcpy(e->mac, b + 8, 6);
++	memcpy(e->ssid, b + 19, b[18] > IWINFO_ESSID_MAX_SIZE ? IWINFO_ESSID_MAX_SIZE : b[18]);
++	memcpy(&cap, b + 16, 2);
++	memcpy(&rssi, b + 78, 2);
++	memcpy(&ieoff, b + 116, 2);
++	memcpy(&ielen, b + 120, 4);
++
++	e->mode = (cap & 0x1) ? IWINFO_OPMODE_MASTER : IWINFO_OPMODE_ADHOC;
++	e->channel = b[88];
++	e->mhz = wl_ch2mhz(e->channel);
++	e->band = (e->channel <= 14) ? IWINFO_BAND_24 : IWINFO_BAND_5;
++	e->signal = rssi + 0x100;
++	sig = rssi + 110;
++	e->quality = sig < 0 ? 0 : (sig > 70 ? 70 : sig);
++	e->quality_max = 70;
++	e->crypto.enabled = !!(cap & 0x10);
++
++	if (ieoff + ielen > blen)
++		return;
++
++	/* RSN (48) e WPA vendor (221, 00:50:f2:01) */
++	for (i = ieoff; i + 2 <= ieoff + ielen && i + 2 + b[i + 1] <= ieoff + ielen; i += 2 + b[i + 1])
++	{
++		uint8_t *ie = b + i;
++
++		if (ie[0] == 48)
++			iwinfo_parse_rsn(&e->crypto, ie + 2, ie[1],
++			                 IWINFO_CIPHER_CCMP, IWINFO_KMGMT_8021x);
++		else if (ie[0] == 221 && ie[1] >= 4 && !memcmp(ie + 2, "\x00\x50\xf2\x01", 4))
++			iwinfo_parse_rsn(&e->crypto, ie + 6, ie[1] - 4,
++			                 IWINFO_CIPHER_TKIP, IWINFO_KMGMT_PSK);
++	}
++}
++
+ static int wl_get_scanlist(const char *ifname, char *buf, int *len)
+ {
+-	return wext_ops.scanlist(ifname, buf, len);
++	uint32_t ssid_len = 0, count, off, i, blen;
++	uint8_t *res;
++	int tries, n = 0;
++	const int max = 64 * 1024;
++
++	/* so o wlc_ssid_t vazio: com o wl_scan_params_t inteiro o 7.x aceita e
++	 * nao acha nada */
++	if (wl_ioctl(ifname, WLC_SCAN, &ssid_len, sizeof(ssid_len)))
++		return -1;
++
++	if (!(res = malloc(max)))
++		return -1;
++
++	for (tries = 0; tries < 40; tries++)
++	{
++		usleep(250000);
++		memset(res, 0, 12);
++		*(uint32_t *)res = max;
++
++		if (!wl_ioctl(ifname, WLC_SCAN_RESULTS, res, max) && ((uint32_t *)res)[2])
++			break;
++	}
++
++	count = ((uint32_t *)res)[2];
++	for (i = 0, off = 12; i < count && off + 128 <= (uint32_t)max; i++, off += blen)
++	{
++		memcpy(&blen, res + off + 4, 4);
++		if (blen < 128 || off + blen > (uint32_t)max)
++			break;
++
++		if ((n + 1) * sizeof(struct iwinfo_scanlist_entry) > IWINFO_BUFSIZE)
++			break;
++
++		wl_scan_entry(res + off, blen, (struct iwinfo_scanlist_entry *)buf + n++);
++	}
++
++	free(res);
++	*len = n * sizeof(struct iwinfo_scanlist_entry);
++	return 0;
+ }
+ 
+ static int wl_get_freqlist(const char *ifname, char *buf, int *len)
+ {
+-	return wext_ops.freqlist(ifname, buf, len);
++	uint32_t l[128];
++	struct iwinfo_freqlist_entry *e = (struct iwinfo_freqlist_entry *)buf;
++	int i;
++
++	memset(l, 0, sizeof(l));
++	l[0] = 127;
++	if (wl_ioctl(ifname, WLC_GET_VALID_CHANNELS, l, sizeof(l)))
++		return -1;
++
++	for (i = 0; i < (int)l[0] && i < 127; i++, e++)
++	{
++		memset(e, 0, sizeof(*e));
++		e->channel = l[i + 1];
++		e->mhz = wl_ch2mhz(e->channel);
++		e->band = (e->channel <= 14) ? IWINFO_BAND_24 : IWINFO_BAND_5;
++	}
++
++	*len = i * sizeof(struct iwinfo_freqlist_entry);
++	return 0;
+ }
+ 
+ static int wl_get_country(const char *ifname, char *buf)
+@@ -596,7 +789,16 @@ static int wl_get_countrylist(const char *ifname, char *buf, int *len)
+ 		return 0;
+ 	}
+ 
+-	return -1;
++	/* o 7.x nao responde WLC_GET_COUNTRY_LIST: lista ISO inteira */
++	for (i = 0; IWINFO_ISO3166_NAMES[i].iso3166; i++, c++)
++	{
++		c->iso3166 = IWINFO_ISO3166_NAMES[i].iso3166;
++		snprintf(c->ccode, sizeof(c->ccode), "%c%c",
++		         c->iso3166 / 256, c->iso3166 % 256);
++	}
++
++	*len = (i * sizeof(struct iwinfo_country_entry));
++	return 0;
+ }
+ 
+ static int wl_get_hwmodelist(const char *ifname, int *buf)
+@@ -760,6 +962,8 @@ const struct iwinfo_ops wl_ops = {
  	.mbssid_support   = wl_get_mbssid_support,
  	.hwmodelist       = wl_get_hwmodelist,
  	.htmodelist       = wl_get_htmodelist,
