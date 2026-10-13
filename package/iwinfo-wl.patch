@@ -1,8 +1,8 @@
 diff --git a/iwinfo_wl.c b/iwinfo_wl.c
-index 9ec78cd..da4e6c4 100644
+index 9ec78cd..7debcb5 100644
 --- a/iwinfo_wl.c
 +++ b/iwinfo_wl.c
-@@ -21,6 +21,7 @@
+@@ -21,14 +21,38 @@
  #include <sys/types.h>
  #include <sys/stat.h>
  
@@ -10,7 +10,38 @@ index 9ec78cd..da4e6c4 100644
  #include "iwinfo.h"
  #include "api/broadcom.h"
  
-@@ -144,9 +145,57 @@ static int wl_get_channel(const char *ifname, int *buf)
++/* o LuCI chama o rpcd com o nome da secao (radio0): troca pelo ifname */
++static const char *wl_ifname(const char *name)
++{
++	static char ifn[IFNAMSIZ];
++	struct uci_section *s;
++	const char *v;
++
++	if (strncmp(name, "radio", 5))
++		return name;
++
++	if (!(s = iwinfo_uci_get_radio(name, "broadcom")))
++		return name;
++
++	v = uci_lookup_option_string(uci_ctx, s, "ifname");
++	if (v)
++		snprintf(ifn, sizeof(ifn), "%s", v);
++	iwinfo_uci_free();
++
++	return v ? ifn : name;
++}
++
+ static int wl_ioctl(const char *name, int cmd, void *buf, int len)
+ {
+ 	struct ifreq ifr;
+ 	wl_ioctl_t ioc;
+ 
++	name = wl_ifname(name);
++
+ 	/* do it */
+ 	ioc.cmd = cmd;
+ 	ioc.buf = buf;
+@@ -144,9 +168,57 @@ static int wl_get_channel(const char *ifname, int *buf)
  	return wl_ioctl(ifname, WLC_GET_CHANNEL, buf, sizeof(buf));
  }
  
@@ -68,7 +99,7 @@ index 9ec78cd..da4e6c4 100644
  	return -1;
  }
  
-@@ -156,15 +205,43 @@ static int wl_get_center_chan2(const char *ifname, int *buf)
+@@ -156,15 +228,43 @@ static int wl_get_center_chan2(const char *ifname, int *buf)
  	return -1;
  }
  
@@ -115,7 +146,7 @@ index 9ec78cd..da4e6c4 100644
  }
  
  static int wl_get_bitrate(const char *ifname, int *buf)
-@@ -250,12 +327,20 @@ static int wl_get_noise(const char *ifname, int *buf)
+@@ -250,12 +350,20 @@ static int wl_get_noise(const char *ifname, int *buf)
  
  static int wl_get_quality(const char *ifname, int *buf)
  {
@@ -138,7 +169,7 @@ index 9ec78cd..da4e6c4 100644
  }
  
  static int wl_get_encryption(const char *ifname, char *buf)
-@@ -424,11 +509,20 @@ static void wl_get_assoclist_cb(const char *ifname,
+@@ -424,11 +532,20 @@ static void wl_get_assoclist_cb(const char *ifname,
  	if (!wl_iovar(ifname, "sta_info", e->mac, 6, &sta, sizeof(sta)) &&
  		(sta.ver >= 2))
  	{
@@ -163,7 +194,7 @@ index 9ec78cd..da4e6c4 100644
  
  		/* ToDo: 11n */
  		e->rx_rate.mcs = -1;
-@@ -534,14 +628,113 @@ static int wl_get_txpwrlist(const char *ifname, char *buf, int *len)
+@@ -534,14 +651,113 @@ static int wl_get_txpwrlist(const char *ifname, char *buf, int *len)
  	return 0;
  }
  
@@ -279,7 +310,7 @@ index 9ec78cd..da4e6c4 100644
  }
  
  static int wl_get_country(const char *ifname, char *buf)
-@@ -596,7 +789,16 @@ static int wl_get_countrylist(const char *ifname, char *buf, int *len)
+@@ -596,7 +812,16 @@ static int wl_get_countrylist(const char *ifname, char *buf, int *len)
  		return 0;
  	}
  
@@ -297,7 +328,7 @@ index 9ec78cd..da4e6c4 100644
  }
  
  static int wl_get_hwmodelist(const char *ifname, int *buf)
-@@ -760,6 +962,8 @@ const struct iwinfo_ops wl_ops = {
+@@ -760,6 +985,8 @@ const struct iwinfo_ops wl_ops = {
  	.mbssid_support   = wl_get_mbssid_support,
  	.hwmodelist       = wl_get_hwmodelist,
  	.htmodelist       = wl_get_htmodelist,
