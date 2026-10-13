@@ -8,7 +8,15 @@ attach_ubi_data() {
 	mtd=$(grep '"data"' /proc/mtd | cut -d: -f1)
 	[ -n "$mtd" ] || return 0
 	grep -qx "${mtd#mtd}" /sys/class/ubi/ubi*/mtd_num 2>/dev/null && return 0
-	ubiattach -m "${mtd#mtd}" >/dev/null 2>&1 || echo "- ubi_data: attach de $mtd falhou -"
+	ubiattach -m "${mtd#mtd}" >/dev/null 2>&1 || { echo "- ubi_data: attach de $mtd falhou -"; return 0; }
+
+	# no preinit o /dev/ubiN_M vem do hotplug, assincrono, e o "block
+	# extroot" nao cria no de caractere: cria aqui para ele achar o volume
+	local d n
+	for d in /sys/class/ubi/ubi*_*; do
+		n=/dev/${d##*/}
+		[ -e "$n" ] || mknod "$n" c $(tr : ' ' < "$d/dev")
+	done
 }
 
 boot_hook_add preinit_main attach_ubi_data
