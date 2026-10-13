@@ -1,0 +1,14 @@
+# Anexa o UBI da particao "data" (o ML grande da Netgear, formatado) antes
+# do mount_root, para o "block extroot" achar o overlay grande. Sem a
+# particao, ou se o attach falhar, segue com o overlay interno.
+
+attach_ubi_data() {
+	local mtd
+
+	mtd=$(grep '"data"' /proc/mtd | cut -d: -f1)
+	[ -n "$mtd" ] || return 0
+	grep -qx "${mtd#mtd}" /sys/class/ubi/ubi*/mtd_num 2>/dev/null && return 0
+	ubiattach -m "${mtd#mtd}" >/dev/null 2>&1 || echo "- ubi_data: attach de $mtd falhou -"
+}
+
+boot_hook_add preinit_main attach_ubi_data

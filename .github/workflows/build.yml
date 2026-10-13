@@ -62,9 +62,10 @@ jobs:
           make defconfig
           grep -E 'r7000|DEBUG_INFO|CONFIG_SDK' .config
           # falha cedo se o defconfig derrubou o que tem de ir na imagem
-          for p in kmod-wl-r7000 kmod-wireguard uhttpd-mod-ucode wifi-scripts libiwinfo; do
+          for p in kmod-wl-r7000 kmod-wireguard uhttpd-mod-ucode wifi-scripts libiwinfo block-mount ubi-utils; do
             grep -q "^CONFIG_PACKAGE_$p=y" .config || { echo "falta $p"; exit 1; }
           done
+          grep -q "^CONFIG_FSTOOLS_UBIFS_EXTROOT=y" .config || { echo "falta UBIFS_EXTROOT"; exit 1; }
 
       - name: Download
         run: cd openwrt && make download -j8
