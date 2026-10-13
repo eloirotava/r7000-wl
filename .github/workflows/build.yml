@@ -65,7 +65,8 @@ jobs:
           for p in luci-base luci rpcd-mod-iwinfo; do
             grep -q "^CONFIG_PACKAGE_$p=y" .config && continue
             echo "== $p caiu no defconfig; dependencias:"
-            awk -v c="config PACKAGE_$p" '$0==c{f=1} f&&/^config /&&$0!=c{exit} f' tmp/.config-package.in
+            grep -n -A25 "config PACKAGE_$p\$" tmp/.config-package.in | grep -E "config|depends|select" | head -30
+            grep -E "PACKAGE_($p|lua|liblucihttp|ucode|rpcd)" .config | head -20
           done
           for p in kmod-wl-r7000 kmod-wireguard uhttpd-mod-ucode wifi-scripts libiwinfo block-mount ubi-utils luci-base luci luci-proto-wireguard rpcd-mod-iwinfo; do
             grep -q "^CONFIG_PACKAGE_$p=y" .config || { echo "falta $p"; exit 1; }
