@@ -49,6 +49,9 @@ jobs:
           cd openwrt
           ./scripts/feeds update -a
           ./scripts/feeds install -a
+          # dependencia circular no Kconfig (weechat) derruba simbolos alheios
+          # (rpcd -> luci-base) no defconfig
+          ./scripts/feeds uninstall luci-app-weechat
           # libiwinfo com o backend wl (Broadcom) do proprio iwinfo + htmode,
           # center_chan1, survey (o rpcd chama sem checar NULL), scan, canais,
           # potencia e clientes direto nos ioctls do wl (sem wext); release
@@ -62,7 +65,7 @@ jobs:
           make defconfig
           grep -E 'r7000|DEBUG_INFO|CONFIG_SDK' .config
           # falha cedo se o defconfig derrubou o que tem de ir na imagem
-          for p in rpcd luci-base; do
+          for p in rpcd luci-base luci rpcd-mod-iwinfo; do
             grep -q "^CONFIG_PACKAGE_$p=y" .config && continue
             echo "== $p caiu no defconfig; dependencias:"
             grep -n -A25 "config PACKAGE_$p\$" tmp/.config-package.in | head -30
