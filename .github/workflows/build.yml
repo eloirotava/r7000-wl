@@ -62,7 +62,12 @@ jobs:
           make defconfig
           grep -E 'r7000|DEBUG_INFO|CONFIG_SDK' .config
           # falha cedo se o defconfig derrubou o que tem de ir na imagem
-          for p in kmod-wl-r7000 kmod-wireguard uhttpd-mod-ucode wifi-scripts libiwinfo block-mount ubi-utils; do
+          for p in luci-base luci rpcd-mod-iwinfo; do
+            grep -q "^CONFIG_PACKAGE_$p=y" .config && continue
+            echo "== $p caiu no defconfig; dependencias:"
+            awk -v c="config PACKAGE_$p" '$0==c{f=1} f&&/^config /&&$0!=c{exit} f' tmp/.config-package.in
+          done
+          for p in kmod-wl-r7000 kmod-wireguard uhttpd-mod-ucode wifi-scripts libiwinfo block-mount ubi-utils luci-base luci luci-proto-wireguard rpcd-mod-iwinfo; do
             grep -q "^CONFIG_PACKAGE_$p=y" .config || { echo "falta $p"; exit 1; }
           done
           grep -q "^CONFIG_FSTOOLS_UBIFS_EXTROOT=y" .config || { echo "falta UBIFS_EXTROOT"; exit 1; }

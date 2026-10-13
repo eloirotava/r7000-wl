@@ -33,7 +33,8 @@ Rodando no R7000 do lab: OpenWrt 25.12 (kernel 6.12.112 com o patch do
 - `package/kernel/wl-r7000` — modulo: nucleo binario do DD-WRT + `wl_linux.c`
   proprio + `shared/` da Broadcom compilado do fonte.
 - `files/etc/init.d/wl-r7000` + `files/etc/config/wl-r7000` — servico:
-  carrega o `wl`, configura os radios (UCI), bridge e um `nas` por radio.
+  carrega o `wl` antes da rede; os radios ficam no `/etc/config/wireless`
+  (type broadcom, `/lib/netifd/wireless/broadcom.sh`) e no LuCI padrao.
   Protecao contra boot-loop: depois de 3 boots sem estabilizar (10 min)
   o `wl` nao carrega (`/etc/wl-r7000.fails`).
 - `tools/libnvram-shim` — `libnvram.so` substituto para rodar o `nas` do
