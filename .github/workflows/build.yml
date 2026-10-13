@@ -62,10 +62,10 @@ jobs:
           make defconfig
           grep -E 'r7000|DEBUG_INFO|CONFIG_SDK' .config
           # falha cedo se o defconfig derrubou o que tem de ir na imagem
-          for p in luci-base luci rpcd-mod-iwinfo; do
+          for p in rpcd luci-base; do
             grep -q "^CONFIG_PACKAGE_$p=y" .config && continue
             echo "== $p caiu no defconfig; dependencias:"
-            grep -n -A25 "config PACKAGE_$p\$" tmp/.config-package.in | grep -E "config|depends|select" | head -30
+            grep -n -A25 "config PACKAGE_$p\$" tmp/.config-package.in | head -30
             grep -E "PACKAGE_($p|lua|liblucihttp|ucode|rpcd)" .config | head -20
           done
           for p in kmod-wl-r7000 kmod-wireguard uhttpd-mod-ucode wifi-scripts libiwinfo block-mount ubi-utils luci-base luci luci-proto-wireguard rpcd-mod-iwinfo; do
