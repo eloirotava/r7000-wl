@@ -45,13 +45,15 @@ jobs:
           CROSS_COMPILE=arm-linux-gnueabi- ./scripts/prep-core.sh \
             package/kernel/wl-r7000/src/brcm package/kernel/wl-r7000/src/core/wl_core.o
           cp -r package/kernel/wl-r7000 openwrt/package/kernel/
-          cp config.seed openwrt/.config
           cd openwrt
           ./scripts/feeds update -a
           ./scripts/feeds install -a
           # dependencia circular no Kconfig (weechat) derruba simbolos alheios
           # (rpcd -> luci-base) no defconfig
           ./scripts/feeds uninstall luci-app-weechat
+          # seed so depois dos feeds: o feeds install reescreve o .config e marca
+          # como 'not set' o que ainda nao existia (luci-base caia por isso)
+          cp ../config.seed .config
           # libiwinfo com o backend wl (Broadcom) do proprio iwinfo + htmode,
           # center_chan1, survey (o rpcd chama sem checar NULL), scan, canais,
           # potencia e clientes direto nos ioctls do wl (sem wext); release
