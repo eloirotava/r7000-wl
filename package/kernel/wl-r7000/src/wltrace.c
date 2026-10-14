@@ -34,13 +34,16 @@ static unsigned int wt_n;
 static bool wt_on = true;
 static DEFINE_SPINLOCK(wt_lock);
 
-/* ate 4 phy_info distintos (dois radios + folga) viram unidade 0..3 */
-static void *wt_pi[4];
+/* ponteiros distintos (pi de cada radio e o shim dos wlapi_*) viram
+ * unidade 0..7; sem contexto (NULL) = 0xe */
+static void *wt_pi[8];
 
 static unsigned int wt_unit(void *pi)
 {
 	int i;
 
+	if (!pi)
+		return 0xe;
 	for (i = 0; i < ARRAY_SIZE(wt_pi); i++) {
 		if (wt_pi[i] == pi)
 			return i;
@@ -245,43 +248,43 @@ u32 wltrace_si_corereg(void *sih, u32 coreidx, u32 off, u32 mask, u32 val)
 
 void wltrace_wlapi_bmac_write_shm(void *sh, u32 off, u32 val)
 {
-	wt_put(WT_SHM_W, NULL, off, val, 0);
+	wt_put(WT_SHM_W, sh, off, val, 0);
 	wlapi_bmac_write_shm(sh, off, val);
 }
 
 void wltrace_wlapi_bmac_mhf(void *sh, u32 idx, u32 mask, u32 val, u32 bands)
 {
-	wt_put(WT_MHF, NULL, idx, mask, val);
+	wt_put(WT_MHF, sh, idx, mask, val);
 	wlapi_bmac_mhf(sh, idx, mask, val, bands);
 }
 
 void wltrace_wlapi_suspend_mac_and_wait(void *sh)
 {
-	wt_put(WT_EVENT, NULL, EV_SUSPEND, 0, 0);
+	wt_put(WT_EVENT, sh, EV_SUSPEND, 0, 0);
 	wlapi_suspend_mac_and_wait(sh);
 }
 
 void wltrace_wlapi_enable_mac(void *sh)
 {
-	wt_put(WT_EVENT, NULL, EV_ENABLE, 0, 0);
+	wt_put(WT_EVENT, sh, EV_ENABLE, 0, 0);
 	wlapi_enable_mac(sh);
 }
 
 void wltrace_wlapi_bmac_phyclk_fgc(void *sh, u32 clk)
 {
-	wt_put(WT_EVENT, NULL, EV_PHYCLK_FGC, clk, 0);
+	wt_put(WT_EVENT, sh, EV_PHYCLK_FGC, clk, 0);
 	wlapi_bmac_phyclk_fgc(sh, clk);
 }
 
 void wltrace_wlapi_bmac_bw_set(void *sh, u32 bw)
 {
-	wt_put(WT_EVENT, NULL, EV_BW_SET, bw, 0);
+	wt_put(WT_EVENT, sh, EV_BW_SET, bw, 0);
 	wlapi_bmac_bw_set(sh, bw);
 }
 
 void wltrace_wlapi_switch_macfreq(void *sh, u32 spurmode)
 {
-	wt_put(WT_EVENT, NULL, EV_MACFREQ, spurmode, 0);
+	wt_put(WT_EVENT, sh, EV_MACFREQ, spurmode, 0);
 	wlapi_switch_macfreq(sh, spurmode);
 }
 
