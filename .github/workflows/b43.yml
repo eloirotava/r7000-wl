@@ -46,9 +46,11 @@ jobs:
           grep -n 'B43_PHY_AC' $M/broadcom.mk
           make defconfig
           # o SDK liga todos os kmods (ALL_KMODS): so o b43 e dependencias
-          sed -i '/^CONFIG_ALL_KMODS=y/d; /^CONFIG_PACKAGE_kmod-.*=m$/d' .config
+          sed -i -E '/^CONFIG_ALL(_KMODS|_NONSHARED)?=y/d; /^CONFIG_PACKAGE_kmod-.*=m$/d' .config
           cat >> .config <<'EOF'
           # CONFIG_ALL_KMODS is not set
+          # CONFIG_ALL is not set
+          # CONFIG_ALL_NONSHARED is not set
           CONFIG_PACKAGE_kmod-b43=m
           CONFIG_PACKAGE_B43_DEBUG=y
           CONFIG_PACKAGE_B43_BUSES_BCMA=y
@@ -76,6 +78,14 @@ jobs:
           set -o pipefail
           make package/mac80211/compile V=s -j$(nproc) 2>&1 | tee ../build.log | tail -40
           grep -E 'CPTCFG_B43_PHY_AC|CPTCFG_B43_DEBUG' build_dir/target-*/linux-*/*/backports-*/.config
+
+      - name: Config do backports
+        if: always()
+        run: |
+          grep -E '^CONFIG_ALL|kmod-(b43|mac80211|cfg80211|bcma)' sdk/.config || true
+          for c in sdk/build_dir/target-*/linux-*/*/backports-*/.config; do
+            echo "== $c"; grep -E 'B43|BCMA|MAC80211=|CFG80211=' $c || true
+          done
 
       - name: Junta os modulos
         if: always()
