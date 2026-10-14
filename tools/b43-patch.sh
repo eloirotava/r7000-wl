@@ -19,7 +19,8 @@ for f in Kconfig $(cd "$here/b43/src" && ls); do
 		: > "$w/a/drivers/net/wireless/broadcom/b43/$f"
 done
 cp "$up/Kconfig" "$here"/b43/src/* "$w/b/drivers/net/wireless/broadcom/b43/"
-sed -i 's/depends on B43 && B43_BCMA && BROKEN/depends on B43 \&\& B43_BCMA/' \
+sed -i -e 's/depends on B43 && B43_BCMA && BROKEN/depends on B43 \&\& B43_BCMA/' \
+	-e '/^\tdepends on CORDIC$/d' \
 	"$w/b/drivers/net/wireless/broadcom/b43/Kconfig"
 out=$here/b43/patches/brcm/950-b43-ac-phy-r7000.patch
 (cd "$w" && diff -ruN a b) > "$out" || true

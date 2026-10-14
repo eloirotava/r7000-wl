@@ -1,7 +1,15 @@
 diff -ruN a/drivers/net/wireless/broadcom/b43/Kconfig b/drivers/net/wireless/broadcom/b43/Kconfig
---- a/drivers/net/wireless/broadcom/b43/Kconfig	2026-10-14 15:08:00.118865279 -0300
-+++ b/drivers/net/wireless/broadcom/b43/Kconfig	2026-10-14 15:08:00.134865685 -0300
-@@ -151,7 +151,7 @@
+--- a/drivers/net/wireless/broadcom/b43/Kconfig	2026-10-14 15:28:32.562362870 -0300
++++ b/drivers/net/wireless/broadcom/b43/Kconfig	2026-10-14 15:28:32.606363998 -0300
+@@ -6,7 +6,6 @@
+ 	select BCMA if B43_BCMA
+ 	select SSB if B43_SSB
+ 	depends on FW_LOADER
+-	depends on CORDIC
+ 	help
+ 	  b43 is a driver for the Broadcom 43xx series wireless devices.
+ 
+@@ -151,7 +150,7 @@
  
  config B43_PHY_AC
  	bool "Support for AC-PHY (802.11ac) devices (BROKEN)"
@@ -11,8 +19,8 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/Kconfig b/drivers/net/wireless/bro
  	  This PHY type can be found in the following chipsets:
  	  PCI: BCM4352, BCM4360
 diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/broadcom/b43/phy_ac.c
---- a/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-14 15:08:00.118865279 -0300
-+++ b/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-14 15:08:00.126865482 -0300
+--- a/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-14 15:28:32.570363075 -0300
++++ b/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-14 15:28:32.590363588 -0300
 @@ -55,6 +55,35 @@
  	b43_write16(dev, B43_MMIO_RADIO24_DATA, value);
  }
