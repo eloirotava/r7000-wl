@@ -709,6 +709,101 @@ static void wl_free(struct wl_info *wl)
 	kfree(wl);
 }
 
+#ifdef WLTRACE
+/*
+ * /proc/wlshm: retrato do estado do wl em funcionamento para comparar com
+ * o b43.  Por unidade (0, 1), 32 KB: SHM compartilhada 0x0000-0x1fff
+ * (wlc_bmac_copyfrom_objmem), PHY 0x0000-0x1fff e radio 0x0000-0x0fff
+ * (u16, pelos registradores de acesso indireto do d11).  Tudo sob WL_LOCK
+ * e so com o hardware no ar (clock do core ligado).
+ */
+#include <linux/proc_fs.h>
+#include <linux/vmalloc.h>
+
+extern void wlc_bmac_copyfrom_objmem(void *wlc_hw, uint offset, void *buf,
+	int len, uint32 sel);
+
+#define WLSHM_SHM	0x2000
+#define WLSHM_PHY	0x2000
+#define WLSHM_RAD	0x1000
+#define WLSHM_UNIT	(WLSHM_SHM + 2 * WLSHM_PHY + 2 * WLSHM_RAD)
+
+static struct wl_info *wlshm_wl[2];
+static u8 *wlshm_buf;
+
+static void wlshm_snap(struct wl_info *wl, u8 *out)
+{
+	void *hw = *(void **)((u8 *)wl->wlc + 16);	/* wlc->hw (wlc_statsupd) */
+	u16 *p = (u16 *)(out + WLSHM_SHM);
+	u16 *r = p + WLSHM_PHY;
+	unsigned int i;
+
+	WL_LOCK(wl);
+	if (WLPUB_HW_UP(wl->pub)) {
+		wlc_bmac_copyfrom_objmem(hw, 0, out, WLSHM_SHM, 0x10000);
+		for (i = 0; i < WLSHM_PHY; i++) {
+			writew(i, wl->regsva + 0x3fc);
+			p[i] = readw(wl->regsva + 0x3fe);
+		}
+		for (i = 0; i < WLSHM_RAD; i++) {
+			writew(i, wl->regsva + 0x3d8);
+			r[i] = readw(wl->regsva + 0x3da);
+		}
+	}
+	WL_UNLOCK(wl);
+}
+
+static ssize_t wlshm_read(struct file *f, char __user *ubuf, size_t len,
+			  loff_t *pos)
+{
+	unsigned int u;
+
+	if (!wlshm_buf)
+		return -ENOMEM;
+	if (*pos == 0) {
+		memset(wlshm_buf, 0, 2 * WLSHM_UNIT);
+		for (u = 0; u < 2; u++)
+			if (wlshm_wl[u])
+				wlshm_snap(wlshm_wl[u], wlshm_buf + u * WLSHM_UNIT);
+	}
+	return simple_read_from_buffer(ubuf, len, pos, wlshm_buf,
+				       2 * WLSHM_UNIT);
+}
+
+static const struct proc_ops wlshm_ops = {
+	.proc_read	= wlshm_read,
+};
+
+static void wlshm_init(void)
+{
+	wlshm_buf = vzalloc(2 * WLSHM_UNIT);
+	proc_create("wlshm", 0400, NULL, &wlshm_ops);
+}
+
+static void wlshm_exit(void)
+{
+	remove_proc_entry("wlshm", NULL);
+	vfree(wlshm_buf);
+}
+
+static void wlshm_add(struct wl_info *wl)
+{
+	if (wl->unit < 2)
+		wlshm_wl[wl->unit] = wl;
+}
+
+static void wlshm_del(struct wl_info *wl)
+{
+	if (wl->unit < 2)
+		wlshm_wl[wl->unit] = NULL;
+}
+#else
+static inline void wlshm_init(void) {}
+static inline void wlshm_exit(void) {}
+static inline void wlshm_add(struct wl_info *wl) {}
+static inline void wlshm_del(struct wl_info *wl) {}
+#endif
+
 static int wl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 {
 	struct wl_info *wl;
@@ -798,6 +893,7 @@ static int wl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 	wlif->registered = true;
 
 	pci_set_drvdata(pdev, wl);
+	wlshm_add(wl);
 	if (!wl_dma_dev)
 		wl_dma_dev = &pdev->dev;
 	wl_units++;
@@ -820,6 +916,7 @@ static void wl_pci_remove(struct pci_dev *pdev)
 	if (!wl)
 		return;
 
+	wlshm_del(wl);
 	WL_LOCK(wl);
 	if (WLPUB_UP(wl->pub))
 		wl_down(wl);
@@ -857,6 +954,7 @@ static inline void wltrace_exit(void) {}
 static int __init wl_module_init(void)
 {
 	wltrace_init();
+	wlshm_init();
 	return pci_register_driver(&wl_pci_driver);
 }
 
@@ -864,6 +962,7 @@ static void __exit wl_module_exit(void)
 {
 	pci_unregister_driver(&wl_pci_driver);
 	wl_nvram_free();
+	wlshm_exit();
 	wltrace_exit();
 }
 
