@@ -45,7 +45,10 @@ jobs:
           sed -i 's/^config-\$(call config_package,b43) += B43$/&\nconfig-$(call config_package,b43) += B43_PHY_AC/' $M/broadcom.mk
           grep -n 'B43_PHY_AC' $M/broadcom.mk
           make defconfig
+          # o SDK liga todos os kmods (ALL_KMODS): so o b43 e dependencias
+          sed -i '/^CONFIG_ALL_KMODS=y/d; /^CONFIG_PACKAGE_kmod-.*=m$/d' .config
           cat >> .config <<'EOF'
+          # CONFIG_ALL_KMODS is not set
           CONFIG_PACKAGE_kmod-b43=m
           CONFIG_PACKAGE_B43_DEBUG=y
           CONFIG_PACKAGE_B43_BUSES_BCMA=y
