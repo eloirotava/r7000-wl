@@ -210,9 +210,19 @@ static void op64_fill_descriptor(struct b43_dmaring *ring,
 	desc->dma64.address_high = cpu_to_le32(addrhi);
 }
 
+/* Core rev >= 40: os ponteiros de descritor (TXINDEX/RXINDEX e o campo do
+ * status) incluem os bits baixos do endereco do anel, como o rcvptrbase/
+ * xmtptrbase do hnddma do wl; o campo do status tem 16 bits. */
+static u32 op64_ptrbase(struct b43_dmaring *ring)
+{
+	if (ring->dev->dev->core_rev < 40)
+		return 0;
+	return lower_32_bits(ring->dmabase);
+}
+
 static void op64_poke_tx(struct b43_dmaring *ring, int slot)
 {
-	b43_dma_write(ring, B43_DMA64_TXINDEX,
+	b43_dma_write(ring, B43_DMA64_TXINDEX, op64_ptrbase(ring) +
 		      (u32) (slot * sizeof(struct b43_dmadesc64)));
 }
 
@@ -233,14 +243,17 @@ static int op64_get_current_rxslot(struct b43_dmaring *ring)
 	u32 val;
 
 	val = b43_dma_read(ring, B43_DMA64_RXSTATUS);
-	val &= B43_DMA64_RXSTATDPTR;
+	if (ring->dev->dev->core_rev >= 40)
+		val = (val - op64_ptrbase(ring)) & 0xffff;
+	else
+		val &= B43_DMA64_RXSTATDPTR;
 
 	return (val / sizeof(struct b43_dmadesc64));
 }
 
 static void op64_set_current_rxslot(struct b43_dmaring *ring, int slot)
 {
-	b43_dma_write(ring, B43_DMA64_RXINDEX,
+	b43_dma_write(ring, B43_DMA64_RXINDEX, op64_ptrbase(ring) +
 		      (u32) (slot * sizeof(struct b43_dmadesc64)));
 }
 
@@ -760,8 +773,8 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
 				b43_dma_write(ring, B43_DMA64_RXRINGLO, addrlo);
 				b43_dma_write(ring, B43_DMA64_RXRINGHI, addrhi);
 			}
-			b43_dma_write(ring, B43_DMA64_RXINDEX, ring->nr_slots *
-				      sizeof(struct b43_dmadesc64));
+			b43_dma_write(ring, B43_DMA64_RXINDEX, op64_ptrbase(ring) +
+				      ring->nr_slots * sizeof(struct b43_dmadesc64));
 			b43dbg(ring->dev->wl, "dma rx%d ctl %08x ring %08x:%08x\n",
 			       ring->index, b43_dma_read(ring, B43_DMA64_RXCTL),
 			       b43_dma_read(ring, B43_DMA64_RXRINGHI),
