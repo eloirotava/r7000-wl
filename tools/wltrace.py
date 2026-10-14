@@ -7,7 +7,7 @@ import struct, sys, collections
 T = {1: 'phy_w', 2: 'phy_r', 3: 'phy_mod', 4: 'phy_and', 5: 'phy_or',
      6: 'rad_w', 7: 'rad_r', 8: 'rad_mod', 9: 'rad_or', 10: 'tbl_w',
      11: 'tbl_r', 12: 'data', 13: 'delay', 14: 'pmu', 15: 'corereg',
-     16: 'shm_w', 17: 'mhf', 18: 'event'}
+     16: 'shm_w', 17: 'mhf', 18: 'event', 19: 'tblregs'}
 EV = {1: 'suspend_mac', 2: 'enable_mac', 3: 'phyclk_fgc', 4: 'bw_set',
       5: 'switch_macfreq'}
 
