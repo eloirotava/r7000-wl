@@ -66,21 +66,18 @@ static void wt_put_locked(u32 type, void *pi, u32 a, u32 b, u32 c)
 	wt_n++;
 }
 
-/* primeiro uso de cada tipo vai para o printk (netconsole): se travar,
- * mostra ate onde chegou */
-static unsigned long wt_seen;
-
-static void wt_first(u32 type, u32 a, u32 b)
-{
-	if (!test_and_set_bit(type, &wt_seen))
-		pr_info("wltrace: 1o tipo %u (%#x %#x)\n", type, a, b);
-}
+/* nada de printk aqui: os wrappers rodam com locks do wl e o netconsole
+ * sai pelo br-lan, que inclui wl0/wl1 (deadlock).  Tipos a gravar em
+ * /sys/module/wl/parameters/wltrace_mask (bit = tipo; 0 = so passa). */
+static ulong wt_mask = ~0UL;
+module_param_named(wltrace_mask, wt_mask, ulong, 0644);
 
 static void wt_put(u32 type, void *pi, u32 a, u32 b, u32 c)
 {
 	unsigned long flags;
 
-	wt_first(type, a, b);
+	if (!(READ_ONCE(wt_mask) & BIT(type)))
+		return;
 	spin_lock_irqsave(&wt_lock, flags);
 	wt_put_locked(type, pi, a, b, c);
 	spin_unlock_irqrestore(&wt_lock, flags);
@@ -102,18 +99,13 @@ static void wt_table(u32 type, void *pi, const struct wt_phytbl *t)
 	u32 bytes, i, w[3];
 	const u8 *p = t->ptr;
 
-	wt_first(type, t->id, t->len);
+	if (!(READ_ONCE(wt_mask) & BIT(type)))
+		return;
 	bytes = t->len * (t->width / 8);
+	/* fora do esperado: grava so o cabecalho (o decodificador acusa) */
 	if (bytes > 65536 || (t->width != 8 && t->width != 16 &&
-			      t->width != 32 && t->width != 48 && t->width != 64)) {
-		static bool warned;
-
-		if (!warned)
-			pr_info("wltrace: tabela estranha id %#x len %u width %u ptr %px\n",
-				t->id, t->len, t->width, t->ptr);
-		warned = true;
+			      t->width != 32 && t->width != 48 && t->width != 64))
 		bytes = 0;
-	}
 	spin_lock_irqsave(&wt_lock, flags);
 	wt_put_locked(type, pi, t->id, t->offset, t->len | (t->width << 24));
 	if (type == WT_TBL_W && p) {
