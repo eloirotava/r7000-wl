@@ -8,6 +8,8 @@
 
 #include "b43.h"
 #include "phy_ac.h"
+#include "phy_ac_replay.h"
+#include "radio_2069.h"
 
 /**************************************************
  * Basic PHY ops
@@ -60,13 +62,113 @@ static void b43_phy_ac_op_prepare_structs(struct b43_wldev *dev)
 	memset(dev->phy.ac, 0, sizeof(*dev->phy.ac));
 }
 
-/* marco 1: so identifica PHY/radio; init real do PHY e do 2069 ainda nao */
+/**************************************************
+ * Init gravado do wl (phy_ac_replay.c)
+ **************************************************/
+
+static void b43_phy_ac_delay(unsigned int us)
+{
+	if (us < 10)
+		udelay(us);
+	else
+		usleep_range(us, us + us / 4 + 1);
+}
+
+/* tabela do AC-PHY pelos registradores 0x00d/0x00e/0x00f-0x011, como o wl
+ * (argumentos extras de wlc_phy_write_table_ext no wltrace) */
+static void b43_phy_ac_table_write(struct b43_wldev *dev, u16 id, u16 offset,
+				   const struct b43_ac_replay_tbl *t)
+{
+	const u32 *d = &b43_ac_replay_data[t->start];
+	unsigned int i;
+
+	b43_phy_write(dev, B43_PHY_AC_TABLE_ID, id);
+	b43_phy_write(dev, B43_PHY_AC_TABLE_OFFSET, offset);
+	for (i = 0; i < t->len; i++) {
+		switch (t->width) {
+		case 48:
+			b43_phy_write(dev, B43_PHY_AC_TABLE_DATA3, d[3 * i + 2]);
+			b43_phy_write(dev, B43_PHY_AC_TABLE_DATA2, d[3 * i + 1]);
+			b43_phy_write(dev, B43_PHY_AC_TABLE_DATA1, d[3 * i]);
+			break;
+		case 32:
+			b43_phy_write(dev, B43_PHY_AC_TABLE_DATA2, d[i] >> 16);
+			b43_phy_write(dev, B43_PHY_AC_TABLE_DATA1, d[i] & 0xffff);
+			break;
+		default:
+			b43_phy_write(dev, B43_PHY_AC_TABLE_DATA1, d[i]);
+		}
+	}
+}
+
+static void b43_phy_ac_replay(struct b43_wldev *dev)
+{
+	struct bcma_drv_cc *cc = &dev->dev->bdev->bus->drv_cc;
+	const struct b43_ac_replay_op *op;
+	const struct b43_ac_replay_pmu *pmu;
+	unsigned int i;
+
+	for (i = 0; i < b43_ac_replay_nops; i++) {
+		op = &b43_ac_replay_ops[i];
+		switch (op->type) {
+		case B43_AC_OP_PHY_W:
+			b43_phy_write(dev, op->addr, op->val);
+			break;
+		case B43_AC_OP_PHY_MOD:
+			b43_phy_maskset(dev, op->addr, ~op->mask, op->val & op->mask);
+			break;
+		case B43_AC_OP_PHY_AND:
+			b43_phy_mask(dev, op->addr, op->val);
+			break;
+		case B43_AC_OP_PHY_OR:
+			b43_phy_set(dev, op->addr, op->val);
+			break;
+		case B43_AC_OP_RAD_W:
+			b43_radio_write(dev, op->addr, op->val);
+			break;
+		case B43_AC_OP_RAD_MOD:
+			b43_radio_maskset(dev, op->addr, ~op->mask,
+					  op->val & op->mask);
+			break;
+		case B43_AC_OP_RAD_OR:
+			b43_radio_set(dev, op->addr, op->val);
+			break;
+		case B43_AC_OP_TBL_W:
+			b43_phy_ac_table_write(dev, op->addr, op->mask,
+					       &b43_ac_replay_tbls[op->val]);
+			break;
+		case B43_AC_OP_DELAY:
+			b43_phy_ac_delay(op->val);
+			break;
+		case B43_AC_OP_PMU:
+			pmu = &b43_ac_replay_pmus[op->val];
+			bcma_chipco_regctl_maskset(cc, op->addr, ~pmu->mask,
+						   pmu->val & pmu->mask);
+			break;
+		case B43_AC_OP_SHM_W:
+			b43_shm_write16(dev, B43_SHM_SHARED, op->addr, op->val);
+			break;
+		}
+	}
+}
+
 static int b43_phy_ac_op_init(struct b43_wldev *dev)
 {
 	struct b43_phy *phy = &dev->phy;
 
-	b43info(dev->wl, "AC-PHY rev %u, radio 0x%04x rev %u (init ainda vazio)\n",
-		phy->rev, phy->radio_ver, phy->radio_rev);
+	b43info(dev->wl, "AC-PHY rev %u, radio 0x%04x rev %u: init gravado do wl (%u ops, canal %d)\n",
+		phy->rev, phy->radio_ver, phy->radio_rev, b43_ac_replay_nops,
+		B43_AC_REPLAY_CHANNEL);
+	if (phy->rev != 1 || phy->radio_ver != 0x2069 || phy->radio_rev != 4) {
+		b43err(dev->wl, "init gravado e do 4360 B1 (AC rev 1, 2069 rev 4)\n");
+		return -EOPNOTSUPP;
+	}
+	if (b43_current_band(dev->wl) != NL80211_BAND_5GHZ) {
+		b43err(dev->wl, "init gravado e do radio de 5 GHz\n");
+		return -EOPNOTSUPP;
+	}
+	b43_phy_ac_replay(dev);
+	dev->phy.ac->channel = B43_AC_REPLAY_CHANNEL;
 	return 0;
 }
 
@@ -78,9 +180,32 @@ static void b43_phy_ac_op_switch_analog(struct b43_wldev *dev, bool on)
 {
 }
 
+/* So o bloco da tabela de canais (radio 2069 + BW do PHY), que e o que o wl
+ * escreve ao sintonizar; o resto da troca de canal (ganhos por banda,
+ * calibracao) ainda nao. */
 static int b43_phy_ac_op_switch_channel(struct b43_wldev *dev,
 					unsigned int new_channel)
 {
+	const struct b43_radio_2069_channeltab_e *e = NULL;
+	unsigned int i;
+
+	if (new_channel == dev->phy.ac->channel)
+		return 0;
+	for (i = 0; i < b43_radio_2069_r4_chantab_size; i++) {
+		if (b43_radio_2069_r4_chantab[i].channel == new_channel) {
+			e = &b43_radio_2069_r4_chantab[i];
+			break;
+		}
+	}
+	if (!e)
+		return -ESRCH;
+	for (i = 0; i < B43_RADIO_2069_CHAN_REGS; i++)
+		b43_radio_write(dev, b43_radio_2069_chan_regs[i], e->radio[i]);
+	for (i = 0; i < ARRAY_SIZE(e->bw); i++)
+		b43_phy_write(dev, B43_PHY_AC_BW1A + i, e->bw[i]);
+	dev->phy.ac->channel = new_channel;
+	b43dbg(dev->wl, "AC-PHY: canal %u (%u MHz) pela tabela do 2069\n",
+	       new_channel, e->freq);
 	return 0;
 }
 

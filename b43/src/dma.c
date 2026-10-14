@@ -669,10 +669,13 @@ static int alloc_initial_descbuffers(struct b43_dmaring *ring)
  * Reset the controller, write the ring busaddress
  * and switch the "enable" bit on.
  */
-/* Campos do controle do DMA64 que o wl preserva do reset (hnddma.c):
- * multiplas leituras, burst, prefetch ctl e threshold. */
-#define B43_DMA64_XC_KEEP	(0x000001C0 | 0x001C0000 | 0x00E00000 | 0x03000000)
-#define B43_DMA64_RC_KEEP	(0x001C0000 | 0x00E00000 | 0x03000000)
+/* Campos do controle do DMA64 que o wl programa no 4360 (wltrace-dma no
+ * R7000; no reset sao 0): TX = multiplas leituras 1, burst 4, prefetch
+ * ctl 3, threshold 3; RX = burst 4, prefetch ctl 2. */
+#define B43_DMA64_XC_REV40	((1 << 6) | (4 << 18) | (3 << 21) | (3 << 24))
+#define B43_DMA64_RC_REV40	((4 << 18) | (2 << 21))
+/* rxoffset que o wl usa no 4360: cabecalho de RX do ucode >= 40 */
+#define B43_DMA0_RX_REV40_FO	40
 
 /* Engine sem exigencia de alinhamento de 4K (core d11 rev >= 40, 4360B0+):
  * a tabela de descritores tem de estar programada antes do enable, senao
@@ -704,9 +707,8 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
 			if (!parity)
 				value |= B43_DMA64_TXPARITYDISABLE;
 			if (b43_dma_late_enable(ring)) {
-				/* 4360B0+: anel antes do enable; burst/prefetch do reset */
-				value |= b43_dma_read(ring, B43_DMA64_TXCTL) &
-					 B43_DMA64_XC_KEEP;
+				/* 4360B0+: anel antes do enable; burst/prefetch do wl */
+				value |= B43_DMA64_XC_REV40;
 				b43_dma_write(ring, B43_DMA64_TXRINGLO, addrlo);
 				b43_dma_write(ring, B43_DMA64_TXRINGHI, addrhi);
 				b43_dma_write(ring, B43_DMA64_TXCTL, value);
@@ -749,8 +751,7 @@ static int dmacontroller_setup(struct b43_dmaring *ring)
 			if (!parity)
 				value |= B43_DMA64_RXPARITYDISABLE;
 			if (b43_dma_late_enable(ring)) {
-				value |= b43_dma_read(ring, B43_DMA64_RXCTL) &
-					 B43_DMA64_RC_KEEP;
+				value |= B43_DMA64_RC_REV40;
 				b43_dma_write(ring, B43_DMA64_RXRINGLO, addrlo);
 				b43_dma_write(ring, B43_DMA64_RXRINGHI, addrhi);
 				b43_dma_write(ring, B43_DMA64_RXCTL, value);
@@ -914,6 +915,13 @@ struct b43_dmaring *b43_setup_dmaring(struct b43_wldev *dev,
 				ring->rx_buffersize = B43_DMA0_RX_FW351_BUFSIZE;
 				ring->frameoffset = B43_DMA0_RX_FW351_FO;
 				break;
+			}
+			/* core rev >= 40: o wl programa rxoffset 40 (cabecalho de
+			 * RX do ucode novo), medido com o wltrace no 4360 */
+			if (dev->dev->core_rev >= 40) {
+				ring->frameoffset = B43_DMA0_RX_REV40_FO;
+				ring->rx_buffersize = B43_DMA0_RX_REV40_FO +
+						      IEEE80211_MAX_FRAME_LEN;
 			}
 		} else
 			B43_WARN_ON(1);

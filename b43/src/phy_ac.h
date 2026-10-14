@@ -32,6 +32,7 @@
 #define  B43_PHY_AC_C3_CLIP_DIS			0x4000
 
 struct b43_phy_ac {
+	unsigned int channel;	/* canal sintonizado no radio */
 };
 
 extern const struct b43_phy_operations b43_phyops_ac;
