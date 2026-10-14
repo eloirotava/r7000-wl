@@ -61,21 +61,20 @@ jobs:
           make defconfig
           grep -E 'b43|B43|mac80211|cfg80211' .config
 
-      - name: Prepara arvore e aplica b43/src
+      # como patches do pacote: editar a arvore preparada nao adianta, o
+      # compile refaz o prepare quando a config muda.  950 = b43 AC-PHY (gerado
+      # de b43/src por tools/b43-patch.sh); 951 = mac80211 sem CRYPTO_CMAC
+      # (o kernel da imagem nao tem; o cmac(aes) so e pedido para 802.11w)
+      - name: Patches do b43 e do mac80211
         run: |
+          cp b43/patches/brcm/*.patch sdk/$MAC80211/patches/brcm/
+          cp b43/patches/subsys/*.patch sdk/$MAC80211/patches/subsys/
           cd sdk
-          make package/mac80211/prepare V=s -j$(nproc) 2>&1 | tail -5
-          for D in build_dir/target-*/linux-*/*/backports-*/drivers/net/wireless/broadcom/b43; do
+          make package/mac80211/prepare V=s -j$(nproc) 2>&1 | grep -E 'Applying|FAILED|rej' | grep -E '95[01]|FAILED|rej'
+          for D in build_dir/target-*/linux-*/*/backports-*; do
             echo "== $D"
-            cp ../b43/src/* $D/
-            sed -i 's/depends on B43 && B43_BCMA && BROKEN/depends on B43 \&\& B43_BCMA/' $D/Kconfig
-            grep -n -A2 'config B43_PHY_AC' $D/Kconfig
-          done
-          # o kernel da imagem nao tem CRYPTO_CMAC e o backports descarta o
-          # mac80211; o cmac(aes) so e pedido em runtime (chaves 802.11w)
-          for K in build_dir/target-*/linux-*/*/backports-*/net/mac80211/Kconfig; do
-            sed -i '/^\tdepends on CRYPTO_CMAC$/d' $K
-            grep -c CRYPTO_CMAC $K || true
+            grep -n -A2 'config B43_PHY_AC' $D/drivers/net/wireless/broadcom/b43/Kconfig
+            grep -c 'CRYPTO_CMAC' $D/net/mac80211/Kconfig || true
           done
 
       - name: Compila

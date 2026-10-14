@@ -1,0 +1,10 @@
+--- a/net/mac80211/Kconfig	2026-10-14 15:07:21.813892862 -0300
++++ b/net/mac80211/Kconfig	2026-10-14 15:07:21.817892964 -0300
+@@ -8,7 +8,6 @@
+ 	depends on CRYPTO_AES
+ 	depends on CRYPTO_CCM
+ 	depends on CRYPTO_GCM
+-	depends on CRYPTO_CMAC
+ 	depends on CRC32
+ 	help
+ 	  This option enables the hardware independent IEEE 802.11
