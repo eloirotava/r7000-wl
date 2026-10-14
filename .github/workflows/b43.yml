@@ -42,7 +42,8 @@ jobs:
           M=feeds/base/package/kernel/mac80211
           [ -d "$M" ] || M=$(dirname $(find feeds -path '*kernel/mac80211/Makefile' | head -1))
           echo "MAC80211=$M" >> $GITHUB_ENV
-          sed -i 's/^config-\$(call config_package,b43) += B43$/&\nconfig-$(call config_package,b43) += B43_PHY_AC/' $M/broadcom.mk
+          # bool: tem de ser =y (config_package da "m", que o Kconfig descarta)
+          sed -i 's/^config-\$(call config_package,b43) += B43$/&\nconfig-$(if $(call config_package,b43),y) += B43_PHY_AC/' $M/broadcom.mk
           grep -n 'B43_PHY_AC' $M/broadcom.mk
           make defconfig
           # o SDK liga todos os kmods (ALL_KMODS): so o b43 e dependencias
