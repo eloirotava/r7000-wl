@@ -106,9 +106,13 @@ static void b43_phy_ac_table_write(struct b43_wldev *dev, u16 id, u16 offset,
 	for (i = 0; i < t->len; i++) {
 		switch (t->width) {
 		case 48:
-			b43_phy_write(dev, B43_PHY_AC_TABLE_DATA3, d[3 * i + 2]);
-			b43_phy_write(dev, B43_PHY_AC_TABLE_DATA2, d[3 * i + 1]);
-			b43_phy_write(dev, B43_PHY_AC_TABLE_DATA1, d[3 * i]);
+			/* como o wl: seleciona 0x011 uma vez e escreve as tres
+			 * palavras (15:0, 31:16, 47:32) seguidas no PHY_DATA */
+			b43_write16f(dev, B43_MMIO_PHY_CONTROL,
+				     B43_PHY_AC_TABLE_DATA3);
+			b43_write16(dev, B43_MMIO_PHY_DATA, d[3 * i]);
+			b43_write16(dev, B43_MMIO_PHY_DATA, d[3 * i + 1]);
+			b43_write16(dev, B43_MMIO_PHY_DATA, d[3 * i + 2]);
 			break;
 		case 32:
 			b43_phy_write(dev, B43_PHY_AC_TABLE_DATA2, d[i] >> 16);
