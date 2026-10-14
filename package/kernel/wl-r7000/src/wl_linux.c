@@ -846,8 +846,17 @@ static struct pci_driver wl_pci_driver = {
 	.remove		= wl_pci_remove,
 };
 
+#ifdef WLTRACE
+void wltrace_init(void);
+void wltrace_exit(void);
+#else
+static inline void wltrace_init(void) {}
+static inline void wltrace_exit(void) {}
+#endif
+
 static int __init wl_module_init(void)
 {
+	wltrace_init();
 	return pci_register_driver(&wl_pci_driver);
 }
 
@@ -855,6 +864,7 @@ static void __exit wl_module_exit(void)
 {
 	pci_unregister_driver(&wl_pci_driver);
 	wl_nvram_free();
+	wltrace_exit();
 }
 
 module_init(wl_module_init);

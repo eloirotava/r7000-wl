@@ -9,6 +9,11 @@ BRCM := brcm
 
 wl-y := wl_linux.o shim.o osl_nvram.o core/wl_core.o
 
+# core preparado com WLTRACE=1 (scripts/prep-core.sh) chama wltrace_*
+ifneq ($(wildcard $(src)/core/wltrace),)
+wl-y += wltrace.o
+endif
+
 wl-y += $(BRCM)/shared/linux_osl.o \
 	$(BRCM)/shared/siutils.o \
 	$(BRCM)/shared/aiutils.o \
@@ -56,3 +61,8 @@ ccflags-y += -Wno-empty-body
 
 # o shim e quem implementa o redirecionamento de dma_sync_* (osl_compat.h)
 CFLAGS_shim.o += -DWL_SHIM_NO_DMA_REDIRECT
+
+# o -DWLTRACE vai aqui: ccflags-y e redefinido acima
+ifneq ($(wildcard $(src)/core/wltrace),)
+ccflags-y += -DWLTRACE
+endif

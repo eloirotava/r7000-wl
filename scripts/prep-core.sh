@@ -20,6 +20,35 @@ for o in "$brcm"/wl/sys/*.o "$brcm"/wl/phy/*.o \
 done
 
 tmp=$(mktemp -d)
+
+# WLTRACE=1: nos objetos do PHY, as chamadas aos acessores (que vem de
+# outro objeto) passam por wltrace_* (src/wltrace.c).  Definicoes intactas.
+rm -f "$(dirname "$out")/wltrace"
+if [ "$WLTRACE" = 1 ]; then
+	traced='phy_reg_write phy_reg_read phy_reg_mod phy_reg_and phy_reg_or
+		write_radio_reg read_radio_reg mod_radio_reg or_radio_reg
+		wlc_phy_write_table_ext wlc_phy_read_table_ext osl_delay
+		si_pmu_regcontrol si_corereg wlapi_bmac_write_shm wlapi_bmac_mhf
+		wlapi_suspend_mac_and_wait wlapi_enable_mac wlapi_bmac_phyclk_fgc
+		wlapi_bmac_bw_set wlapi_switch_macfreq'
+	mkdir "$tmp/phy"
+	new=""
+	for o in $objs; do
+		case "$o" in */wl/phy/*) ;; *) new="$new $o"; continue ;; esac
+		und=$("${CROSS_COMPILE}nm" -u "$o" | awk '{print $2}')
+		args=""
+		for s in $traced; do
+			echo "$und" | grep -qx "$s" && args="$args --redefine-sym $s=wltrace_$s"
+		done
+		c="$tmp/phy/$(basename "$o")"
+		"${CROSS_COMPILE}objcopy" $args "$o" "$c"
+		[ -n "$args" ] && echo "wltrace: $(basename "$o"):$(echo $args | sed 's/--redefine-sym //g; s/=wltrace_[a-z_0-9]*//g')"
+		new="$new $c"
+	done
+	objs=$new
+	touch "$(dirname "$out")/wltrace"
+fi
+
 "${CROSS_COMPILE}ld" -r -o "$tmp/core.o" $objs
 "${CROSS_COMPILE}objcopy" \
 	--redefine-sym kmalloc_caches=wl_kmalloc_caches \

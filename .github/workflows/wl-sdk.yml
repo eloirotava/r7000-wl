@@ -4,7 +4,7 @@ name: wl-sdk
 
 on:
   push:
-    branches: [main]
+    branches: [main, b43]
     paths:
       - 'package/**'
       - 'scripts/**'
@@ -41,7 +41,8 @@ jobs:
           S=package/kernel/wl-r7000/src
           ./scripts/fetch-brcm.sh $S/brcm
           mkdir -p $S/core
-          CROSS_COMPILE=arm-linux-gnueabi- ./scripts/prep-core.sh $S/brcm $S/core/wl_core.o
+          WLTRACE=${{ github.ref_name == 'b43' && '1' || '' }} \
+            CROSS_COMPILE=arm-linux-gnueabi- ./scripts/prep-core.sh $S/brcm $S/core/wl_core.o
           cp -r package/kernel/wl-r7000 sdk/package/
 
       - name: Compila kmod-wl-r7000
