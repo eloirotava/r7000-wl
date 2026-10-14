@@ -73,6 +73,8 @@ static int ac_replay_ops = -1;
 module_param(ac_replay_ops, int, 0444);
 static int ac_replay_ckpt;
 module_param(ac_replay_ckpt, int, 0444);
+static int ac_replay_skip = -1;
+module_param(ac_replay_skip, int, 0444);
 
 static void b43_phy_ac_ckpt(struct b43_wldev *dev, unsigned int i)
 {
@@ -130,6 +132,8 @@ static void b43_phy_ac_replay(struct b43_wldev *dev)
 			break;
 		if (ac_replay_ckpt > 0 && i % ac_replay_ckpt == 0)
 			b43_phy_ac_ckpt(dev, i);
+		if (i == ac_replay_skip)
+			continue;
 		op = &b43_ac_replay_ops[i];
 		switch (op->type) {
 		case B43_AC_OP_PHY_W:
