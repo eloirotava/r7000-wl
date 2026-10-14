@@ -711,11 +711,10 @@ static void wl_free(struct wl_info *wl)
 
 #ifdef WLTRACE
 /*
- * /proc/wlshm: retrato do estado do wl em funcionamento para comparar com
- * o b43.  Por unidade (0, 1), 32 KB: SHM compartilhada 0x0000-0x1fff
- * (wlc_bmac_copyfrom_objmem), PHY 0x0000-0x1fff e radio 0x0000-0x0fff
- * (u16, pelos registradores de acesso indireto do d11).  Tudo sob WL_LOCK
- * e so com o hardware no ar (clock do core ligado).
+ * /proc/wlshm: SHM compartilhada (0x0000-0x1fff) de cada unidade (0, 1)
+ * do wl em funcionamento, por wlc_bmac_copyfrom_objmem sob WL_LOCK e so
+ * com o hardware no ar, para comparar com o b43.  (Varrer todo o espaco
+ * do PHY/radio pelo acesso indireto travou o R7000 no boot.)
  */
 #include <linux/proc_fs.h>
 #include <linux/vmalloc.h>
@@ -724,9 +723,7 @@ extern void wlc_bmac_copyfrom_objmem(void *wlc_hw, uint offset, void *buf,
 	int len, uint32 sel);
 
 #define WLSHM_SHM	0x2000
-#define WLSHM_PHY	0x2000
-#define WLSHM_RAD	0x1000
-#define WLSHM_UNIT	(WLSHM_SHM + 2 * WLSHM_PHY + 2 * WLSHM_RAD)
+#define WLSHM_UNIT	WLSHM_SHM
 
 static struct wl_info *wlshm_wl[2];
 static u8 *wlshm_buf;
@@ -734,21 +731,10 @@ static u8 *wlshm_buf;
 static void wlshm_snap(struct wl_info *wl, u8 *out)
 {
 	void *hw = *(void **)((u8 *)wl->wlc + 16);	/* wlc->hw (wlc_statsupd) */
-	u16 *p = (u16 *)(out + WLSHM_SHM);
-	u16 *r = p + WLSHM_PHY;
-	unsigned int i;
 
 	WL_LOCK(wl);
 	if (WLPUB_HW_UP(wl->pub)) {
 		wlc_bmac_copyfrom_objmem(hw, 0, out, WLSHM_SHM, 0x10000);
-		for (i = 0; i < WLSHM_PHY; i++) {
-			writew(i, wl->regsva + 0x3fc);
-			p[i] = readw(wl->regsva + 0x3fe);
-		}
-		for (i = 0; i < WLSHM_RAD; i++) {
-			writew(i, wl->regsva + 0x3d8);
-			r[i] = readw(wl->regsva + 0x3da);
-		}
 	}
 	WL_UNLOCK(wl);
 }
