@@ -71,6 +71,12 @@ jobs:
             sed -i 's/depends on B43 && B43_BCMA && BROKEN/depends on B43 \&\& B43_BCMA/' $D/Kconfig
             grep -n -A2 'config B43_PHY_AC' $D/Kconfig
           done
+          # o kernel da imagem nao tem CRYPTO_CMAC e o backports descarta o
+          # mac80211; o cmac(aes) so e pedido em runtime (chaves 802.11w)
+          for K in build_dir/target-*/linux-*/*/backports-*/net/mac80211/Kconfig; do
+            sed -i '/^\tdepends on CRYPTO_CMAC$/d' $K
+            grep -c CRYPTO_CMAC $K || true
+          done
 
       - name: Compila
         run: |
