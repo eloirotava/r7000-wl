@@ -60,7 +60,7 @@ jobs:
         run: |
           cd sdk
           make package/mac80211/prepare V=s -j$(nproc) 2>&1 | tail -5
-          D=$(ls -d build_dir/target-*/linux-*/backports-*/drivers/net/wireless/broadcom/b43)
+          D=$(ls -d build_dir/target-*/linux-*/*/backports-*/drivers/net/wireless/broadcom/b43)
           echo "B43DIR=$D" >> $GITHUB_ENV
           cp ../b43/src/* $D/
           sed -i 's/depends on B43 && B43_BCMA && BROKEN/depends on B43 \&\& B43_BCMA/' $D/Kconfig
@@ -71,13 +71,13 @@ jobs:
           cd sdk
           set -o pipefail
           make package/mac80211/compile V=s -j$(nproc) 2>&1 | tee ../build.log | tail -40
-          grep -E 'CPTCFG_B43_PHY_AC|CPTCFG_B43_DEBUG' build_dir/target-*/linux-*/backports-*/.config
+          grep -E 'CPTCFG_B43_PHY_AC|CPTCFG_B43_DEBUG' build_dir/target-*/linux-*/*/backports-*/.config
 
       - name: Junta os modulos
         if: always()
         run: |
           mkdir -p out
-          find sdk/build_dir/target-*/linux-*/backports-* -name '*.ko' -exec cp {} out/ \;
+          find sdk/build_dir/target-*/linux-*/*/backports-* -name '*.ko' -exec cp {} out/ \;
           ls -la out
           grep -E 'undefined!|error:' build.log | sort -u | head -40 || true
 
