@@ -54,8 +54,10 @@ jobs:
           CONFIG_PACKAGE_kmod-b43=m
           CONFIG_PACKAGE_B43_DEBUG=y
           CONFIG_PACKAGE_B43_BUSES_BCMA=y
-          CONFIG_PACKAGE_B43_PHY_N=y
-          CONFIG_PACKAGE_B43_PHY_HT=y
+          # CONFIG_PACKAGE_B43_PHY_N is not set
+          # CONFIG_PACKAGE_B43_PHY_G is not set
+          # CONFIG_PACKAGE_B43_PHY_LP is not set
+          # CONFIG_PACKAGE_B43_PHY_HT is not set
           EOF
           sed -i 's/^ *//' .config
           make defconfig
