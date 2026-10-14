@@ -1,0 +1,92 @@
+name: b43
+
+# b43 aberto para o BCM4360 (AC-PHY) compilado no SDK da imagem publicada.
+# Os .ko saem soltos: no roteador vao para /tmp e entram com insmod (nada na flash).
+
+on:
+  push:
+    branches: [b43]
+    paths:
+      - 'b43/**'
+      - '.github/workflows/b43.yml'
+  workflow_dispatch:
+
+env:
+  RELEASE: openwrt-25.12-r7000-2
+
+jobs:
+  kmod:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dependencias
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential gawk gettext libncurses-dev \
+            python3-setuptools rsync unzip zlib1g-dev file wget zstd
+
+      - name: SDK da release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "$RELEASE" -p 'openwrt-sdk-*' -O sdk.tar.zst
+          mkdir sdk && tar -I zstd -xf sdk.tar.zst -C sdk --strip-components=1
+
+      - name: Configura mac80211 com b43 AC
+        run: |
+          cd sdk
+          ./scripts/feeds update base
+          ./scripts/feeds install kmod-b43
+          M=feeds/base/package/kernel/mac80211
+          [ -d "$M" ] || M=$(dirname $(find feeds -path '*kernel/mac80211/Makefile' | head -1))
+          echo "MAC80211=$M" >> $GITHUB_ENV
+          sed -i 's/^config-\$(call config_package,b43) += B43$/&\nconfig-$(call config_package,b43) += B43_PHY_AC/' $M/broadcom.mk
+          grep -n 'B43_PHY_AC' $M/broadcom.mk
+          make defconfig
+          cat >> .config <<'EOF'
+          CONFIG_PACKAGE_kmod-b43=m
+          CONFIG_PACKAGE_B43_DEBUG=y
+          CONFIG_PACKAGE_B43_BUSES_BCMA=y
+          CONFIG_PACKAGE_B43_PHY_N=y
+          CONFIG_PACKAGE_B43_PHY_HT=y
+          EOF
+          sed -i 's/^ *//' .config
+          make defconfig
+          grep -E 'b43|B43|mac80211|cfg80211' .config
+
+      - name: Prepara arvore e aplica b43/src
+        run: |
+          cd sdk
+          make package/mac80211/prepare V=s -j$(nproc) 2>&1 | tail -5
+          D=$(ls -d build_dir/target-*/linux-*/backports-*/drivers/net/wireless/broadcom/b43)
+          echo "B43DIR=$D" >> $GITHUB_ENV
+          cp ../b43/src/* $D/
+          sed -i 's/depends on B43 && B43_BCMA && BROKEN/depends on B43 \&\& B43_BCMA/' $D/Kconfig
+          grep -n -A2 'config B43_PHY_AC' $D/Kconfig
+
+      - name: Compila
+        run: |
+          cd sdk
+          set -o pipefail
+          make package/mac80211/compile V=s -j$(nproc) 2>&1 | tee ../build.log | tail -40
+          grep -E 'CPTCFG_B43_PHY_AC|CPTCFG_B43_DEBUG' build_dir/target-*/linux-*/backports-*/.config
+
+      - name: Junta os modulos
+        if: always()
+        run: |
+          mkdir -p out
+          find sdk/build_dir/target-*/linux-*/backports-* -name '*.ko' -exec cp {} out/ \;
+          ls -la out
+          grep -E 'undefined!|error:' build.log | sort -u | head -40 || true
+
+      - name: Artefatos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: b43-ac
+          path: |
+            build.log
+            out/*.ko
+          if-no-files-found: warn
