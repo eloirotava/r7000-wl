@@ -67,6 +67,22 @@ static void b43_phy_ac_op_prepare_structs(struct b43_wldev *dev)
  * Init gravado do wl (phy_ac_replay.c)
  **************************************************/
 
+/* depuracao no R7000: quantas ops do replay rodar (-1 = todas) e intervalo
+ * de checkpoints (mensagem + 1,5 s de espera para o log chegar ao flash) */
+static int ac_replay_ops = -1;
+module_param(ac_replay_ops, int, 0444);
+static int ac_replay_ckpt;
+module_param(ac_replay_ckpt, int, 0444);
+
+static void b43_phy_ac_ckpt(struct b43_wldev *dev, unsigned int i)
+{
+	const struct b43_ac_replay_op *op = &b43_ac_replay_ops[i];
+
+	b43info(dev->wl, "replay: op %u tipo %u addr 0x%x\n", i, op->type,
+		op->addr);
+	mdelay(1500);
+}
+
 static void b43_phy_ac_delay(unsigned int us)
 {
 	if (us < 10)
@@ -110,6 +126,10 @@ static void b43_phy_ac_replay(struct b43_wldev *dev)
 	unsigned int i;
 
 	for (i = 0; i < b43_ac_replay_nops; i++) {
+		if (ac_replay_ops >= 0 && i >= ac_replay_ops)
+			break;
+		if (ac_replay_ckpt > 0 && i % ac_replay_ckpt == 0)
+			b43_phy_ac_ckpt(dev, i);
 		op = &b43_ac_replay_ops[i];
 		switch (op->type) {
 		case B43_AC_OP_PHY_W:
@@ -168,7 +188,10 @@ static int b43_phy_ac_op_init(struct b43_wldev *dev)
 		b43err(dev->wl, "init gravado e do radio de 5 GHz\n");
 		return -EOPNOTSUPP;
 	}
+	if (ac_replay_ckpt > 0)
+		mdelay(1500);
 	b43_phy_ac_replay(dev);
+	b43info(dev->wl, "replay: fim\n");
 	dev->phy.ac->channel = B43_AC_REPLAY_CHANNEL;
 	return 0;
 }
