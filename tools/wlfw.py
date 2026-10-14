@@ -18,7 +18,8 @@ def blob(n): o, s = syms[n]; return d[o:o + s]
 def hdr(t, n): return struct.pack('>BBxxI', ord(t), 1, n)
 def ucode(sym, fn):
     b = blob(sym); w = struct.unpack('<%dI' % (len(b) // 4), b)
-    open(os.path.join(out, fn), 'wb').write(hdr('u', 0) + struct.pack('>%dI' % len(w), *w))
+    # o b43 exige no cabecalho do ucode o tamanho exato dos dados
+    open(os.path.join(out, fn), 'wb').write(hdr('u', len(w) * 4) + struct.pack('>%dI' % len(w), *w))
 def iv(sym, fn):
     b = blob(sym); o = bytearray(); n = 0
     for i in range(0, len(b), 8):

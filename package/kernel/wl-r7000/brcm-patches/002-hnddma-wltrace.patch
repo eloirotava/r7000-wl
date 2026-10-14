@@ -1,0 +1,50 @@
+--- a/shared/hnddma.c	2026-10-14 16:07:31.494841750 -0300
++++ b/shared/hnddma.c	2026-10-14 16:08:12.251891469 -0300
+@@ -32,6 +32,14 @@
+ #include <sbhnddma.h>
+ #include <hnddma.h>
+ 
++/* build com wltrace: registradores do DMA no init, para comparar com o b43
++ * (so dmesg; nao usar com netconsole no br-lan, que passa pelo wl) */
++#ifdef WLTRACE
++#define WLT_DMA(fmt, ...) printk(KERN_INFO "wltrace-dma %s: " fmt "\n", di->name, ##__VA_ARGS__)
++#else
++#define WLT_DMA(fmt, ...) do {} while (0)
++#endif
++
+ /* debug/trace */
+ #ifdef BCMDBG
+ #define	DMA_ERROR(args) if (di && (!(*di->msg_level & 1))); else printf args
+@@ -1105,6 +1113,9 @@
+ static void
+ _dma_ddtable_init(dma_info_t *di, uint direction, dmaaddr_t pa)
+ {
++	WLT_DMA("ddtable %s pa %08x:%08x offs %08x:%08x aligndesc_4k %d addrext %d",
++		direction == DMA_TX ? "tx" : "rx", PHYSADDRHI(pa), PHYSADDRLO(pa),
++		di->ddoffsethigh, di->ddoffsetlow, di->aligndesc_4k, di->addrext);
+ 	if (DMA64_ENAB(di) && DMA64_MODE(di)) {
+ 		if (!di->aligndesc_4k) {
+ 			if (direction == DMA_TX)
+@@ -1289,6 +1300,10 @@
+ 
+ 		W_REG(di->osh, &di->d64rxregs->control,
+ 		      ((di->rxoffset << D64_RC_RO_SHIFT) | control));
++		WLT_DMA("rxenable control %08x (rxoffset %d bl %d pc %d pt %d flags %x) le %08x",
++			(di->rxoffset << D64_RC_RO_SHIFT) | control, di->rxoffset,
++			di->rxburstlen, di->rxprefetchctl, di->rxprefetchthresh,
++			dmactrlflags, R_REG(di->osh, &di->d64rxregs->control));
+ 	} else if (DMA32_ENAB(di)) {
+ 		uint32 control = (R_REG(di->osh, &di->d32rxregs->control) & RC_AE) | RC_RE;
+ 
+@@ -2885,6 +2900,11 @@
+ 	addrlow &= 0xffff;
+ 	W_REG(di->osh, &di->d64txregs->ptr, addrlow);
+ #endif
++	WLT_DMA("txinit control %08x (bl %d mr %d pc %d pt %d flags %x) addr %08x:%08x",
++		R_REG(di->osh, &di->d64txregs->control), di->txburstlen,
++		di->txmultioutstdrd, di->txprefetchctl, di->txprefetchthresh,
++		di->hnddma.dmactrlflags, R_REG(di->osh, &di->d64txregs->addrhigh),
++		R_REG(di->osh, &di->d64txregs->addrlow));
+ }
+ 
+ static bool
