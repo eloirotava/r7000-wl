@@ -3,7 +3,7 @@
  * wltrace: grava os acessos do codigo PHY do wl (registradores do PHY e do
  * radio, tabelas, delays, PMU, shm) para reproduzir o init do AC-PHY no b43.
  *
- * scripts/prep-core.sh (WLTRACE=1) troca, nos objetos wl/phy/*.o, as
+ * scripts/prep-core.sh (WLTRACE=1) troca, nos objetos de wl/phy, as
  * chamadas a esses acessores por wltrace_<nome>.  Cada wrapper grava um
  * registro e chama o original.
  *
