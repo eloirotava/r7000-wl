@@ -1638,6 +1638,10 @@ void b43_dma_handle_txstatus(struct b43_wldev *dev,
 	ieee80211_queue_work(dev->wl->hw, &dev->wl->tx_work);
 }
 
+static int rx_hexdump;
+module_param(rx_hexdump, int, 0644);
+MODULE_PARM_DESC(rx_hexdump, "Despeja os primeiros N buffers de RX (depuracao)");
+
 static void dma_rx(struct b43_dmaring *ring, int *slot)
 {
 	const struct b43_dma_ops *ops = ring->ops;
@@ -1655,6 +1659,12 @@ static void dma_rx(struct b43_dmaring *ring, int *slot)
 	skb = meta->skb;
 
 	rxhdr = (struct b43_rxhdr_fw4 *)skb->data;
+	if (rx_hexdump > 0) {
+		/* layout do cabecalho de RX do ucode rev >= 40 ainda incerto */
+		rx_hexdump--;
+		print_hex_dump(KERN_INFO, "b43 rx: ", DUMP_PREFIX_OFFSET, 16, 1,
+			       skb->data, 96, false);
+	}
 	len = le16_to_cpu(rxhdr->frame_len);
 	if (len == 0) {
 		int i = 0;
