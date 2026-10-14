@@ -14,11 +14,13 @@ fi
 up=$bp/backports-$V/drivers/net/wireless/broadcom/b43
 w=$(mktemp -d)
 mkdir -p "$w/a/drivers/net/wireless/broadcom/b43" "$w/b/drivers/net/wireless/broadcom/b43"
-for f in Kconfig $(cd "$here/b43/src" && ls); do
+for f in Kconfig Makefile $(cd "$here/b43/src" && ls); do
 	cp "$up/$f" "$w/a/drivers/net/wireless/broadcom/b43/" 2>/dev/null ||
 		: > "$w/a/drivers/net/wireless/broadcom/b43/$f"
 done
-cp "$up/Kconfig" "$here"/b43/src/* "$w/b/drivers/net/wireless/broadcom/b43/"
+cp "$up/Kconfig" "$up/Makefile" "$here"/b43/src/* "$w/b/drivers/net/wireless/broadcom/b43/"
+sed -i 's/^b43-\$(CPTCFG_B43_PHY_AC)\t+= phy_ac.o$/&\nb43-$(CPTCFG_B43_PHY_AC)\t+= radio_2069.o/' \
+	"$w/b/drivers/net/wireless/broadcom/b43/Makefile"
 sed -i -e 's/depends on B43 && B43_BCMA && BROKEN/depends on B43 \&\& B43_BCMA/' \
 	-e '/^\tdepends on CORDIC$/d' \
 	"$w/b/drivers/net/wireless/broadcom/b43/Kconfig"
