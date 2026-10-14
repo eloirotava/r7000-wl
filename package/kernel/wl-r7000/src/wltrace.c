@@ -21,7 +21,7 @@ enum {
 	WT_PHY_W = 1, WT_PHY_R, WT_PHY_MOD, WT_PHY_AND, WT_PHY_OR,
 	WT_RAD_W, WT_RAD_R, WT_RAD_MOD, WT_RAD_OR,
 	WT_TBL_W, WT_TBL_R, WT_DATA, WT_DELAY, WT_PMU, WT_COREREG,
-	WT_SHM_W, WT_MHF, WT_EVENT,
+	WT_SHM_W, WT_MHF, WT_EVENT, WT_TBLREGS,
 };
 
 enum { EV_SUSPEND = 1, EV_ENABLE, EV_PHYCLK_FGC, EV_BW_SET, EV_MACFREQ };
@@ -128,8 +128,12 @@ extern void write_radio_reg(void *pi, u32 addr, u32 val);
 extern u32 read_radio_reg(void *pi, u32 addr);
 extern void mod_radio_reg(void *pi, u32 addr, u32 mask, u32 val);
 extern void or_radio_reg(void *pi, u32 addr, u32 val);
-extern void wlc_phy_write_table_ext(void *pi, const struct wt_phytbl *t);
-extern void wlc_phy_read_table_ext(void *pi, const struct wt_phytbl *t);
+/* 7 argumentos (disassembly do wlc_phy_cmn.o: r0-r3 + 3 u16 na pilha,
+ * os registradores de tabela).  Com 2 o wl travava a caixa no wifi up. */
+extern void wlc_phy_write_table_ext(void *pi, const struct wt_phytbl *t,
+				    u32 a2, u32 a3, u32 s0, u32 s1, u32 s2);
+extern void wlc_phy_read_table_ext(void *pi, const struct wt_phytbl *t,
+				   u32 a2, u32 a3, u32 s0, u32 s1, u32 s2);
 extern void osl_delay(u32 us);
 extern u32 si_pmu_regcontrol(void *sih, u32 reg, u32 mask, u32 val);
 extern u32 si_corereg(void *sih, u32 coreidx, u32 off, u32 mask, u32 val);
@@ -199,16 +203,22 @@ void wltrace_or_radio_reg(void *pi, u32 addr, u32 val)
 	or_radio_reg(pi, addr, val);
 }
 
-void wltrace_wlc_phy_write_table_ext(void *pi, const struct wt_phytbl *t)
+void wltrace_wlc_phy_write_table_ext(void *pi, const struct wt_phytbl *t,
+				     u32 a2, u32 a3, u32 s0, u32 s1, u32 s2)
 {
+	wt_put(WT_TBLREGS, pi, a2 << 16 | (a3 & 0xffff),
+	       (s0 & 0xffff) << 16 | (s1 & 0xffff), s2 & 0xffff);
 	wt_table(WT_TBL_W, pi, t);
-	wlc_phy_write_table_ext(pi, t);
+	wlc_phy_write_table_ext(pi, t, a2, a3, s0, s1, s2);
 }
 
-void wltrace_wlc_phy_read_table_ext(void *pi, const struct wt_phytbl *t)
+void wltrace_wlc_phy_read_table_ext(void *pi, const struct wt_phytbl *t,
+				    u32 a2, u32 a3, u32 s0, u32 s1, u32 s2)
 {
+	wt_put(WT_TBLREGS, pi, a2 << 16 | (a3 & 0xffff),
+	       (s0 & 0xffff) << 16 | (s1 & 0xffff), s2 & 0xffff);
 	wt_table(WT_TBL_R, pi, t);
-	wlc_phy_read_table_ext(pi, t);
+	wlc_phy_read_table_ext(pi, t, a2, a3, s0, s1, s2);
 }
 
 void wltrace_osl_delay(u32 us)

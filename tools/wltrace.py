@@ -60,6 +60,8 @@ while i < len(recs):
         s = '%#x = %#x' % (a, b)
     elif t == 17:
         s = 'idx %d mask %#x val %#x' % (a, b, c)
+    elif t == 19:
+        s = 'args %04x %04x pilha %04x %04x %04x' % (a >> 16, a & 0xffff, b >> 16, b & 0xffff, c)
     elif t == 18:
         s = EV.get(a, a) + ('' if a in (1, 2) else ' %d' % b)
     else:
