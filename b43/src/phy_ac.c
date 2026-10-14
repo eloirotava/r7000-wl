@@ -7,6 +7,7 @@
  */
 
 #include "b43.h"
+#include "main.h"
 #include "phy_ac.h"
 #include "phy_ac_replay.h"
 #include "radio_2069.h"
