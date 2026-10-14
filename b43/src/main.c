@@ -5428,6 +5428,12 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
 	/* Get real info about supported bands */
 	b43_supported_bands(dev, &have_2ghz_phy, &have_5ghz_phy);
 
+	/* AC-PHY: o init (gravado do wl no R7000) so existe para o radio de
+	 * 5 GHz.  Com o 4360 anunciado como dual band o core subia com GMODE
+	 * (caminho de 2,4 GHz) e o PHY de 5 GHz nao recebia nada. */
+	if (dev->phy.type == B43_PHYTYPE_AC && have_5ghz_phy)
+		have_2ghz_phy = false;
+
 	/* We don't support 5 GHz on some PHYs yet */
 	if (have_5ghz_phy) {
 		switch (dev->phy.type) {
