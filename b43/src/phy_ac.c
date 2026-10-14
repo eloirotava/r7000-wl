@@ -177,6 +177,9 @@ static void b43_phy_ac_replay(struct b43_wldev *dev)
 		case B43_AC_OP_SHM_W:
 			b43_shm_write16(dev, B43_SHM_SHARED, op->addr, op->val);
 			break;
+		case B43_AC_OP_FGC:
+			b43_phy_force_clock(dev, op->val);
+			break;
 		}
 	}
 }

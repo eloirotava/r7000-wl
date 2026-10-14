@@ -17,6 +17,7 @@ enum {
 	B43_AC_OP_DELAY,	/* val = us */
 	B43_AC_OP_PMU,		/* addr = regcontrol, val = indice em pmus */
 	B43_AC_OP_SHM_W,	/* SHM compartilhada, addr em bytes */
+	B43_AC_OP_FGC,		/* val = forca o clock do PHY (1) ou solta (0) */
 };
 
 struct b43_ac_replay_op {

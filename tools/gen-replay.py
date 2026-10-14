@@ -15,7 +15,7 @@ s0, s1 = int(s0), int(s1)
 
 OP = {'phy_w': 1, 'phy_mod': 2, 'phy_and': 3, 'phy_or': 4,
       'rad_w': 5, 'rad_mod': 6, 'rad_or': 7, 'tbl_w': 8, 'delay': 9,
-      'pmu': 10, 'shm_w': 11}
+      'pmu': 10, 'shm_w': 11, 'fgc': 12}
 ops, tbls, blob, pmus = [], [], [], []
 names = {}
 
@@ -46,6 +46,9 @@ while i < len(lines):
         # 'reg N mask M val V'
         ops.append((OP[t], int(f[4]), 0, len(pmus)))
         pmus.append((int(f[6], 16), int(f[8], 16)))
+    elif t == 'event' and f[3] == 'phyclk_fgc':
+        # clock do PHY forcado (o wl pulsa o reset de CCA com ele ligado)
+        ops.append((OP['fgc'], 0, 0, int(f[4])))
     elif t == 'shm_w':
         ops.append((OP[t], int(f[3], 16), 0, int(f[5], 16)))
     elif t == 'tbl_w':
