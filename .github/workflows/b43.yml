@@ -60,11 +60,12 @@ jobs:
         run: |
           cd sdk
           make package/mac80211/prepare V=s -j$(nproc) 2>&1 | tail -5
-          D=$(ls -d build_dir/target-*/linux-*/*/backports-*/drivers/net/wireless/broadcom/b43)
-          echo "B43DIR=$D" >> $GITHUB_ENV
-          cp ../b43/src/* $D/
-          sed -i 's/depends on B43 && B43_BCMA && BROKEN/depends on B43 \&\& B43_BCMA/' $D/Kconfig
-          grep -n -A2 'config B43_PHY_AC' $D/Kconfig
+          for D in build_dir/target-*/linux-*/*/backports-*/drivers/net/wireless/broadcom/b43; do
+            echo "== $D"
+            cp ../b43/src/* $D/
+            sed -i 's/depends on B43 && B43_BCMA && BROKEN/depends on B43 \&\& B43_BCMA/' $D/Kconfig
+            grep -n -A2 'config B43_PHY_AC' $D/Kconfig
+          done
 
       - name: Compila
         run: |
