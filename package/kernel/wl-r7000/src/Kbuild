@@ -66,3 +66,4 @@ CFLAGS_shim.o += -DWL_SHIM_NO_DMA_REDIRECT
 ifneq ($(wildcard $(src)/core/wltrace),)
 ccflags-y += -DWLTRACE
 endif
+CFLAGS_wltrace.o += -Wno-missing-prototypes
