@@ -724,7 +724,21 @@ extern void wlc_bmac_copyfrom_objmem(void *wlc_hw, uint offset, void *buf,
 
 #define WLSHM_SHM	0x2000
 #define WLSHM_PMU	0x100
-#define WLSHM_UNIT	(WLSHM_SHM + WLSHM_PMU)
+#define WLSHM_IHR	(0x200 + 0xc00)	/* 0x000-0x1ff (u32) + 0x400-0xfff (u16) */
+#define WLSHM_UNIT	(WLSHM_SHM + WLSHM_PMU + WLSHM_IHR)
+
+/* registradores do MAC d11 (mesmas faixas do tools/r7000/ihrdump.sh do
+ * b43): sem 0x160-0x16c (objaddr/objdata), sem DMA e acesso indireto */
+static void wlshm_ihr(struct wl_info *wl, u8 *o)
+{
+	unsigned int a;
+
+	for (a = 0; a < 0x200; a += 4)
+		*(u32 *)(o + a) = (a >= 0x160 && a <= 0x16c) ? 0 :
+				  readl(wl->regsva + a);
+	for (a = 0x400; a < 0x1000; a += 2)
+		*(u16 *)(o + 0x200 + a - 0x400) = readw(wl->regsva + a);
+}
 
 /* chipcommon do cartao em bar0 + 12K (PCI_16KB0_CCREGS_OFFSET): mesma
  * lista que o b43 despeja no init do AC-PHY (b43_phy_ac_pmu_dump) */
@@ -762,6 +776,7 @@ static void wlshm_snap(struct wl_info *wl, u8 *out)
 	if (WLPUB_HW_UP(wl->pub)) {
 		wlc_bmac_copyfrom_objmem(hw, 0, out, WLSHM_SHM, 0x10000);
 		wlshm_pmu(wl, (u32 *)(out + WLSHM_SHM));
+		wlshm_ihr(wl, out + WLSHM_SHM + WLSHM_PMU);
 	}
 	WL_UNLOCK(wl);
 }
