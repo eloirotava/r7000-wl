@@ -41,7 +41,7 @@ struct b43_ac_replay_pmu {
 };
 
 /* canal em que o init gravado termina */
-#define B43_AC_REPLAY_CHANNEL	36
+#define B43_AC_REPLAY_CHANNEL	44
 
 extern const struct b43_ac_replay_op b43_ac_replay_ops[];
 extern const unsigned int b43_ac_replay_nops;
