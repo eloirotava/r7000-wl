@@ -234,6 +234,9 @@ static int b43_phy_ac_op_init(struct b43_wldev *dev)
 	if (ac_replay_ckpt > 0)
 		mdelay(1500);
 	b43_phy_ac_pmu_dump(dev, "antes");
+	/* regcontrol 0: o wl no ar tem 0x00200004; depois do wl down (e no
+	 * b43) fica 0x00200006.  O bit 1 nao aparece no rastro do PHY. */
+	bcma_chipco_regctl_maskset(&dev->dev->bdev->bus->drv_cc, 0, ~0x2, 0);
 	b43_phy_ac_replay(dev);
 	b43_phy_ac_pmu_dump(dev, "depois");
 	if (dev->dev->bus_type == B43_BUS_BCMA) {

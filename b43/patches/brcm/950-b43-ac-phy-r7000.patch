@@ -1,6 +1,6 @@
 diff -ruN a/drivers/net/wireless/broadcom/b43/dma.c b/drivers/net/wireless/broadcom/b43/dma.c
---- a/drivers/net/wireless/broadcom/b43/dma.c	2026-10-14 21:44:27.456384231 -0300
-+++ b/drivers/net/wireless/broadcom/b43/dma.c	2026-10-14 21:44:27.504385470 -0300
+--- a/drivers/net/wireless/broadcom/b43/dma.c	2026-10-14 22:05:38.617425802 -0300
++++ b/drivers/net/wireless/broadcom/b43/dma.c	2026-10-14 22:05:38.693427775 -0300
 @@ -210,9 +210,19 @@
  	desc->dma64.address_high = cpu_to_le32(addrhi);
  }
@@ -157,8 +157,8 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/dma.c b/drivers/net/wireless/broad
  	if (len == 0) {
  		int i = 0;
 diff -ruN a/drivers/net/wireless/broadcom/b43/Kconfig b/drivers/net/wireless/broadcom/b43/Kconfig
---- a/drivers/net/wireless/broadcom/b43/Kconfig	2026-10-14 21:44:27.436383715 -0300
-+++ b/drivers/net/wireless/broadcom/b43/Kconfig	2026-10-14 21:44:27.556386813 -0300
+--- a/drivers/net/wireless/broadcom/b43/Kconfig	2026-10-14 22:05:38.585424971 -0300
++++ b/drivers/net/wireless/broadcom/b43/Kconfig	2026-10-14 22:05:38.733428814 -0300
 @@ -6,7 +6,6 @@
  	select BCMA if B43_BCMA
  	select SSB if B43_SSB
@@ -177,8 +177,8 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/Kconfig b/drivers/net/wireless/bro
  	  This PHY type can be found in the following chipsets:
  	  PCI: BCM4352, BCM4360
 diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
---- a/drivers/net/wireless/broadcom/b43/main.c	2026-10-14 21:44:27.468384541 -0300
-+++ b/drivers/net/wireless/broadcom/b43/main.c	2026-10-14 21:44:27.516385780 -0300
+--- a/drivers/net/wireless/broadcom/b43/main.c	2026-10-14 22:05:38.625426010 -0300
++++ b/drivers/net/wireless/broadcom/b43/main.c	2026-10-14 22:05:38.709428190 -0300
 @@ -3188,6 +3188,10 @@
  		b43_rate_memory_write(dev, B43_CCK_RATE_5MB, 0);
  		b43_rate_memory_write(dev, B43_CCK_RATE_11MB, 0);
@@ -204,8 +204,8 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broa
  	if (have_5ghz_phy) {
  		switch (dev->phy.type) {
 diff -ruN a/drivers/net/wireless/broadcom/b43/Makefile b/drivers/net/wireless/broadcom/b43/Makefile
---- a/drivers/net/wireless/broadcom/b43/Makefile	2026-10-14 21:44:27.444383921 -0300
-+++ b/drivers/net/wireless/broadcom/b43/Makefile	2026-10-14 21:44:27.556386813 -0300
+--- a/drivers/net/wireless/broadcom/b43/Makefile	2026-10-14 22:05:38.593425179 -0300
++++ b/drivers/net/wireless/broadcom/b43/Makefile	2026-10-14 22:05:38.725428606 -0300
 @@ -15,6 +15,7 @@
  b43-$(CPTCFG_B43_PHY_HT)	+= radio_2059.o
  b43-$(CPTCFG_B43_PHY_LCN)	+= phy_lcn.o tables_phy_lcn.o
@@ -215,8 +215,8 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/Makefile b/drivers/net/wireless/br
  b43-y				+= xmit.o
  b43-y				+= dma.o
 diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/broadcom/b43/phy_ac.c
---- a/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-14 21:44:27.472384644 -0300
-+++ b/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-14 21:44:27.516385780 -0300
+--- a/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-14 22:05:38.633426217 -0300
++++ b/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-14 22:05:38.709428190 -0300
 @@ -7,7 +7,10 @@
   */
  
@@ -228,7 +228,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  
  /**************************************************
   * Basic PHY ops
-@@ -55,6 +58,235 @@
+@@ -55,6 +58,238 @@
  	b43_write16(dev, B43_MMIO_RADIO24_DATA, value);
  }
  
@@ -408,6 +408,9 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
 +	if (ac_replay_ckpt > 0)
 +		mdelay(1500);
 +	b43_phy_ac_pmu_dump(dev, "antes");
++	/* regcontrol 0: o wl no ar tem 0x00200004; depois do wl down (e no
++	 * b43) fica 0x00200006.  O bit 1 nao aparece no rastro do PHY. */
++	bcma_chipco_regctl_maskset(&dev->dev->bdev->bus->drv_cc, 0, ~0x2, 0);
 +	b43_phy_ac_replay(dev);
 +	b43_phy_ac_pmu_dump(dev, "depois");
 +	if (dev->dev->bus_type == B43_BUS_BCMA) {
@@ -464,7 +467,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  static unsigned int b43_phy_ac_op_get_default_chan(struct b43_wldev *dev)
  {
  	if (b43_current_band(dev->wl) == NL80211_BAND_2GHZ)
-@@ -79,9 +311,14 @@
+@@ -79,9 +314,14 @@
  const struct b43_phy_operations b43_phyops_ac = {
  	.allocate		= b43_phy_ac_op_allocate,
  	.free			= b43_phy_ac_op_free,
@@ -480,8 +483,8 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  	.recalc_txpower		= b43_phy_ac_op_recalc_txpower,
  	.adjust_txpower		= b43_phy_ac_op_adjust_txpower,
 diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.h b/drivers/net/wireless/broadcom/b43/phy_ac.h
---- a/drivers/net/wireless/broadcom/b43/phy_ac.h	2026-10-14 21:44:27.484384954 -0300
-+++ b/drivers/net/wireless/broadcom/b43/phy_ac.h	2026-10-14 21:44:27.528386090 -0300
+--- a/drivers/net/wireless/broadcom/b43/phy_ac.h	2026-10-14 22:05:38.641426425 -0300
++++ b/drivers/net/wireless/broadcom/b43/phy_ac.h	2026-10-14 22:05:38.709428190 -0300
 @@ -32,6 +32,7 @@
  #define  B43_PHY_AC_C3_CLIP_DIS			0x4000
  
@@ -491,8 +494,8 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.h b/drivers/net/wireless/br
  
  extern const struct b43_phy_operations b43_phyops_ac;
 diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac_replay.c b/drivers/net/wireless/broadcom/b43/phy_ac_replay.c
---- a/drivers/net/wireless/broadcom/b43/phy_ac_replay.c	2026-10-14 21:44:27.488385058 -0300
-+++ b/drivers/net/wireless/broadcom/b43/phy_ac_replay.c	2026-10-14 21:44:27.528386090 -0300
+--- a/drivers/net/wireless/broadcom/b43/phy_ac_replay.c	2026-10-14 22:05:38.653426736 -0300
++++ b/drivers/net/wireless/broadcom/b43/phy_ac_replay.c	2026-10-14 22:05:38.709428190 -0300
 @@ -0,0 +1,3481 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
@@ -3976,8 +3979,8 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac_replay.c b/drivers/net/wire
 +	0x0, 0x35, 0x35, 0x35, 0x35, 0x35, 0x35,
 +};
 diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac_replay.h b/drivers/net/wireless/broadcom/b43/phy_ac_replay.h
---- a/drivers/net/wireless/broadcom/b43/phy_ac_replay.h	2026-10-14 21:44:27.492385160 -0300
-+++ b/drivers/net/wireless/broadcom/b43/phy_ac_replay.h	2026-10-14 21:44:27.528386090 -0300
+--- a/drivers/net/wireless/broadcom/b43/phy_ac_replay.h	2026-10-14 22:05:38.661426944 -0300
++++ b/drivers/net/wireless/broadcom/b43/phy_ac_replay.h	2026-10-14 22:05:38.709428190 -0300
 @@ -0,0 +1,52 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +#ifndef B43_PHY_AC_REPLAY_H_
@@ -4032,8 +4035,8 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac_replay.h b/drivers/net/wire
 +
 +#endif /* B43_PHY_AC_REPLAY_H_ */
 diff -ruN a/drivers/net/wireless/broadcom/b43/radio_2069.c b/drivers/net/wireless/broadcom/b43/radio_2069.c
---- a/drivers/net/wireless/broadcom/b43/radio_2069.c	2026-10-14 21:44:27.492385160 -0300
-+++ b/drivers/net/wireless/broadcom/b43/radio_2069.c	2026-10-14 21:44:27.540386400 -0300
+--- a/drivers/net/wireless/broadcom/b43/radio_2069.c	2026-10-14 22:05:38.669427152 -0300
++++ b/drivers/net/wireless/broadcom/b43/radio_2069.c	2026-10-14 22:05:38.709428190 -0300
 @@ -0,0 +1,795 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
@@ -4831,8 +4834,8 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/radio_2069.c b/drivers/net/wireles
 +const unsigned int b43_radio_2069_r4_chantab_size =
 +	ARRAY_SIZE(b43_radio_2069_r4_chantab);
 diff -ruN a/drivers/net/wireless/broadcom/b43/radio_2069.h b/drivers/net/wireless/broadcom/b43/radio_2069.h
---- a/drivers/net/wireless/broadcom/b43/radio_2069.h	2026-10-14 21:44:27.492385160 -0300
-+++ b/drivers/net/wireless/broadcom/b43/radio_2069.h	2026-10-14 21:44:27.552386710 -0300
+--- a/drivers/net/wireless/broadcom/b43/radio_2069.h	2026-10-14 22:05:38.677427360 -0300
++++ b/drivers/net/wireless/broadcom/b43/radio_2069.h	2026-10-14 22:05:38.709428190 -0300
 @@ -0,0 +1,22 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +#ifndef B43_RADIO_2069_H_
