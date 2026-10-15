@@ -1,0 +1,42 @@
+--- a/shared/linux_osl.c	2026-10-15 06:51:33.347780275 -0300
++++ b/shared/linux_osl.c	2026-10-15 06:51:46.616118472 -0300
+@@ -2505,10 +2505,39 @@
+ /* Linux Kernel: File Operations: end */
+ 
+ #if (defined(BCM47XX_CA9) || (defined(STB) && defined(__arm__)))
++#ifdef WLTRACE
++/* build com wltrace: o BMC do d11 rev >= 40 (wlc_bmac_bmc_init) programa
++ * cada FIFO com escritas em 0x520-0x550 e um comando, e faz polling do
++ * registrador de comando por esta funcao.  Registra os parametros a cada
++ * polling para reproduzir a sequencia no b43.  Ate 120 linhas. */
++static int wlt_bmc_n;
++static void wlt_bmc(ulong addr, uint size)
++{
++	ulong off = addr & 0xfff, b = addr & ~0xfffUL;
++
++	if (size != 2 || (off != 0x548 && off != 0x530) || wlt_bmc_n >= 120)
++		return;
++	wlt_bmc_n++;
++	printk(KERN_INFO "wltrace-bmc %03lx: 520=%04x 530=%04x 532=%04x 534=%04x "
++	       "536=%04x 540=%04x 542=%04x 548=%04x 54a=%04x 54c=%04x 54e=%04x "
++	       "550=%04x\n", off,
++	       readw((void *)(b + 0x520)), readw((void *)(b + 0x530)),
++	       readw((void *)(b + 0x532)), readw((void *)(b + 0x534)),
++	       readw((void *)(b + 0x536)), readw((void *)(b + 0x540)),
++	       readw((void *)(b + 0x542)), readw((void *)(b + 0x548)),
++	       readw((void *)(b + 0x54a)), readw((void *)(b + 0x54c)),
++	       readw((void *)(b + 0x54e)), readw((void *)(b + 0x550)));
++}
++#else
++#define wlt_bmc(addr, size) do {} while (0)
++#endif
++
+ inline void osl_pcie_rreg(osl_t *osh, ulong addr, void *v, uint size)
+ {
+ 	unsigned long flags = 0;
+ 	int pci_access = 0;
++
++	wlt_bmc(addr, size);
+ #if defined(BCM_GMAC3)
+ 	const int acp_war_enab = 1;
+ #else  /* !BCM_GMAC3 */
