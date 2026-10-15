@@ -437,6 +437,7 @@ const struct b43_ac_replay_op b43_ac_replay_ops[] = {
 	{  8, 0x000a, 0x0000, 0x0017 },
 	{  8, 0x000a, 0x0020, 0x0018 },
 	{  8, 0x000a, 0x0040, 0x0019 },
+	{ 13, 0x0028, 0x0000, 0x0002 },
 	{  2, 0x019e, 0x0002, 0x0002 },
 	{  2, 0x019e, 0x0002, 0x0002 },
 	{  8, 0x0007, 0x0142, 0x001a },
@@ -2817,6 +2818,7 @@ const struct b43_ac_replay_tbl b43_ac_replay_tbls[] = {
 const struct b43_ac_replay_pmu b43_ac_replay_pmus[] = {
 	{ 0x01f00000, 0x00200000 },
 	{ 0x00000004, 0x00000004 },
+	{ 0x00fffffd, 0x00000010 },
 };
 
 const u32 b43_ac_replay_data[] = {
