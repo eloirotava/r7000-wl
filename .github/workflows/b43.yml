@@ -36,8 +36,7 @@ jobs:
           set -o pipefail
           cd sdk
           BP=$(ls -d $PWD/build_dir/target-*/linux-*/mac80211-regular/backports-*)
-          echo "BP=$BP"; ls $BP | head -30; ls $BP/drivers/net/wireless/broadcom 2>&1 | head
-          du -sh $BP 2>/dev/null; find $PWD/build_dir -maxdepth 4 -type d | head -30
+          echo "BP=$BP"
           cp ../b43/src/* $BP/drivers/net/wireless/broadcom/b43/
           echo "MAC80211=$(dirname $(find feeds -path '*kernel/mac80211/Makefile' | head -1))" >> $GITHUB_ENV
           T=$(ls -d $PWD/staging_dir/toolchain-*)
