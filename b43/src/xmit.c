@@ -231,6 +231,45 @@ static u8 b43_calc_fallback_rate(u8 bitrate, int gmode)
 	return 0;
 }
 
+/* Cabecalho de TX do ucode 928 (AC-PHY), campo a campo como o wl manda os
+ * frames de gerencia (dump do hnddma no R7000):
+ *   0x00     prefixo 02 00 00 00 00 00
+ *   0x06     MacTxControlLow 0x4880   0x08 MacTxControlHigh 0x0002
+ *   0x0a     chanspec (5 GHz, 20 MHz)  0x0c tamanho do cabecalho 802.11
+ *   0x0e     tamanho do frame + FCS    0x10 TxFrameID (cookie do b43)
+ *   0x18     PHY ctl word 0 0x0045     0x1e PLCP OFDM (taxa | len << 5)
+ *   0x24     0x0003                    0x26 taxa em 500 kbit/s
+ *   0x28     0x0020
+ * Por enquanto tudo a 6 Mbit/s. */
+static int b43_generate_txhdr_ac(struct b43_wldev *dev, u8 *h,
+				 struct sk_buff *skb_frag, u16 cookie)
+{
+	const struct ieee80211_hdr *wlhdr =
+		(const struct ieee80211_hdr *)skb_frag->data;
+	struct ieee80211_channel *ch = dev->wl->hw->conf.chandef.chan;
+	u16 flen = skb_frag->len + FCS_LEN;
+	u32 plcp = 0xb | ((u32)flen << 5);	/* 6 Mbit/s */
+
+	memset(h, 0, B43_TXHDR_AC_LEN);
+	h[0x00] = 0x02;
+	put_unaligned_le16(0x4880, h + 0x06);
+	put_unaligned_le16(0x0002, h + 0x08);
+	put_unaligned_le16(0xd000 |
+			   ieee80211_frequency_to_channel(ch->center_freq),
+			   h + 0x0a);
+	h[0x0c] = ieee80211_hdrlen(wlhdr->frame_control);
+	put_unaligned_le16(flen, h + 0x0e);
+	put_unaligned_le16(cookie, h + 0x10);
+	put_unaligned_le16(0x0045, h + 0x18);
+	h[0x1e] = plcp;
+	h[0x1f] = plcp >> 8;
+	h[0x20] = plcp >> 16;
+	put_unaligned_le16(0x0003, h + 0x24);
+	put_unaligned_le16(12, h + 0x26);
+	put_unaligned_le16(0x0020, h + 0x28);
+	return 0;
+}
+
 /* Generate a TX data header. */
 int b43_generate_txhdr(struct b43_wldev *dev,
 		       u8 *_txhdr,
@@ -248,6 +287,9 @@ int b43_generate_txhdr(struct b43_wldev *dev,
 	__le16 fctl = wlhdr->frame_control;
 	struct ieee80211_rate *fbrate;
 	u8 rate, rate_fb;
+
+	if (phy->type == B43_PHYTYPE_AC)
+		return b43_generate_txhdr_ac(dev, _txhdr, skb_frag, cookie);
 	int rate_ofdm, rate_fb_ofdm;
 	unsigned int plcp_fragment_len;
 	u32 mac_ctl = 0;
