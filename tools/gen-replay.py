@@ -12,6 +12,8 @@ import sys, struct
 
 src, upi, ush, s0, s1, out = sys.argv[1:7]
 s0, s1 = int(s0), int(s1)
+# opcional: ate s2 entram so as escritas na SHM (potencia por taxa etc.)
+s2 = int(sys.argv[7]) if len(sys.argv) > 7 else s1
 
 OP = {'phy_w': 1, 'phy_mod': 2, 'phy_and': 3, 'phy_or': 4,
       'rad_w': 5, 'rad_mod': 6, 'rad_or': 7, 'tbl_w': 8, 'delay': 9,
@@ -27,7 +29,9 @@ while i < len(lines):
     if len(f) < 4:
         continue
     seq, unit, t = int(f[0]), f[1], f[2]
-    if seq < s0 or seq > s1:
+    if seq < s0 or seq > s2:
+        continue
+    if seq > s1 and t != 'shm_w':
         continue
     if unit not in ('u' + upi, 'u' + ush, 'ue'):
         continue
