@@ -1,0 +1,65 @@
+--- a/shared/aiutils.c	2026-10-14 21:08:54.805139034 -0300
++++ b/shared/aiutils.c	2026-10-14 21:09:05.917424577 -0300
+@@ -32,6 +32,20 @@
+ 
+ #include <bcmdevs.h>
+ 
++/* build com wltrace: escritas no ioctrl dos cores (flags de reset do d11),
++ * para comparar com o b43.  So escritas que nao sejam so o FGC; ate 300. */
++#ifdef WLTRACE
++static int wlt_ioc_n;
++#define WLT_IOC(what, v) do { \
++	if (wlt_ioc_n++ < 300) \
++		printk(KERN_INFO "wltrace-ioc %s core %x/%u ioctrl %08x ioctrl_le %08x\n", \
++		       what, si_coreid(&sii->pub), si_coreidx(&sii->pub), (v), \
++		       R_REG(sii->osh, &ai->ioctrl)); \
++} while (0)
++#else
++#define WLT_IOC(what, v) do {} while (0)
++#endif
++
+ #define BCM47162_DMP() ((CHIPID(sih->chip) == BCM47162_CHIP_ID) && \
+ 	    (CHIPREV(sih->chiprev) == 0) && \
+ 	    (cores_info->coreid[sii->curidx] == MIPS74K_CORE_ID))
+@@ -1034,6 +1048,7 @@
+ 	OSL_DELAY(1);
+ 
+ 	W_REG(sii->osh, &ai->ioctrl, bits);
++	WLT_IOC("disable", bits);
+ 	dummy = R_REG(sii->osh, &ai->ioctrl);
+ 	BCM_REFERENCE(dummy);
+ 	if (ai_sec) {
+@@ -1083,6 +1098,7 @@
+ 	SPINWAIT((status = ai_check_bp_status(sii, ai, ai_sec)), 300);
+ 
+ 	W_REG(sii->osh, &ai->ioctrl, (bits | resetbits | SICF_FGC | SICF_CLOCK_EN));
++	WLT_IOC("reset_ini", (bits | resetbits | SICF_FGC | SICF_CLOCK_EN));
+ 	dummy = R_REG(sii->osh, &ai->ioctrl);
+ 	BCM_REFERENCE(dummy);
+ 	if (ai_sec) {
+@@ -1126,6 +1142,7 @@
+ #endif
+ 
+ 	W_REG(sii->osh, &ai->ioctrl, (bits | SICF_CLOCK_EN));
++	WLT_IOC("reset_fim", (bits | SICF_CLOCK_EN));
+ 	dummy = R_REG(sii->osh, &ai->ioctrl);
+ 	BCM_REFERENCE(dummy);
+ 	if (ai_sec) {
+@@ -1174,6 +1191,8 @@
+ 	if (mask || val) {
+ 		w = ((R_REG(sii->osh, &ai->ioctrl) & ~mask) | val);
+ 		W_REG(sii->osh, &ai->ioctrl, w);
++		if (mask != SICF_FGC)
++			WLT_IOC("cflags_wo", w);
+ 	}
+ }
+ 
+@@ -1214,6 +1233,8 @@
+ 	if (mask || val) {
+ 		w = ((R_REG(sii->osh, &ai->ioctrl) & ~mask) | val);
+ 		W_REG(sii->osh, &ai->ioctrl, w);
++		if (mask != SICF_FGC)
++			WLT_IOC("cflags", w);
+ 	}
+ 
+ 	return R_REG(sii->osh, &ai->ioctrl);
