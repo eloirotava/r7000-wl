@@ -38,6 +38,7 @@
 #include "phy_common.h"
 #include "phy_g.h"
 #include "phy_n.h"
+#include "phy_ac.h"
 #include "dma.h"
 #include "pio.h"
 #include "sysfs.h"
