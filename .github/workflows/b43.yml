@@ -28,7 +28,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: sdk
-          key: sdk-mac80211-${{ env.RELEASE }}-${{ hashFiles('.github/workflows/b43.yml', 'b43/patches/subsys/*.patch', 'tools/b43-patch.sh') }}
+          key: sdk-mac80211-v1-${{ env.RELEASE }}-${{ hashFiles('b43/patches/subsys/*.patch') }}
 
       - name: b43 incremental (cache)
         if: steps.sdk.outputs.cache-hit == 'true'
@@ -128,7 +128,7 @@ jobs:
       - name: Salva o SDK compilado
         if: always() && steps.sdk.outputs.cache-hit != 'true'
         run: |
-          find sdk/build_dir/target-*/linux-*/*/backports-* -name b43.ko | grep -q .
+          ls sdk/build_dir/target-*/linux-*/mac80211-regular/backports-*/drivers/net/wireless/broadcom/b43/main.o
           echo "OK_SAVE=1" >> $GITHUB_ENV
       - uses: actions/cache/save@v4
         if: always() && env.OK_SAVE == '1'
