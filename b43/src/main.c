@@ -1350,6 +1350,22 @@ static void handle_irq_transmit_status(struct b43_wldev *dev)
 			if (n++ < 16)
 				b43info(dev->wl, "txstatus %08x %08x %08x %08x\n",
 					v0, v1, v2, v3);
+			/* o status vem em pacotes; so o primeiro (0x2) traz o
+			 * TxFrameID.  Bits do 1o: 0x4 intermediario, 0x8 PM,
+			 * 0xf0 suppress, 0x7f00 tentativas, 0x8000 ACK */
+			if (!(v0 & 0x0002))
+				continue;
+			tmp = v0 >> 16;
+			memset(&stat, 0, sizeof(stat));
+			stat.cookie = (((tmp & 7) + 1) << 12) | (tmp >> 3);
+			stat.seq = v1 & 0xffff;
+			stat.frame_count = min_t(u32, (v0 >> 8) & 0x7f, 15);
+			stat.supp_reason = (v0 >> 4) & 0x7;
+			stat.pm_indicated = !!(v0 & 0x0008);
+			stat.intermediate = !!(v0 & 0x0004);
+			stat.acked = !!(v0 & 0x8000);
+			b43_handle_txstatus(dev, &stat);
+			continue;
 		}
 
 		stat.cookie = (v0 >> 16);

@@ -1,0 +1,1388 @@
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Linux version 6.12.112 (runner@runnervmmprz5) (arm-openwrt-linux-muslgnueabi-gcc (OpenWrt GCC 14.3.0 r0-58efa99) 14.3.0, GNU ld (GNU Binutils) 2.44) #0 SMP Fri Oct  9 22:38:59 2026
+[    0.000000] CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c5387d
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+[    0.000000] OF: fdt: Machine model: Netgear R7000
+[    0.000000] Memory policy: Data cache writealloc
+[    0.000000] Hit pending asynchronous external abort (FSR=0x00001c06) during first unmask, this is most likely caused by a firmware/bootloader bug.
+[    0.000000] Zone ranges:
+[    0.000000]   Normal   [mem 0x0000000000000000-0x0000000007ffffff]
+[    0.000000]   HighMem  [mem 0x0000000008000000-0x000000008fffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000000000000-0x0000000007ffffff]
+[    0.000000]   node   0: [mem 0x0000000088000000-0x000000008fffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000000000000-0x000000008fffffff]
+[    0.000000] OF: reserved mem: Reserved memory: No reserved-memory node in the DT
+[    0.000000] percpu: Embedded 12 pages/cpu s19276 r8192 d21684 u49152
+[    0.000000] pcpu-alloc: s19276 r8192 d21684 u49152 alloc=12*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 
+[    0.000000] Kernel command line: console=ttyS0,115200
+[    0.000000] Dentry cache hash table entries: 16384 (order: 4, 65536 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 8192 (order: 3, 32768 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 65536
+[    0.000000] mem auto-init: stack:off, heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
+[    0.000000] RCU Tasks Trace: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.000000] NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
+[    0.000000] L2C: DT/platform modifies aux control register: 0x0a130000 -> 0x3a530000
+[    0.000000] L2C-310 enabling early BRESP for Cortex-A9
+[    0.000000] L2C-310 full line of zeros enabled for Cortex-A9
+[    0.000000] L2C-310 ID prefetch enabled, offset 1 lines
+[    0.000000] L2C-310 dynamic clock gating enabled, standby mode enabled
+[    0.000000] L2C-310 cache controller enabled, 16 ways, 256 kB
+[    0.000000] L2C-310: CACHE_ID 0x410000c8, AUX_CTRL 0x7e530001
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+[    0.000003] sched_clock: 64 bits at 500MHz, resolution 2ns, wraps every 4398046511103ns
+[    0.000021] clocksource: arm_global_timer: mask: 0xffffffffffffffff max_cycles: 0xe6a171a037, max_idle_ns: 881590485102 ns
+[    0.000044] Switching to timer-based delay loop, resolution 2ns
+[    0.000334] Calibrating delay loop (skipped), value calculated using timer frequency.. 1000.00 BogoMIPS (lpj=5000000)
+[    0.000346] CPU: Testing write buffer coherency: ok
+[    0.000372] CPU0: Spectre v2: using BPIALL workaround
+[    0.000379] pid_max: default: 32768 minimum: 301
+[    0.006846] Mount-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.006860] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.009939] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+[    0.011199] Setting up static identity map for 0x100000 - 0x10003c
+[    0.011385] rcu: Hierarchical SRCU implementation.
+[    0.011392] rcu: 	Max phase no-delay instances is 1000.
+[    0.012001] smp: Bringing up secondary CPUs ...
+[    0.012757] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+[    0.012775] CPU1: Spectre v2: using BPIALL workaround
+[    0.012898] smp: Brought up 1 node, 2 CPUs
+[    0.012909] SMP: Total of 2 processors activated (2000.00 BogoMIPS).
+[    0.012917] CPU: WARNING: CPU(s) started in wrong/inconsistent modes (primary CPU mode 0x13)
+[    0.012921] CPU: This may indicate a broken bootloader or firmware.
+[    0.013346] Memory: 246676K/262144K available (7501K kernel code, 587K rwdata, 1832K rodata, 1024K init, 294K bss, 14748K reserved, 0K cma-reserved, 131072K highmem)
+[    0.016350] futex hash table entries: 512 (order: 3, 32768 bytes, linear)
+[    0.019730] pinctrl core: initialized pinctrl subsystem
+[    0.021235] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.021853] DMA: preallocated 256 KiB pool for atomic coherent allocations
+[    0.022626] thermal_sys: Registered thermal governor 'step_wise'
+[    0.034643] clocksource: Switched to clocksource arm_global_timer
+[    0.038529] NET: Registered PF_INET protocol family
+[    0.038702] IP idents hash table entries: 2048 (order: 2, 16384 bytes, linear)
+[    0.039181] tcp_listen_portaddr_hash hash table entries: 512 (order: 0, 4096 bytes, linear)
+[    0.039205] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.039220] TCP established hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.039236] TCP bind hash table entries: 1024 (order: 2, 16384 bytes, linear)
+[    0.039267] TCP: Hash tables configured (established 1024 bind 1024)
+[    0.039542] MPTCP token hash table entries: 256 (order: 0, 4096 bytes, linear)
+[    0.039759] UDP hash table entries: 256 (order: 1, 8192 bytes, linear)
+[    0.039787] UDP-Lite hash table entries: 256 (order: 1, 8192 bytes, linear)
+[    0.040320] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.040385] PCI: CLS 0 bytes, default 64
+[    0.042202] workingset: timestamp_bits=14 max_order=16 bucket_order=2
+[    0.043856] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.043866] jffs2: version 2.2 (NAND) (SUMMARY) (LZMA) (RTIME) (CMODE_PRIORITY) (c) 2001-2006 Red Hat, Inc.
+[    0.046222] bounce: pool size: 64 pages
+[    0.048158] Serial: 8250/16550 driver, 2 ports, IRQ sharing disabled
+[    0.048968] printk: legacy console [ttyS0] disabled
+[    0.049282] 18000300.serial: ttyS0 at MMIO 0x18000300 (irq = 26, base_baud = 7812500) is a 16550
+[    0.049339] printk: legacy console [ttyS0] enabled
+[    0.605523] bcm2835-rng 18004000.rng: hwrng registered
+[    0.612948] nand: device found, Manufacturer ID: 0xc2, Chip ID: 0xf1
+[    0.619377] nand: Macronix MX30LF1G18AC
+[    0.623229] nand: 128 MiB, SLC, erase size: 128 KiB, page size: 2048, OOB size: 64
+[    0.630886] iproc_nand 18028000.nand-controller: detected 128MiB total, 128KiB blocks, 2KiB pages, 16B OOB, 8-bit, BCH-8
+[    0.641865] Scanning device for bad blocks
+[    1.034666] random: crng init done
+[    1.423294] 13 bcm47xxpart partitions found on MTD device brcmnand.0
+[    1.429697] Creating 13 MTD partitions on "brcmnand.0":
+[    1.434949] 0x000000000000-0x000000080000 : "boot"
+[    1.440433] 0x000000080000-0x000000200000 : "nvram"
+[    1.446038] 0x000000200000-0x000002200000 : "firmware"
+[    1.452578] 2 trx partitions found on MTD device firmware
+[    1.458040] Creating 2 MTD partitions on "firmware":
+[    1.463029] 0x00000000001c-0x000000400000 : "linux"
+[    1.467940] mtd: partition "linux" doesn't start on an erase/write block boundary -- force read-only
+[    1.477758] 0x000000400000-0x000002000000 : "ubi"
+[    1.483178] 0x000002200000-0x000002240000 : "board_data"
+[    1.489226] 0x000002240000-0x000002280000 : "POT"
+[    1.494606] 0x000002280000-0x0000023c0000 : "POT"
+[    1.500055] 0x0000023c0000-0x000002400000 : "ML"
+[    1.505399] 0x000002400000-0x000002440000 : "ML"
+[    1.510662] 0x000002440000-0x000002480000 : "ML"
+[    1.516121] 0x000002480000-0x0000024c0000 : "ML"
+[    1.521408] 0x0000024c0000-0x000002500000 : "ML"
+[    1.526719] 0x000002500000-0x000002540000 : "ML"
+[    1.531976] 0x000002540000-0x000008000000 : "data"
+[    1.541999] bcm_iproc 18029200.spi: using bspi-mspi mode
+[    1.549955] iproc-mdio 18003000.mdio: Broadcom iProc MDIO bus registered
+[    1.557999] b53-srab-switch 18007000.ethernet-switch: found switch: BCM53012, rev 5
+[    1.566156] bgmac_bcma: Broadcom 47xx GBit MAC driver loaded
+[    1.572519] bcma-host-soc 18000000.axi: bus0: Found chip with id 53010, rev 0x00 and package 0x00
+[    1.581606] bcma-host-soc 18000000.axi: bus0: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2A, class 0x0)
+[    1.592310] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.592331] bcma-host-soc 18000000.axi: bus0: Core 1 found: Chipcommon B (manuf 0x4BF, id 0x50B, rev 0x01, class 0x0)
+[    1.603154] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.603168] bcma-host-soc 18000000.axi: bus0: Core 2 found: DMA (manuf 0x4BF, id 0x502, rev 0x01, class 0x0)
+[    1.613257] bcma-host-soc 18000000.axi: bus0: Core 3 found: GBit MAC (manuf 0x4BF, id 0x82D, rev 0x05, class 0x0)
+[    1.623753] bcma-host-soc 18000000.axi: bus0: Core 4 found: GBit MAC (manuf 0x4BF, id 0x82D, rev 0x05, class 0x0)
+[    1.634258] bcma-host-soc 18000000.axi: bus0: Core 5 found: GBit MAC (manuf 0x4BF, id 0x82D, rev 0x05, class 0x0)
+[    1.644778] bcma-host-soc 18000000.axi: bus0: Core 6 found: GBit MAC (manuf 0x4BF, id 0x82D, rev 0x05, class 0x0)
+[    1.655186] bcma-host-soc 18000000.axi: bus0: Core 7 found: PCIe Gen 2 (manuf 0x4BF, id 0x501, rev 0x01, class 0x0)
+[    1.665791] bcma-host-soc 18000000.axi: bus0: Core 8 found: PCIe Gen 2 (manuf 0x4BF, id 0x501, rev 0x01, class 0x0)
+[    1.676407] bcma-host-soc 18000000.axi: bus0: Core 9 found: PCIe Gen 2 (manuf 0x4BF, id 0x501, rev 0x01, class 0x0)
+[    1.687054] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.687068] bcma-host-soc 18000000.axi: bus0: Core 10 found: ARM Cortex A9 core (ihost) (manuf 0x4BF, id 0x510, rev 0x01, class 0x0)
+[    1.699176] bcma-host-soc 18000000.axi: bus0: Core 11 found: USB 2.0 (manuf 0x4BF, id 0x504, rev 0x01, class 0x0)
+[    1.709627] bcma-host-soc 18000000.axi: bus0: Core 12 found: USB 3.0 (manuf 0x4BF, id 0x505, rev 0x01, class 0x0)
+[    1.720092] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.720106] bcma-host-soc 18000000.axi: bus0: Core 13 found: SDIO3 (manuf 0x4BF, id 0x503, rev 0x01, class 0x0)
+[    1.730392] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.730405] bcma-host-soc 18000000.axi: bus0: Core 14 found: I2S (manuf 0x4BF, id 0x834, rev 0x03, class 0x0)
+[    1.740519] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.740531] bcma-host-soc 18000000.axi: bus0: Core 15 found: ARM Cortex A9 JTAG (manuf 0x4BF, id 0x506, rev 0x01, class 0x0)
+[    1.751957] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.751970] bcma-host-soc 18000000.axi: bus0: Core 16 found: Denali DDR2/DDR3 memory controller (manuf 0x4BF, id 0x507, rev 0x01, class 0x0)
+[    1.764789] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.764802] bcma-host-soc 18000000.axi: bus0: Core 17 found: ROM (manuf 0x4BF, id 0x508, rev 0x01, class 0x0)
+[    1.774953] bcma-host-soc 18000000.axi: bus0: Core 18 found: NAND flash controller (manuf 0x4BF, id 0x509, rev 0x01, class 0x0)
+[    1.786635] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.786648] bcma-host-soc 18000000.axi: bus0: Core 19 found: SPI flash controller (manuf 0x4BF, id 0x50A, rev 0x01, class 0x0)
+[    1.798114] bcma-host-soc 18000000.axi: bus0: Flash type not supported
+[    1.825732] bcma-host-soc 18000000.axi: bus0: Using SPROM revision 11 provided by platform.
+[    1.826010] bgmac_bcma bcma0:3: Found PHY addr: 30 (NOREGS)
+[    1.831617] bgmac_bcma bcma0:3: Support for Roboswitch not implemented
+[    1.839367] b53-srab-switch b53-srab-switch: error -EINVAL: invalid resource (null)
+[    1.847132] b53-srab-switch b53-srab-switch: probe with driver b53-srab-switch failed with error -22
+[    1.856970] bgmac_bcma bcma0:4: Found PHY addr: 0
+[    1.861708] bgmac_bcma bcma0:4: Support for Roboswitch not implemented
+[    1.868299] bgmac_bcma bcma0:4: Invalid MAC addr: 00:00:00:00:00:00
+[    1.874601] bgmac_bcma bcma0:4: Using random MAC: fa:45:86:bc:d9:8c
+[    1.882515] bgmac_bcma bcma0:5: Found PHY addr: 0
+[    1.887334] bgmac_bcma bcma0:5: Support for Roboswitch not implemented
+[    1.893902] bgmac_bcma bcma0:5: Invalid MAC addr: 00:00:00:00:00:00
+[    1.900233] bgmac_bcma bcma0:5: Using random MAC: 36:9b:cb:97:5b:ee
+[    1.908186] bgmac_bcma bcma0:6: Unsupported core_unit 3
+[    1.913442] bgmac_bcma bcma0:6: probe with driver bgmac_bcma failed with error -524
+[    1.921353] pcie_iproc_bcma bcma0:7: host bridge /axi@18000000/pcie@12000 ranges:
+[    1.928923] pcie_iproc_bcma bcma0:7:   No bus range found for /axi@18000000/pcie@12000, using [bus 00-ff]
+[    1.938552] OF: /axi@18000000/pcie@12000: Missing device_type
+[    1.944324] pcie_iproc_bcma bcma0:7: non-prefetchable memory resource required
+[    2.054641] pcie_iproc_bcma bcma0:7: link: UP
+[    2.059227] pcie_iproc_bcma bcma0:7: PCI host bridge to bus 0000:00
+[    2.065550] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    2.071053] pci_bus 0000:00: root bus resource [mem 0x08000000-0x0fffffff]
+[    2.077983] pci_bus 0000:00: 2-byte config write to 0000:00:00.0 offset 0xc8 may corrupt adjacent RW1C bits
+[    2.087812] pci 0000:00:00.0: [14e4:8012] type 01 class 0x060400 PCIe Root Port
+[    2.095175] pci 0000:00:00.0: PCI bridge to [bus 00]
+[    2.100163] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+[    2.106990] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+[    2.114810] pci 0000:00:00.0: PME# supported from D0 D3hot D3cold
+[    2.121765] PCI: bus0: Fast back to back transfers disabled
+[    2.127396] pci 0000:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
+[    2.135574] pci 0000:01:00.0: [14e4:4360] type 00 class 0x028000 PCIe Endpoint
+[    2.142830] pci_bus 0000:01: 2-byte config write to 0000:01:00.0 offset 0x4 may corrupt adjacent RW1C bits
+[    2.152554] pci 0000:01:00.0: BAR 0 [mem 0x00000000-0x00007fff 64bit]
+[    2.159158] pci 0000:01:00.0: supports D1 D2
+[    2.163646] PCI: bus1: Fast back to back transfers disabled
+[    2.169274] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
+[    2.175956] pci 0000:00:00.0: bridge window [mem 0x08000000-0x080fffff]: assigned
+[    2.183468] pci 0000:01:00.0: BAR 0 [mem 0x08000000-0x08007fff 64bit]: assigned
+[    2.190826] pci 0000:00:00.0: PCI bridge to [bus 01]
+[    2.195818] pci 0000:00:00.0:   bridge window [mem 0x08000000-0x080fffff]
+[    2.202634] pci_bus 0000:00: resource 4 [mem 0x08000000-0x0fffffff]
+[    2.208934] pci_bus 0000:01: resource 1 [mem 0x08000000-0x080fffff]
+[    2.215348] pci 0000:00:00.0: 4.000 Gb/s available PCIe bandwidth (5.0 GT/s PCIe x1 link)
+[    2.223703] pcie_iproc_bcma bcma0:8: host bridge /axi@18000000/pcie@13000 ranges:
+[    2.231256] pcie_iproc_bcma bcma0:8:   No bus range found for /axi@18000000/pcie@13000, using [bus 00-ff]
+[    2.240900] pcie_iproc_bcma bcma0:8: non-prefetchable memory resource required
+[    2.354642] pcie_iproc_bcma bcma0:8: link: UP
+[    2.359145] pcie_iproc_bcma bcma0:8: PCI host bridge to bus 0001:00
+[    2.365468] pci_bus 0001:00: root bus resource [bus 00-ff]
+[    2.370976] pci_bus 0001:00: root bus resource [mem 0x40000000-0x47ffffff]
+[    2.377901] pci_bus 0001:00: 2-byte config write to 0001:00:00.0 offset 0xc8 may corrupt adjacent RW1C bits
+[    2.387710] pci 0001:00:00.0: [14e4:8012] type 01 class 0x060400 PCIe Root Port
+[    2.395073] pci 0001:00:00.0: PCI bridge to [bus 00]
+[    2.400059] pci 0001:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+[    2.406884] pci 0001:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+[    2.414705] pci 0001:00:00.0: PME# supported from D0 D3hot D3cold
+[    2.421654] PCI: bus0: Fast back to back transfers disabled
+[    2.427277] pci 0001:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
+[    2.435455] pci 0001:01:00.0: [14e4:4360] type 00 class 0x028000 PCIe Endpoint
+[    2.442707] pci_bus 0001:01: 2-byte config write to 0001:01:00.0 offset 0x4 may corrupt adjacent RW1C bits
+[    2.452432] pci 0001:01:00.0: BAR 0 [mem 0x00000000-0x00007fff 64bit]
+[    2.459037] pci 0001:01:00.0: supports D1 D2
+[    2.463523] PCI: bus1: Fast back to back transfers disabled
+[    2.469144] pci_bus 0001:01: busn_res: [bus 01-ff] end is updated to 01
+[    2.475825] pci 0001:00:00.0: bridge window [mem 0x40000000-0x400fffff]: assigned
+[    2.483339] pci 0001:01:00.0: BAR 0 [mem 0x40000000-0x40007fff 64bit]: assigned
+[    2.490695] pci 0001:00:00.0: PCI bridge to [bus 01]
+[    2.495690] pci 0001:00:00.0:   bridge window [mem 0x40000000-0x400fffff]
+[    2.502505] pci_bus 0001:00: resource 4 [mem 0x40000000-0x47ffffff]
+[    2.508803] pci_bus 0001:01: resource 1 [mem 0x40000000-0x400fffff]
+[    2.515219] pci 0001:00:00.0: 4.000 Gb/s available PCIe bandwidth (5.0 GT/s PCIe x1 link)
+[    2.523575] pcie_iproc_bcma bcma0:9: host bridge /axi@18000000/pcie@14000 ranges:
+[    2.531133] pcie_iproc_bcma bcma0:9:   No bus range found for /axi@18000000/pcie@14000, using [bus 00-ff]
+[    2.540766] pcie_iproc_bcma bcma0:9: non-prefetchable memory resource required
+[    2.654645] pcie_iproc_bcma bcma0:9: PHY or data link is INACTIVE!
+[    2.660854] pcie_iproc_bcma bcma0:9: no PCIe EP device detected
+[    2.667261] gpio gpiochip0: Static allocation of GPIO base is deprecated, use dynamic allocation.
+[    2.676826] bcm47xx-wdt bcm47xx-wdt.0: BCM47xx Watchdog Timer enabled (30 seconds, Software Timer)
+[    2.685922] bcma-host-soc 18000000.axi: bus0: Bus registered
+[    2.692111] pci 0000:00:00.0: enabling device (0140 -> 0142)
+[    2.697869] bcma-pci-bridge 0000:01:00.0: enabling device (0140 -> 0142)
+[    2.704655] bcma-pci-bridge 0000:01:00.0: bus1: Found chip with id 0x4360, rev 0x03 and package 0x01
+[    2.713846] bcma-pci-bridge 0000:01:00.0: bus1: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2B, class 0x0)
+[    2.724532] bcma-pci-bridge 0000:01:00.0: bus1: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x2A, class 0x0)
+[    2.735298] bcma-pci-bridge 0000:01:00.0: bus1: Core 2 found: ARM CR4 (manuf 0x4BF, id 0x83E, rev 0x02, class 0x0)
+[    2.745715] bcma-pci-bridge 0000:01:00.0: bus1: Core 3 found: PCIe Gen2 (manuf 0x4BF, id 0x83C, rev 0x01, class 0x0)
+[    2.756298] bcma-pci-bridge 0000:01:00.0: bus1: Core 4 found: USB 2.0 Device (manuf 0x4BF, id 0x81A, rev 0x11, class 0x0)
+[    2.767347] bcma-pci-bridge 0000:01:00.0: bus1: Found rev 17 PMU (capabilities 0x10A22B11)
+[    2.767413] bcma-pci-bridge 0000:01:00.0: bus1: SPROM offset 0x800
+[    2.798850] bcma-pci-bridge 0000:01:00.0: bus1: Invalid SPROM read from the PCIe card, trying to use fallback SPROM
+[    2.826635] bcma-pci-bridge 0000:01:00.0: bus1: Using SPROM revision 11 provided by platform.
+[    2.826658] bcma-pci-bridge 0000:01:00.0: bus1: PMU resource config unknown or not needed for device 0x4360
+[    2.829190] bcma-pci-bridge 0000:01:00.0: bus1: Workarounds unknown or not needed for device 0x4360
+[    2.829217] bcma-pci-bridge 0000:01:00.0: bus1: Switched to core: 0x83C
+[    2.829577] bcma-pci-bridge 0000:01:00.0: bus1: Bus registered
+[    2.835685] pci 0001:00:00.0: enabling device (0140 -> 0142)
+[    2.841382] bcma-pci-bridge 0001:01:00.0: enabling device (0140 -> 0142)
+[    2.848200] bcma-pci-bridge 0001:01:00.0: bus2: Found chip with id 0x4360, rev 0x03 and package 0x01
+[    2.857419] bcma-pci-bridge 0001:01:00.0: bus2: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2B, class 0x0)
+[    2.868088] bcma-pci-bridge 0001:01:00.0: bus2: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x2A, class 0x0)
+[    2.878851] bcma-pci-bridge 0001:01:00.0: bus2: Core 2 found: ARM CR4 (manuf 0x4BF, id 0x83E, rev 0x02, class 0x0)
+[    2.889260] bcma-pci-bridge 0001:01:00.0: bus2: Core 3 found: PCIe Gen2 (manuf 0x4BF, id 0x83C, rev 0x01, class 0x0)
+[    2.899842] bcma-pci-bridge 0001:01:00.0: bus2: Core 4 found: USB 2.0 Device (manuf 0x4BF, id 0x81A, rev 0x11, class 0x0)
+[    2.910893] bcma-pci-bridge 0001:01:00.0: bus2: Found rev 17 PMU (capabilities 0x10A22B11)
+[    2.910957] bcma-pci-bridge 0001:01:00.0: bus2: SPROM offset 0x800
+[    2.942385] bcma-pci-bridge 0001:01:00.0: bus2: Invalid SPROM read from the PCIe card, trying to use fallback SPROM
+[    2.967305] bcma-pci-bridge 0001:01:00.0: bus2: Using SPROM revision 11 provided by platform.
+[    2.967328] bcma-pci-bridge 0001:01:00.0: bus2: PMU resource config unknown or not needed for device 0x4360
+[    2.969856] bcma-pci-bridge 0001:01:00.0: bus2: Workarounds unknown or not needed for device 0x4360
+[    2.969874] bcma-pci-bridge 0001:01:00.0: bus2: Switched to core: 0x83C
+[    2.970237] bcma-pci-bridge 0001:01:00.0: bus2: Bus registered
+[    2.976663] NET: Registered PF_INET6 protocol family
+[    2.982997] Segment Routing with IPv6
+[    2.986792] In-situ OAM (IOAM) with IPv6
+[    2.990818] NET: Registered PF_PACKET protocol family
+[    2.996130] 8021q: 802.1Q VLAN Support v1.8
+[    3.000402] Registering SWP/SWPB emulation handler
+[    3.021667] b53-srab-switch 18007000.ethernet-switch: found switch: BCM53012, rev 5
+[    3.107745] b53-srab-switch 18007000.ethernet-switch: OF node /ethernet-switch@18007000/ports/port@5 of CPU port 5 lacks the required "phy-mode" property
+[    3.121605] b53-srab-switch 18007000.ethernet-switch: OF node /ethernet-switch@18007000/ports/port@5 of CPU port 5 lacks the required "phy-handle", "fixed-link" or "managed" properties
+[    3.138153] b53-srab-switch 18007000.ethernet-switch: Skipping phylink registration for CPU port 5
+[    3.148576] b53-srab-switch 18007000.ethernet-switch wan (uninitialized): PHY [dsa-0.0:00] driver [Generic PHY] (irq=POLL)
+[    3.161941] b53-srab-switch 18007000.ethernet-switch lan1 (uninitialized): PHY [dsa-0.0:01] driver [Generic PHY] (irq=POLL)
+[    3.175426] b53-srab-switch 18007000.ethernet-switch lan2 (uninitialized): PHY [dsa-0.0:02] driver [Generic PHY] (irq=POLL)
+[    3.188916] b53-srab-switch 18007000.ethernet-switch lan3 (uninitialized): PHY [dsa-0.0:03] driver [Generic PHY] (irq=POLL)
+[    3.202395] b53-srab-switch 18007000.ethernet-switch lan4 (uninitialized): PHY [dsa-0.0:04] driver [Generic PHY] (irq=POLL)
+[    3.214533] bgmac_bcma bcma0:3 eth0: entered promiscuous mode
+[    3.220430] DSA: tree 0 setup
+[    3.224023] UBI: auto-attach mtd4
+[    3.227399] ubi0: attaching mtd4
+[    3.376447] ubi0: scanning is finished
+[    3.435378] ubi0: attached mtd4 (name "ubi", size 28 MiB)
+[    3.440828] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: 126976 bytes
+[    3.447764] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page size 2048
+[    3.454578] ubi0: VID header offset: 2048 (aligned 2048), data offset: 4096
+[    3.461570] ubi0: good PEBs: 224, bad PEBs: 0, corrupted PEBs: 0
+[    3.467599] ubi0: user volume: 2, internal volumes: 1, max. volumes count: 128
+[    3.474848] ubi0: max/mean erase counter: 24/15, WL threshold: 4096, image sequence number: 593528849
+[    3.484093] ubi0: available PEBs: 0, total reserved PEBs: 224, PEBs reserved for bad PEB handling: 20
+[    3.493365] ubi0: background thread "ubi_bgt0d" started, PID 471
+[    3.494281] block ubiblock0_0: created from ubi0:0(rootfs)
+[    3.504998] ubiblock: device ubiblock0_0 (rootfs) set to be root filesystem
+[    3.512182] clk: Disabling unused clocks
+[    3.520372] VFS: Mounted root (squashfs filesystem) readonly on device 254:0.
+[    3.528528] Freeing unused kernel image (initmem) memory: 1024K
+[    3.534734] Run /sbin/init as init process
+[    3.538843]   with arguments:
+[    3.538848]     /sbin/init
+[    3.538854]   with environment:
+[    3.538858]     HOME=/
+[    3.538863]     TERM=linux
+[    3.865236] init: Console is alive
+[    3.868886] init: - watchdog -
+[    4.328169] kmodloader: loading kernel modules from /etc/modules-boot.d/*
+[    4.366688] bcma_hcd bcma0:12: error -EBUSY: error obtaining VCC GPIO
+[    4.373168] bcma_hcd bcma0:12: probe with driver bcma_hcd failed with error -16
+[    4.390647] usbcore: registered new interface driver usbfs
+[    4.396331] usbcore: registered new interface driver hub
+[    4.401741] usbcore: registered new device driver usb
+[    4.407919] gpio_button_hotplug: loading out-of-tree module taints kernel.
+[    4.425658] ehci-platform 18021000.usb: EHCI Host Controller
+[    4.427587] bcma-host-soc 18000000.axi: Failed to create device link (0x180) with mdio_mux-0.0:10
+[    4.431425] ehci-platform 18021000.usb: new USB bus registered, assigned bus number 1
+[    4.448344] ehci-platform 18021000.usb: irq 41, io mem 0x18021000
+[    4.466248] ehci-platform 18021000.usb: USB 2.0 started, EHCI 1.00
+[    4.473139] hub 1-0:1.0: USB hub found
+[    4.477046] hub 1-0:1.0: 2 ports detected
+[    4.485297] ohci-platform 18022000.usb: Generic Platform OHCI controller
+[    4.492080] ohci-platform 18022000.usb: new USB bus registered, assigned bus number 2
+[    4.500069] ohci-platform 18022000.usb: irq 41, io mem 0x18022000
+[    4.569326] hub 2-0:1.0: USB hub found
+[    4.573220] hub 2-0:1.0: 2 ports detected
+[    4.635751] kmodloader: done loading kernel modules from /etc/modules-boot.d/*
+[    4.646220] init: - preinit -
+[    5.225968] mtdblock: MTD device 'nvram' is NAND, please consider using UBI block devices instead.
+[    5.508312] mtdblock: MTD device 'nvram' is NAND, please consider using UBI block devices instead.
+[    5.955504] b53-srab-switch 18007000.ethernet-switch lan1: configuring for phy/gmii link mode
+[    5.964155] bgmac_bcma bcma0:3 eth0: Link is Up - 1Gbps/Full - flow control off
+[    5.975955] b53-srab-switch 18007000.ethernet-switch lan1: Link is Up - 100Mbps/Full - flow control rx/tx
+[   10.296248] ubi1: attaching mtd14
+[   10.776785] ubi1: scanning is finished
+[   10.825485] ubi1: attached mtd14 (name "data", size 90 MiB)
+[   10.831098] ubi1: PEB size: 131072 bytes (128 KiB), LEB size: 126976 bytes
+[   10.838011] ubi1: min./max. I/O unit sizes: 2048/2048, sub-page size 2048
+[   10.844830] ubi1: VID header offset: 2048 (aligned 2048), data offset: 4096
+[   10.851812] ubi1: good PEBs: 726, bad PEBs: 0, corrupted PEBs: 0
+[   10.857841] ubi1: user volume: 1, internal volumes: 1, max. volumes count: 128
+[   10.865091] ubi1: max/mean erase counter: 22/11, WL threshold: 4096, image sequence number: 1540480622
+[   10.874425] ubi1: available PEBs: 0, total reserved PEBs: 726, PEBs reserved for bad PEB handling: 20
+[   10.883690] ubi1: background thread "ubi_bgt1d" started, PID 647
+[   11.001050] mount_root: loading kmods from internal overlay
+[   11.016561] kmodloader: loading kernel modules from //etc/modules-boot.d/*
+[   11.024950] kmodloader: done loading kernel modules from //etc/modules-boot.d/*
+[   11.141156] block: attempting to load /tmp/overlay/upper/etc/config/fstab
+[   11.149899] block: unable to load configuration (fstab: Entry not found)
+[   11.156849] block: attempting to load /tmp/overlay/etc/config/fstab
+[   11.163295] block: unable to load configuration (fstab: Entry not found)
+[   11.170157] block: attempting to load /etc/config/fstab
+[   11.177687] block: unable to load configuration (fstab: Entry not found)
+[   11.184535] block: no usable configuration
+[   11.192140] UBIFS (ubi0:1): Mounting in unauthenticated mode
+[   11.198058] UBIFS (ubi0:1): background thread "ubifs_bgt0_1" started, PID 656
+[   11.304713] UBIFS (ubi0:1): UBIFS: mounted UBI device 0, volume 1, name "rootfs_data"
+[   11.312595] UBIFS (ubi0:1): LEB size: 126976 bytes (124 KiB), min./max. I/O unit sizes: 2048 bytes/2048 bytes
+[   11.322555] UBIFS (ubi0:1): FS size: 16379904 bytes (15 MiB, 129 LEBs), max 139 LEBs, journal size 1015809 bytes (0 MiB, 6 LEBs)
+[   11.334162] UBIFS (ubi0:1): reserved for root: 773663 bytes (755 KiB)
+[   11.340626] UBIFS (ubi0:1): media format: w5/r0 (latest is w5/r0), UUID 5C8A60CB-CEB6-4950-8799-3269D607A40F, small LPT model
+[   11.353282] block: attempting to load /tmp/ubifs_cfg/upper/etc/config/fstab
+[   11.368028] UBIFS (ubi1:0): Mounting in unauthenticated mode
+[   11.373854] UBIFS (ubi1:0): background thread "ubifs_bgt1_0" started, PID 658
+[   11.422469] UBIFS (ubi1:0): recovery needed
+[   11.532706] UBIFS (ubi1:0): recovery completed
+[   11.537292] UBIFS (ubi1:0): UBIFS: mounted UBI device 1, volume 0, name "extroot"
+[   11.544820] UBIFS (ubi1:0): LEB size: 126976 bytes (124 KiB), min./max. I/O unit sizes: 2048 bytes/2048 bytes
+[   11.554771] UBIFS (ubi1:0): FS size: 87740416 bytes (83 MiB, 691 LEBs), max 702 LEBs, journal size 4444160 bytes (4 MiB, 35 LEBs)
+[   11.566461] UBIFS (ubi1:0): reserved for root: 4144196 bytes (4047 KiB)
+[   11.573095] UBIFS (ubi1:0): media format: w5/r0 (latest is w5/r0), UUID B95881FE-E8F0-48F2-9E45-068F357382D6, small LPT model
+[   11.589619] UBIFS (ubi0:1): un-mount UBI device 0
+[   11.594368] UBIFS (ubi0:1): background thread "ubifs_bgt0_1" stops
+[   11.620235] mount_root: switched to extroot
+[   11.630379] urandom-seed: Seeding with /etc/urandom.seed
+[   11.712416] b53-srab-switch 18007000.ethernet-switch lan1: Link is Down
+[   11.729364] procd: - early -
+[   11.732399] procd: - watchdog -
+[   12.298259] procd: - watchdog -
+[   12.303417] procd: - ubus -
+[   12.461618] procd: - init -
+[   13.377324] kmodloader: loading kernel modules from /etc/modules.d/*
+[   13.488410] PPP generic driver version 2.4.2
+[   13.494719] NET: Registered PF_PPPOX protocol family
+[   13.503364] wireguard: WireGuard 1.0.0 loaded. See www.wireguard.com for information.
+[   13.511270] wireguard: Copyright (C) 2015-2019 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+[   13.512975] urngd: v1.0.2 started.
+[   13.526692] kmodloader: done loading kernel modules from /etc/modules.d/*
+[   17.510770] wl: module license 'Proprietary' taints kernel.
+[   17.516420] Disabling lock debugging due to kernel taint
+[   17.521752] wl: module license taints kernel.
+[   17.547837] wltrace: buffer de 524288 registros
+[   17.552596] wl 0000:01:00.0: wl0: dominio PCI 0, slot 0
+[   17.603523] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   17.610901] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   17.618258] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   17.625356] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   17.632432] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   17.640556] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   17.647927] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   17.655281] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   17.662356] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   17.669437] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   17.801337] wltrace-ioc disable core 812/1 ioctrl 00000000 ioctrl_le 00000000
+[   17.912692] wl 0000:01:00.0 wl0: Broadcom BCM4360 802.11 Wireless Controller 7.14.164.18 (r692288)
+[   17.922061] wl 0001:01:00.0: wl1: dominio PCI 1, slot 0
+[   17.974224] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   17.981623] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   17.988999] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   17.996147] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   18.003250] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   18.011464] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   18.018890] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   18.026302] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   18.033414] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   18.040579] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   18.151880] wltrace-ioc disable core 812/1 ioctrl 00000000 ioctrl_le 00000000
+[   18.263406] wl 0001:01:00.0 wl1: Broadcom BCM4360 802.11 Wireless Controller 7.14.164.18 (r692288)
+[   19.997016] bgmac_bcma bcma0:3 eth0: Link is Up - 1Gbps/Full - flow control off
+[   20.017911] b53-srab-switch 18007000.ethernet-switch lan1: configuring for phy/gmii link mode
+[   20.045444] br-lan: port 1(lan1) entered blocking state
+[   20.050730] br-lan: port 1(lan1) entered disabled state
+[   20.056100] b53-srab-switch 18007000.ethernet-switch lan1: entered allmulticast mode
+[   20.063887] bgmac_bcma bcma0:3 eth0: entered allmulticast mode
+[   20.070195] b53-srab-switch 18007000.ethernet-switch lan1: entered promiscuous mode
+[   20.095675] b53-srab-switch 18007000.ethernet-switch lan2: configuring for phy/gmii link mode
+[   20.115475] br-lan: port 2(lan2) entered blocking state
+[   20.120777] br-lan: port 2(lan2) entered disabled state
+[   20.126194] b53-srab-switch 18007000.ethernet-switch lan2: entered allmulticast mode
+[   20.134346] b53-srab-switch 18007000.ethernet-switch lan2: entered promiscuous mode
+[   20.146953] b53-srab-switch 18007000.ethernet-switch lan3: configuring for phy/gmii link mode
+[   20.157550] br-lan: port 3(lan3) entered blocking state
+[   20.162827] br-lan: port 3(lan3) entered disabled state
+[   20.168171] b53-srab-switch 18007000.ethernet-switch lan3: entered allmulticast mode
+[   20.176472] b53-srab-switch 18007000.ethernet-switch lan3: entered promiscuous mode
+[   20.190793] b53-srab-switch 18007000.ethernet-switch lan4: configuring for phy/gmii link mode
+[   20.201525] br-lan: port 4(lan4) entered blocking state
+[   20.206895] br-lan: port 4(lan4) entered disabled state
+[   20.212226] b53-srab-switch 18007000.ethernet-switch lan4: entered allmulticast mode
+[   20.221294] b53-srab-switch 18007000.ethernet-switch lan4: entered promiscuous mode
+[   20.283105] b53-srab-switch 18007000.ethernet-switch wan: configuring for phy/gmii link mode
+[   20.430940] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   20.438380] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   20.445790] wltrace-ioc disable core 812/1 ioctrl 00000000 ioctrl_le 00000000
+[   20.462124] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   20.469597] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   20.477034] wltrace-ioc disable core 812/1 ioctrl 00000000 ioctrl_le 00000000
+[   20.484284] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   20.491692] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   20.499091] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   20.506221] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   20.513312] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   20.520529] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   20.527688] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   20.534826] wltrace-ioc cflags core 812/1 ioctrl 00000141 ioctrl_le 00000141
+[   20.541943] wltrace-ioc cflags core 812/1 ioctrl 00000145 ioctrl_le 00000145
+[   20.549161] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   20.556585] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   20.563945] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   20.571077] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   20.578211] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   20.585396] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   20.592484] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   20.599599] wltrace-ioc cflags core 812/1 ioctrl 00000141 ioctrl_le 00000141
+[   20.606717] wltrace-ioc cflags core 812/1 ioctrl 00000145 ioctrl_le 00000145
+[   20.613838] wltrace-ioc cflags core 812/1 ioctrl 00002145 ioctrl_le 00002145
+[   20.625841] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.638231] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.650629] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.663030] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.675419] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.687795] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.700166] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.712560] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.724961] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.737388] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.749793] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.762199] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.774601] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.787005] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.799420] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.811836] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.824230] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.836627] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.849015] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.861390] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.873764] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.886155] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.898551] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.910948] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.923352] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.935752] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.948166] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.960562] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.972956] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.985319] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.997697] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.010075] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.022450] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.034813] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.047223] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.059626] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.072018] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.084406] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.096816] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.109233] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.121636] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.134000] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.146406] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.158797] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.171190] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.183577] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.195981] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.208398] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.220810] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.233221] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.245618] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.258015] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.270436] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.282833] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.295215] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.307630] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.320033] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.332420] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.344805] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.357205] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.369606] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.382026] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.394450] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.406856] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.419254] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.431642] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.444043] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.456449] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.468859] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.481241] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.493641] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.506035] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.518436] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.530835] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.543244] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.555634] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.568033] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.580433] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.592862] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.605271] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.617689] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.630097] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.642505] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.654881] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.667287] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.679687] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.692079] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.704471] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.716864] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.729267] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.741672] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.754079] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.766475] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.778882] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.791298] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.803706] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.816117] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.828530] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.840933] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.853343] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.865746] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.878151] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.890543] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.902948] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.915346] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.927755] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.940138] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.952533] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.964925] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.977302] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.989697] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.002102] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.014508] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.026905] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.039301] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.051692] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.064085] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.076464] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.088857] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.101243] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.121859] wltrace-ioc cflags core 812/1 ioctrl 00002155 ioctrl_le 00002155
+[   22.129024] wltrace-dma wl0: ddtable tx pa 00000000:02258000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   22.138957] wltrace-dma wl0: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:02258000
+[   22.148638] wltrace-dma wl0: ddtable tx pa 00000000:0220c000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   22.158576] wltrace-dma wl0: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:0220c000
+[   22.168285] wltrace-dma wl0: ddtable tx pa 00000000:022b0000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   22.178233] wltrace-dma wl0: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:022b0000
+[   22.187935] wltrace-dma wl0: ddtable tx pa 00000000:02280000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   22.197878] wltrace-dma wl0: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:02280000
+[   22.207577] wltrace-dma wl0: ddtable tx pa 00000000:02288000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   22.217529] wltrace-dma wl0: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:02288000
+[   22.227239] wltrace-dma wl0: ddtable rx pa 00000000:02268000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   22.237181] wltrace-dma wl0: rxenable control 00500851 (rxoffset 40 bl 4 pc 2 pt 0 flags 0) le 00500851
+[   22.257827] wltrace-ioc cflags core 812/1 ioctrl 00002155 ioctrl_le 00002155
+[   22.281118] b53-srab-switch 18007000.ethernet-switch lan1: Link is Up - 100Mbps/Full - flow control rx/tx
+[   22.291461] br-lan: port 1(lan1) entered blocking state
+[   22.296803] br-lan: port 1(lan1) entered forwarding state
+[   22.672907] br-lan: port 5(wl0) entered blocking state
+[   22.678177] br-lan: port 5(wl0) entered disabled state
+[   22.683400] wl 0000:01:00.0 wl0: entered allmulticast mode
+[   22.689357] wl 0000:01:00.0 wl0: entered promiscuous mode
+[   22.695103] br-lan: port 5(wl0) entered blocking state
+[   22.700313] br-lan: port 5(wl0) entered forwarding state
+[   22.962491] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   22.969918] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   22.977342] wltrace-ioc disable core 812/1 ioctrl 00000000 ioctrl_le 00000000
+[   22.993769] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   23.001195] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   23.008632] wltrace-ioc disable core 812/1 ioctrl 00000000 ioctrl_le 00000000
+[   23.015945] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   23.023331] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   23.030752] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   23.037907] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   23.045040] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   23.052194] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   23.059327] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   23.066496] wltrace-ioc cflags core 812/1 ioctrl 00000141 ioctrl_le 00000141
+[   23.073607] wltrace-ioc cflags core 812/1 ioctrl 00000145 ioctrl_le 00000145
+[   23.080805] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   23.088234] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   23.095668] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   23.102767] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   23.109917] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   23.117167] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   23.124259] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   23.131391] wltrace-ioc cflags core 812/1 ioctrl 00000141 ioctrl_le 00000141
+[   23.138533] wltrace-ioc cflags core 812/1 ioctrl 00000145 ioctrl_le 00000145
+[   23.145725] wltrace-ioc cflags core 812/1 ioctrl 00000145 ioctrl_le 00000145
+[   23.167080] wltrace-ioc cflags core 812/1 ioctrl 00000155 ioctrl_le 00000155
+[   23.174231] wltrace-dma wl1: ddtable tx pa 00000000:02318000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   23.184155] wltrace-dma wl1: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:02318000
+[   23.193848] wltrace-dma wl1: ddtable tx pa 00000000:02300000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   23.203787] wltrace-dma wl1: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:02300000
+[   23.213468] wltrace-dma wl1: ddtable tx pa 00000000:02328000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   23.223378] wltrace-dma wl1: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:02328000
+[   23.233046] wltrace-dma wl1: ddtable tx pa 00000000:02338000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   23.242976] wltrace-dma wl1: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:02338000
+[   23.252643] wltrace-dma wl1: ddtable tx pa 00000000:02340000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   23.262601] wltrace-dma wl1: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:02340000
+[   23.272310] wltrace-dma wl1: ddtable rx pa 00000000:02320000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   23.282236] wltrace-dma wl1: rxenable control 00500851 (rxoffset 40 bl 4 pc 2 pt 0 flags 0) le 00500851
+[   23.300097] wltrace-ioc cflags core 812/1 ioctrl 00000155 ioctrl_le 00000155
+[   23.589393] br-lan: port 6(wl1) entered blocking state
+[   23.594574] br-lan: port 6(wl1) entered disabled state
+[   23.599855] wl 0001:01:00.0 wl1: entered allmulticast mode
+[   23.605699] wl 0001:01:00.0 wl1: entered promiscuous mode
+[   23.611327] br-lan: port 6(wl1) entered blocking state
+[   23.616556] br-lan: port 6(wl1) entered forwarding state
+[   24.368392] b53-srab-switch 18007000.ethernet-switch lan2: Link is Up - 1Gbps/Full - flow control rx/tx
+[   24.375050] br-lan: port 2(lan2) entered blocking state
+[   24.383125] br-lan: port 2(lan2) entered forwarding state
+[   27.749485] wltrace-tx wl1 len 169
+[   27.752922] wltrace-tx 00000000: 02 00 00 00 00 00 80 48 02 00 80 d0 18 00 2d 00
+[   27.760382] wltrace-tx 00000010: 03 00 00 00 00 00 00 00 45 00 00 00 00 00 ab 05
+[   27.767820] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   27.775252] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   27.782668] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   27.790093] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   27.797528] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   27.804970] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   27.812393] wltrace-tx 00000080: b0 00 3c 00 ac 67 84 36 40 fe a0 04 60 89 45 d8
+[   27.819819] wltrace-tx 00000090: a0 04 60 89 45 d8 00 00 00 00 02 00 00 00 dd 09
+[   27.827255] wltrace-tx 000000a0: 00 10 18 02 00 00 1c 00 00
+[   27.854481] wltrace-tx wl1 len 295
+[   27.857927] wltrace-tx 00000000: 02 00 00 00 00 00 80 48 02 00 80 d0 18 00 ab 00
+[   27.865363] wltrace-tx 00000010: 03 02 00 00 00 00 00 00 45 00 00 00 00 00 6b 15
+[   27.872781] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   27.880210] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   27.887641] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   27.895062] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   27.902479] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   27.909903] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   27.917327] wltrace-tx 00000080: 10 00 3c 00 ac 67 84 36 40 fe a0 04 60 89 45 d8
+[   27.924750] wltrace-tx 00000090: a0 04 60 89 45 d8 00 00 11 10 00 00 01 c0 01 08
+[   27.932178] wltrace-tx 000000a0: 8c 12 98 24 b0 48 60 6c 46 05 32 08 01 00 00 2d
+[   27.939601] wltrace-tx 000000b0: 1a 2d 08 17 ff 00 00 00 00 00 00 00 00 00 00 00
+[   27.955323] wltrace-tx wl1 len 161
+[   27.958755] wltrace-tx 00000000: 02 00 00 00 00 00 80 48 02 00 80 d0 18 00 25 00
+[   27.966214] wltrace-tx 00000010: 01 04 00 00 00 00 00 00 45 00 00 00 00 00 ab 04
+[   27.973634] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   27.981059] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   27.988482] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   27.995908] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.003323] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.010746] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.018170] wltrace-tx 00000080: d0 00 3c 00 ac 67 84 36 40 fe a0 04 60 89 45 d8
+[   28.025594] wltrace-tx 00000090: a0 04 60 89 45 d8 00 00 03 00 02 03 10 00 00 00
+[   28.033012] wltrace-tx 000000a0: 00
+[   28.036546] wltrace-tx wl1 len 162
+[   28.039959] wltrace-tx 00000000: 02 00 00 00 00 00 80 40 02 00 80 d0 1a 00 9f 00
+[   28.047388] wltrace-tx 00000010: 01 06 00 00 00 00 00 00 45 00 00 00 00 00 eb 13
+[   28.054815] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   28.062232] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.069655] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.077079] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.084497] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.091920] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.099345] wltrace-tx 00000080: 88 02 3c 00 ac 67 84 36 40 fe a0 04 60 89 45 d8
+[   28.106768] wltrace-tx 00000090: a0 04 60 89 45 d8 00 00 00 00 aa aa 03 00 00 00
+[   28.114186] wltrace-tx 000000a0: 88 8e
+[   28.118278] wltrace-tx wl1 len 148
+[   28.121703] wltrace-tx 00000000: 02 00 00 00 00 00 80 40 02 00 80 d0 10 00 18 00
+[   28.129151] wltrace-tx 00000010: 01 08 00 00 00 00 00 00 45 00 00 00 00 00 0b 03
+[   28.136582] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   28.143998] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.151423] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.158847] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.166269] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.173687] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.181111] wltrace-tx 00000080: 84 00 3c 00 ac 67 84 36 40 fe a0 04 60 89 45 d8
+[   28.188535] wltrace-tx 00000090: 04 00 10 00
+[   28.195505] wltrace-tx wl1 len 162
+[   28.198941] wltrace-tx 00000000: 02 00 00 00 00 00 80 40 06 00 80 d0 1a 00 c1 00
+[   28.206397] wltrace-tx 00000010: 01 0a 10 00 00 00 00 00 45 00 00 00 00 00 2b 18
+[   28.213821] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   28.221249] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.228682] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.236104] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.243519] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 00 00 20 20 25 15 0f 14
+[   28.250942] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.258368] wltrace-tx 00000080: 88 02 3c 00 ac 67 84 36 40 fe a0 04 60 89 45 d8
+[   28.265790] wltrace-tx 00000090: a0 04 60 89 45 d8 10 00 00 00 aa aa 03 00 00 00
+[   28.273209] wltrace-tx 000000a0: 88 8e
+[   28.307119] wltrace-tx wl1 len 244
+[   28.310552] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 80 00
+[   28.318001] wltrace-tx 00000010: 01 0c 00 00 00 00 00 00 45 00 00 00 00 00 0b 10
+[   28.325430] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   28.332848] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.340280] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.347704] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.355127] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   28.362546] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.369975] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 16 a0 04 60 89 45 d8
+[   28.377402] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 01 00 00 60 00 00 00 00
+[   28.384825] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd 60 00 00 00 00 24 00 01
+[   28.392235] wltrace-tx 000000b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.399802] wltrace-tx wl1 len 168
+[   28.403232] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 80 00
+[   28.410689] wltrace-tx 00000010: 01 0e 00 00 00 00 00 00 45 00 00 00 00 00 0b 10
+[   28.418132] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   28.425566] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.432979] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.440408] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.447838] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   28.455263] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.462677] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 16 a0 04 60 89 45 d8
+[   28.470101] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 02 00 00 60 00 00 00 00
+[   28.477525] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   28.483179] wltrace-tx wl1 len 496
+[   28.486637] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7c 01
+[   28.494063] wltrace-tx 00000010: 01 10 00 00 00 00 00 00 45 00 00 00 00 00 8b 2f
+[   28.501506] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   28.508944] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.516371] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.523787] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.531212] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   28.538637] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.546066] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   28.553481] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 03 00 00 60 00 00 00 00
+[   28.560904] wltrace-tx 000000a0: aa aa 03 00 00 00 08 00 45 00 01 48 30 94 00 00
+[   28.568326] wltrace-tx 000000b0: 40 11 49 12 00 00 00 00 ff ff ff ff 00 44 00 43
+[   28.579297] wltrace-tx wl1 len 168
+[   28.582735] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7c 01
+[   28.590195] wltrace-tx 00000010: 01 12 00 00 00 00 00 00 45 00 00 00 00 00 8b 2f
+[   28.597635] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   28.605070] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.612491] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.619935] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.627374] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   28.634801] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.642215] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   28.649642] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 04 00 00 60 00 00 00 00
+[   28.657087] wltrace-tx 000000a0: aa aa 03 00 00 00 08 00
+[   28.662557] wltrace-tx wl1 len 168
+[   28.666004] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 62 00
+[   28.673429] wltrace-tx 00000010: 01 14 00 00 00 00 00 00 45 00 00 00 00 00 4b 0c
+[   28.680913] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   28.688370] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.695805] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.703224] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.710654] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   28.718086] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.725520] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   28.732939] wltrace-tx 00000090: f4 8e 38 fe 93 3a 00 00 05 00 00 60 00 00 00 00
+[   28.740367] wltrace-tx 000000a0: aa aa 03 00 00 00 08 06
+[   28.746180] wltrace-tx wl1 len 240
+[   28.749616] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7c 00
+[   28.757074] wltrace-tx 00000010: 01 16 00 00 00 00 00 00 45 00 00 00 00 00 8b 0f
+[   28.764503] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   28.771947] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.779386] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.786822] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.794247] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   28.801687] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.809116] wltrace-tx 00000080: 08 42 00 00 33 33 ff 36 40 fe a0 04 60 89 45 d8
+[   28.816538] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 06 00 00 60 00 00 00 00
+[   28.823954] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd 60 00 00 00 00 20 3a ff
+[   28.831382] wltrace-tx 000000b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.838927] wltrace-tx wl1 len 244
+[   28.842347] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 80 00
+[   28.849787] wltrace-tx 00000010: 01 18 00 00 00 00 00 00 45 00 00 00 00 00 0b 10
+[   28.857213] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   28.864636] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.872051] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.879476] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.886903] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   28.894316] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.901742] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 16 a0 04 60 89 45 d8
+[   28.909166] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 07 00 00 60 00 00 00 00
+[   28.916589] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd 60 00 00 00 00 24 00 01
+[   28.924007] wltrace-tx 000000b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.931582] wltrace-tx wl1 len 168
+[   28.935023] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 50 00
+[   28.942441] wltrace-tx 00000010: 01 1a 00 00 00 00 00 00 45 00 00 00 00 00 0b 0a
+[   28.949863] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   28.957286] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.964702] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.972114] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.979534] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   28.986949] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   28.994360] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   29.001780] wltrace-tx 00000090: a0 04 60 89 45 c5 00 00 08 00 00 60 00 00 00 00
+[   29.009197] wltrace-tx 000000a0: aa aa 03 00 00 00 08 06
+[   29.014785] wltrace-tx wl1 len 168
+[   29.018214] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7c 00
+[   29.025655] wltrace-tx 00000010: 01 1c 00 00 00 00 00 00 45 00 00 00 00 00 8b 0f
+[   29.033077] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   29.040498] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.047920] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.055337] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.062748] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   29.070168] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.077584] wltrace-tx 00000080: 08 42 00 00 33 33 ff 36 40 fe a0 04 60 89 45 d8
+[   29.085000] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 09 00 00 60 00 00 00 00
+[   29.092410] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   29.097847] wltrace-tx wl1 len 168
+[   29.101275] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 80 00
+[   29.108703] wltrace-tx 00000010: 01 1e 00 00 00 00 00 00 45 00 00 00 00 00 0b 10
+[   29.116127] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   29.123546] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.130966] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.138382] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.145797] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   29.153209] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.160629] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 16 a0 04 60 89 45 d8
+[   29.168044] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 0a 00 00 60 00 00 00 00
+[   29.175460] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   29.180917] wltrace-tx wl1 len 168
+[   29.184337] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 4c 01
+[   29.191783] wltrace-tx 00000010: 01 20 00 00 00 00 00 00 45 00 00 00 00 00 8b 29
+[   29.199207] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   29.206630] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.214041] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.221462] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.228886] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   29.236301] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.243712] wltrace-tx 00000080: 08 42 00 00 01 00 5e 00 00 fb a0 04 60 89 45 d8
+[   29.251133] wltrace-tx 00000090: f4 8e 38 fe 93 3a 00 00 0b 00 00 60 00 00 00 00
+[   29.258556] wltrace-tx 000000a0: aa aa 03 00 00 00 08 00
+[   29.263995] wltrace-tx wl1 len 168
+[   29.267429] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 60 01
+[   29.274852] wltrace-tx 00000010: 01 22 00 00 00 00 00 00 45 00 00 00 00 00 0b 2c
+[   29.282282] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   29.289703] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.297125] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.304536] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.311957] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   29.319372] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.326788] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 fb a0 04 60 89 45 d8
+[   29.334200] wltrace-tx 00000090: f4 8e 38 fe 93 3a 00 00 0c 00 00 60 00 00 00 00
+[   29.341620] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   29.347144] wltrace-tx wl1 len 168
+[   29.350565] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 c8 00
+[   29.357988] wltrace-tx 00000010: 01 24 00 00 00 00 00 00 45 00 00 00 00 00 0b 19
+[   29.365408] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   29.372820] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.380240] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.387655] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.395071] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   29.402493] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.409913] wltrace-tx 00000080: 08 42 00 00 33 33 00 01 00 02 a0 04 60 89 45 d8
+[   29.417336] wltrace-tx 00000090: 02 a1 1c a1 c0 01 00 00 0d 00 00 60 00 00 00 00
+[   29.424752] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   29.430175] wltrace-tx wl1 len 168
+[   29.433591] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 94 00
+[   29.441015] wltrace-tx 00000010: 01 26 00 00 00 00 00 00 45 00 00 00 00 00 8b 12
+[   29.448436] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   29.455851] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.463262] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.470683] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.478099] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   29.485515] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.492926] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   29.500346] wltrace-tx 00000090: f4 8e 38 fe 93 3a 00 00 0e 00 00 60 00 00 00 00
+[   29.507761] wltrace-tx 000000a0: aa aa 03 00 00 00 08 00
+[   29.513186] wltrace-tx wl1 len 168
+[   29.516610] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 94 00
+[   29.524025] wltrace-tx 00000010: 01 28 00 00 00 00 00 00 45 00 00 00 00 00 8b 12
+[   29.531446] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   29.538862] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.546282] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.553698] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.561118] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   29.568533] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.575948] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   29.583360] wltrace-tx 00000090: f4 8e 38 fe 93 3a 00 00 0f 00 00 60 00 00 00 00
+[   29.590780] wltrace-tx 000000a0: aa aa 03 00 00 00 08 00
+[   29.596181] wltrace-tx wl1 len 168
+[   29.599605] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 94 00
+[   29.607025] wltrace-tx 00000010: 01 2a 00 00 00 00 00 00 45 00 00 00 00 00 8b 12
+[   29.614443] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   29.621862] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.629279] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.636694] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.644105] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   29.651526] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.658942] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   29.666358] wltrace-tx 00000090: f4 8e 38 fe 93 3a 00 00 10 00 00 60 00 00 00 00
+[   29.673769] wltrace-tx 000000a0: aa aa 03 00 00 00 08 00
+[   29.679256] wltrace-tx wl1 len 244
+[   29.682675] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 80 00
+[   29.690107] wltrace-tx 00000010: 01 2c 00 00 00 00 00 00 45 00 00 00 00 00 0b 10
+[   29.697535] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   29.704955] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.712371] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.719796] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.727220] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   29.734644] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.742061] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 16 a0 04 60 89 45 d8
+[   29.749486] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 11 00 00 60 00 00 00 00
+[   29.756910] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd 60 00 00 00 00 24 00 01
+[   29.764325] wltrace-tx 000000b0: fe 80 00 00 00 00 00 00 ae 67 84 ff fe 36 40 fe
+[   29.771793] wltrace-tx wl1 len 224
+[   29.775221] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 6c 00
+[   29.782639] wltrace-tx 00000010: 01 2e 00 00 00 00 00 00 45 00 00 00 00 00 8b 0d
+[   29.790065] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   29.797488] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.804914] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.812327] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.819752] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   29.827176] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.834593] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 02 a0 04 60 89 45 d8
+[   29.842017] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 12 00 00 60 00 00 00 00
+[   29.849442] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd 60 0c 41 7c 00 10 3a ff
+[   29.856867] wltrace-tx 000000b0: fe 80 00 00 00 00 00 00 ae 67 84 ff fe 36 40 fe
+[   29.864368] wltrace-tx wl1 len 168
+[   29.867798] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 8d 01
+[   29.875219] wltrace-tx 00000010: 01 30 00 00 00 00 00 00 45 00 00 00 00 00 ab 31
+[   29.882639] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   29.890058] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.897475] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.904891] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.912302] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   29.919722] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.927138] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   29.934549] wltrace-tx 00000090: f4 8e 38 fe 93 3a 00 00 13 00 00 60 00 00 00 00
+[   29.941969] wltrace-tx 000000a0: aa aa 03 00 00 00 08 00
+[   29.948355] wltrace-tx wl1 len 168
+[   29.951825] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 80 00
+[   29.959310] wltrace-tx 00000010: 01 32 00 00 00 00 00 00 45 00 00 00 00 00 0b 10
+[   29.966765] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   29.974193] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.981633] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.989072] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   29.996509] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   30.003934] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.011376] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 16 a0 04 60 89 45 d8
+[   30.018815] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 14 00 00 60 00 00 00 00
+[   30.026237] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   30.031722] wltrace-tx wl1 len 168
+[   30.035186] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 6c 00
+[   30.042616] wltrace-tx 00000010: 01 34 00 00 00 00 00 00 45 00 00 00 00 00 8b 0d
+[   30.050054] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   30.057493] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.064923] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.072342] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.079772] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   30.087191] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.094607] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 02 a0 04 60 89 45 d8
+[   30.102032] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 15 00 00 60 00 00 00 00
+[   30.109456] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   30.114930] wltrace-tx wl1 len 168
+[   30.118366] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7b 01
+[   30.125813] wltrace-tx 00000010: 01 36 00 00 00 00 00 00 45 00 00 00 00 00 6b 2f
+[   30.133240] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   30.140681] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.148119] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.155548] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.162960] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   30.170385] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.177808] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   30.185233] wltrace-tx 00000090: 6a c4 9f 5a 5f b1 00 00 16 00 00 60 00 00 00 00
+[   30.192649] wltrace-tx 000000a0: aa aa 03 00 00 00 08 00
+[   30.198723] wltrace-tx wl1 len 168
+[   30.202166] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7c 00
+[   30.209617] wltrace-tx 00000010: 01 38 00 00 00 00 00 00 45 00 00 00 00 00 8b 0f
+[   30.217079] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   30.224512] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.231956] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.239392] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.246825] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   30.254239] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.261667] wltrace-tx 00000080: 08 42 00 00 33 33 ff 00 00 01 a0 04 60 89 45 d8
+[   30.269088] wltrace-tx 00000090: 6a c4 9f 5a 5f b1 00 00 17 00 00 60 00 00 00 00
+[   30.276512] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   30.281927] wltrace-tx wl1 len 170
+[   30.285382] wltrace-tx 00000000: 02 00 02 00 00 00 c0 41 00 00 80 d0 1a 00 d6 00
+[   30.292810] wltrace-tx 00000010: 01 3a 20 00 00 00 00 00 47 00 00 00 08 00 f4 03
+[   30.300239] wltrace-tx 00000020: 80 84 02 00 03 00 9c 00 05 09 00 00 47 00 00 00
+[   30.307674] wltrace-tx 00000030: 00 00 f4 03 80 04 02 00 03 00 0d 00 25 0b 00 00
+[   30.315104] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.322522] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.329947] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 04 20 20 25 15 0f 14
+[   30.337371] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.344794] wltrace-tx 00000080: 88 42 3c 00 ac 67 84 36 40 fe a0 04 60 89 45 d8
+[   30.352210] wltrace-tx 00000090: a0 04 60 89 45 c5 20 00 00 00 01 00 00 20 00 00
+[   30.359635] wltrace-tx 000000a0: 00 00 aa aa 03 00 00 00 86 dd
+[   30.397278] wltrace-tx wl1 len 264
+[   30.400726] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 94 00
+[   30.408226] wltrace-tx 00000010: 01 3c 00 00 00 00 00 00 45 00 00 00 00 00 8b 12
+[   30.415685] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   30.423113] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.430542] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.437969] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.445392] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   30.452812] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.460234] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 16 a0 04 60 89 45 d8
+[   30.467658] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 18 00 00 60 00 00 00 00
+[   30.475081] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd 60 00 00 00 00 38 00 01
+[   30.482492] wltrace-tx 000000b0: fe 80 00 00 00 00 00 00 ae 67 84 ff fe 36 40 fe
+[   30.490074] wltrace-tx wl1 len 168
+[   30.493510] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 94 00
+[   30.500972] wltrace-tx 00000010: 01 3e 00 00 00 00 00 00 45 00 00 00 00 00 8b 12
+[   30.508429] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   30.515870] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.523289] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.530720] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.538146] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   30.545570] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.552987] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 16 a0 04 60 89 45 d8
+[   30.560412] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 19 00 00 60 00 00 00 00
+[   30.567835] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   30.573612] wltrace-tx wl1 len 264
+[   30.577086] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 94 00
+[   30.584513] wltrace-tx 00000010: 01 40 00 00 00 00 00 00 45 00 00 00 00 00 8b 12
+[   30.591954] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   30.599385] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.606814] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.614227] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.621655] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   30.629075] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.636499] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 16 a0 04 60 89 45 d8
+[   30.643916] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 1a 00 00 60 00 00 00 00
+[   30.651341] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd 60 00 00 00 00 38 00 01
+[   30.658765] wltrace-tx 000000b0: fe 80 00 00 00 00 00 00 ae 67 84 ff fe 36 40 fe
+[   30.666320] wltrace-tx wl1 len 240
+[   30.669744] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7c 00
+[   30.677183] wltrace-tx 00000010: 01 42 00 00 00 00 00 00 45 00 00 00 00 00 8b 0f
+[   30.684599] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   30.692024] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.699448] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.706871] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.714288] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   30.721712] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.729138] wltrace-tx 00000080: 08 42 00 00 33 33 ff 36 40 fe a0 04 60 89 45 d8
+[   30.736560] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 1b 00 00 60 00 00 00 00
+[   30.743978] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd 60 00 00 00 00 20 3a ff
+[   30.751403] wltrace-tx 000000b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.759125] wltrace-tx wl1 len 168
+[   30.762575] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 94 00
+[   30.770044] wltrace-tx 00000010: 01 44 00 00 00 00 00 00 45 00 00 00 00 00 8b 12
+[   30.777490] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   30.784927] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.792347] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.799775] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.807204] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   30.814627] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.822044] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 16 a0 04 60 89 45 d8
+[   30.829468] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 1c 00 00 60 00 00 00 00
+[   30.836894] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   30.842280] wltrace-tx wl1 len 168
+[   30.845713] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 50 00
+[   30.853135] wltrace-tx 00000010: 01 46 00 00 00 00 00 00 45 00 00 00 00 00 0b 0a
+[   30.860565] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   30.867998] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.875426] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.882842] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.890268] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   30.897689] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.905113] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   30.912531] wltrace-tx 00000090: a0 04 60 89 45 c5 00 00 1d 00 00 60 00 00 00 00
+[   30.919955] wltrace-tx 000000a0: aa aa 03 00 00 00 08 06
+[   30.925424] wltrace-tx wl1 len 168
+[   30.928847] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7c 00
+[   30.936306] wltrace-tx 00000010: 01 48 00 00 00 00 00 00 45 00 00 00 00 00 8b 0f
+[   30.943727] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   30.951161] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.958600] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.966037] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.973459] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   30.980886] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   30.988307] wltrace-tx 00000080: 08 42 00 00 33 33 ff 36 40 fe a0 04 60 89 45 d8
+[   30.995731] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 1e 00 00 60 00 00 00 00
+[   31.003148] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   31.009200] wltrace-tx wl1 len 240
+[   31.012631] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7c 00
+[   31.020078] wltrace-tx 00000010: 01 4a 00 00 00 00 00 00 45 00 00 00 00 00 8b 0f
+[   31.027503] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   31.034925] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.042343] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.049766] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.057191] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   31.064608] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.072033] wltrace-tx 00000080: 08 42 00 00 33 33 ff 31 2c d2 a0 04 60 89 45 d8
+[   31.079455] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 1f 00 00 60 00 00 00 00
+[   31.086880] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd 60 00 00 00 00 20 3a ff
+[   31.094296] wltrace-tx 000000b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.101811] wltrace-tx wl1 len 300
+[   31.105247] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 b8 00
+[   31.112661] wltrace-tx 00000010: 01 4c 00 00 00 00 00 00 45 00 00 00 00 00 0b 17
+[   31.120089] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   31.127513] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.134933] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.142351] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.149775] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   31.157200] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.164615] wltrace-tx 00000080: 08 42 00 00 33 33 00 01 00 02 a0 04 60 89 45 d8
+[   31.172041] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 20 00 00 60 00 00 00 00
+[   31.179466] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd 60 0e 04 b1 00 5c 11 01
+[   31.186888] wltrace-tx 000000b0: fe 80 00 00 00 00 00 00 ae 67 84 ff fe 36 40 fe
+[   31.195112] wltrace-tx wl1 len 168
+[   31.198554] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7c 00
+[   31.206015] wltrace-tx 00000010: 01 4e 00 00 00 00 00 00 45 00 00 00 00 00 8b 0f
+[   31.213438] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   31.220871] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.228302] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.235732] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.243153] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   31.250582] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.258012] wltrace-tx 00000080: 08 42 00 00 33 33 ff 31 2c d2 a0 04 60 89 45 d8
+[   31.265452] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 21 00 00 60 00 00 00 00
+[   31.272877] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   31.278377] wltrace-tx wl1 len 168
+[   31.281800] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 b8 00
+[   31.289246] wltrace-tx 00000010: 01 50 00 00 00 00 00 00 45 00 00 00 00 00 0b 17
+[   31.296682] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   31.304098] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.311526] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.318958] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.326382] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   31.333796] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.341225] wltrace-tx 00000080: 08 42 00 00 33 33 00 01 00 02 a0 04 60 89 45 d8
+[   31.348656] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 22 00 00 60 00 00 00 00
+[   31.356078] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   31.361509] wltrace-tx wl1 len 168
+[   31.364958] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 62 00
+[   31.372381] wltrace-tx 00000010: 01 52 00 00 00 00 00 00 45 00 00 00 00 00 4b 0c
+[   31.379812] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   31.387243] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.394675] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.402087] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.409516] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   31.416936] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.424352] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   31.431777] wltrace-tx 00000090: 6a c4 9f 5a 5f b1 00 00 23 00 00 60 00 00 00 00
+[   31.439200] wltrace-tx 000000a0: aa aa 03 00 00 00 08 06
+[   31.444603] wltrace-tx wl1 len 168
+[   31.448046] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7f 01
+[   31.455481] wltrace-tx 00000010: 01 54 00 00 00 00 00 00 45 00 00 00 00 00 eb 2f
+[   31.462893] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   31.470323] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.477755] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.485174] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.492591] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   31.500018] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.507441] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   31.514864] wltrace-tx 00000090: 6a c4 9f 5a 5f b1 00 00 24 00 00 60 00 00 00 00
+[   31.522281] wltrace-tx 000000a0: aa aa 03 00 00 00 08 00
+[   31.528163] wltrace-tx wl1 len 264
+[   31.531592] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 94 00
+[   31.539051] wltrace-tx 00000010: 01 56 00 00 00 00 00 00 45 00 00 00 00 00 8b 12
+[   31.546488] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   31.553903] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.561332] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.568760] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.576183] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   31.583601] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.591025] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 16 a0 04 60 89 45 d8
+[   31.598450] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 25 00 00 60 00 00 00 00
+[   31.605873] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd 60 00 00 00 00 38 00 01
+[   31.613289] wltrace-tx 000000b0: fe 80 00 00 00 00 00 00 ae 67 84 ff fe 36 40 fe
+[   31.620910] wltrace-tx wl1 len 170
+[   31.624346] wltrace-tx 00000000: 02 00 02 00 00 00 c0 41 00 00 80 d0 1a 00 da 00
+[   31.631783] wltrace-tx 00000010: 01 58 30 00 00 00 00 00 47 00 00 00 08 00 f4 03
+[   31.639215] wltrace-tx 00000020: 80 84 02 00 03 00 9c 00 05 09 00 00 47 00 00 00
+[   31.646642] wltrace-tx 00000030: 06 00 f4 03 80 64 02 00 03 00 75 00 05 09 00 00
+[   31.654059] wltrace-tx 00000040: 47 00 00 00 05 00 f4 03 80 54 02 00 03 00 68 00
+[   31.661481] wltrace-tx 00000050: 05 09 00 00 47 00 00 00 04 00 f4 03 80 44 02 00
+[   31.668906] wltrace-tx 00000060: 03 00 4e 00 25 09 00 00 50 04 20 20 25 15 0f 14
+[   31.676331] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.683749] wltrace-tx 00000080: 88 42 2c 00 ac 67 84 36 40 fe a0 04 60 89 45 d8
+[   31.691173] wltrace-tx 00000090: a0 04 60 89 45 c5 30 00 00 00 02 00 00 20 00 00
+[   31.698595] wltrace-tx 000000a0: 00 00 aa aa 03 00 00 00 86 dd
+[   31.704654] wltrace-tx wl1 len 168
+[   31.708079] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 94 00
+[   31.715502] wltrace-tx 00000010: 01 5a 00 00 00 00 00 00 45 00 00 00 00 00 8b 12
+[   31.722917] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   31.730340] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.737765] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.745190] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.752606] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   31.760029] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.767453] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 16 a0 04 60 89 45 d8
+[   31.774877] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 26 00 00 60 00 00 00 00
+[   31.782295] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   31.787738] wltrace-tx wl1 len 168
+[   31.791158] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 6c 00
+[   31.798587] wltrace-tx 00000010: 01 5c 00 00 00 00 00 00 45 00 00 00 00 00 8b 0d
+[   31.806013] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   31.813429] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.820853] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.828276] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.835701] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   31.843119] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.850543] wltrace-tx 00000080: 08 42 00 00 33 33 00 00 00 02 a0 04 60 89 45 d8
+[   31.857967] wltrace-tx 00000090: f4 8e 38 fe 93 3a 00 00 27 00 00 60 00 00 00 00
+[   31.865390] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   31.870872] wltrace-tx wl1 len 168
+[   31.874293] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 62 00
+[   31.881727] wltrace-tx 00000010: 01 5e 00 00 00 00 00 00 45 00 00 00 00 00 4b 0c
+[   31.889155] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   31.896578] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.903995] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.911420] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.918842] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   31.926266] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.933684] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   31.941107] wltrace-tx 00000090: 6a c4 9f 5a 5f b1 00 00 28 00 00 60 00 00 00 00
+[   31.948531] wltrace-tx 000000a0: aa aa 03 00 00 00 08 06
+[   31.954064] wltrace-tx wl1 len 168
+[   31.957557] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 50 00
+[   31.965014] wltrace-tx 00000010: 01 60 00 00 00 00 00 00 45 00 00 00 00 00 0b 0a
+[   31.972444] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   31.979869] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.987291] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   31.994715] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.002132] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   32.009555] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.016981] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   32.024398] wltrace-tx 00000090: a0 04 60 89 45 c5 00 00 29 00 00 60 00 00 00 00
+[   32.031820] wltrace-tx 000000a0: aa aa 03 00 00 00 08 06
+[   32.154785] wltrace-tx wl1 len 300
+[   32.158224] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 b8 00
+[   32.165671] wltrace-tx 00000010: 01 62 00 00 00 00 00 00 45 00 00 00 00 00 0b 17
+[   32.173088] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   32.180512] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.187934] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.195358] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.202777] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   32.210199] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.217624] wltrace-tx 00000080: 08 42 00 00 33 33 00 01 00 02 a0 04 60 89 45 d8
+[   32.225047] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 2a 00 00 60 00 00 00 00
+[   32.232483] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd 60 0e 04 b1 00 5c 11 01
+[   32.239908] wltrace-tx 000000b0: fe 80 00 00 00 00 00 00 ae 67 84 ff fe 36 40 fe
+[   32.248057] wltrace-tx wl1 len 168
+[   32.251493] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 b8 00
+[   32.258940] wltrace-tx 00000010: 01 64 00 00 00 00 00 00 45 00 00 00 00 00 0b 17
+[   32.266374] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   32.273792] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.281221] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.288654] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.296085] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   32.303499] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.310930] wltrace-tx 00000080: 08 42 00 00 33 33 00 01 00 02 a0 04 60 89 45 d8
+[   32.318361] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 2b 00 00 60 00 00 00 00
+[   32.325782] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   32.331549] wltrace-tx wl1 len 496
+[   32.335025] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7c 01
+[   32.342455] wltrace-tx 00000010: 01 66 00 00 00 00 00 00 45 00 00 00 00 00 8b 2f
+[   32.349887] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   32.357308] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.364732] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.372149] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.379571] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   32.386997] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.394413] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   32.401837] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 2c 00 00 60 00 00 00 00
+[   32.409261] wltrace-tx 000000a0: aa aa 03 00 00 00 08 00 45 00 01 48 d3 08 00 00
+[   32.416686] wltrace-tx 000000b0: 40 11 a6 9d 00 00 00 00 ff ff ff ff 00 44 00 43
+[   32.424276] wltrace-tx wl1 len 170
+[   32.427725] wltrace-tx 00000000: 02 00 02 00 00 00 c0 41 00 00 80 d0 1a 00 da 00
+[   32.435158] wltrace-tx 00000010: 01 68 40 00 00 00 00 00 47 00 00 00 08 00 f4 03
+[   32.442572] wltrace-tx 00000020: 80 84 02 00 03 00 9c 00 05 09 00 00 47 00 00 00
+[   32.449996] wltrace-tx 00000030: 06 00 f4 03 80 64 02 00 03 00 75 00 05 09 00 00
+[   32.457419] wltrace-tx 00000040: 47 00 00 00 05 00 f4 03 80 54 02 00 03 00 68 00
+[   32.464847] wltrace-tx 00000050: 05 09 00 00 47 00 00 00 04 00 f4 03 80 44 02 00
+[   32.472261] wltrace-tx 00000060: 03 00 4e 00 25 09 00 00 50 04 20 20 25 15 0f 14
+[   32.479685] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.487108] wltrace-tx 00000080: 88 42 2c 00 ac 67 84 36 40 fe a0 04 60 89 45 d8
+[   32.494526] wltrace-tx 00000090: a0 04 60 89 45 c5 40 00 00 00 03 00 00 20 00 00
+[   32.501950] wltrace-tx 000000a0: 00 00 aa aa 03 00 00 00 86 dd
+[   32.508018] wltrace-tx wl1 len 168
+[   32.511457] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7c 01
+[   32.518896] wltrace-tx 00000010: 01 6a 00 00 00 00 00 00 45 00 00 00 00 00 8b 2f
+[   32.526321] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   32.533738] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.541160] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.548584] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.556009] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   32.563427] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.570851] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   32.578275] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 2d 00 00 60 00 00 00 00
+[   32.585698] wltrace-tx 000000a0: aa aa 03 00 00 00 08 00
+[   32.795165] wltrace-tx wl1 len 168
+[   32.798596] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 c8 00
+[   32.806052] wltrace-tx 00000010: 01 6c 00 00 00 00 00 00 45 00 00 00 00 00 0b 19
+[   32.813474] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   32.820899] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.828322] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.835746] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.843179] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   32.850601] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.858022] wltrace-tx 00000080: 08 42 00 00 33 33 00 01 00 02 a0 04 60 89 45 d8
+[   32.865443] wltrace-tx 00000090: 02 a1 1c a1 c0 01 00 00 2e 00 00 60 00 00 00 00
+[   32.872863] wltrace-tx 000000a0: aa aa 03 00 00 00 86 dd
+[   32.878401] wltrace-tx wl1 len 168
+[   32.881840] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 62 00
+[   32.889333] wltrace-tx 00000010: 01 6e 00 00 00 00 00 00 45 00 00 00 00 00 4b 0c
+[   32.896789] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   32.904207] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.911638] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.919068] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.926496] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   32.933913] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.941341] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   32.948763] wltrace-tx 00000090: 6a c4 9f 5a 5f b1 00 00 2f 00 00 60 00 00 00 00
+[   32.956184] wltrace-tx 000000a0: aa aa 03 00 00 00 08 06
+[   32.964759] wltrace-tx wl1 len 168
+[   32.968207] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 50 00
+[   32.975644] wltrace-tx 00000010: 01 70 00 00 00 00 00 00 45 00 00 00 00 00 0b 0a
+[   32.983065] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   32.990495] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   32.997921] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.005344] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.012763] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   33.020188] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.027610] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   33.035034] wltrace-tx 00000090: a0 04 60 89 45 c5 00 00 30 00 00 60 00 00 00 00
+[   33.042451] wltrace-tx 000000a0: aa aa 03 00 00 00 08 06
+[   33.597824] wltrace-tx wl1 len 496
+[   33.601262] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7c 01
+[   33.608710] wltrace-tx 00000010: 01 72 00 00 00 00 00 00 45 00 00 00 00 00 8b 2f
+[   33.616131] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   33.623549] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.630971] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.638394] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.645817] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   33.653229] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.660652] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   33.668085] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 31 00 00 60 00 00 00 00
+[   33.675508] wltrace-tx 000000a0: aa aa 03 00 00 00 08 00 45 00 01 48 e0 ce 00 00
+[   33.682927] wltrace-tx 000000b0: 40 11 98 d7 00 00 00 00 ff ff ff ff 00 44 00 43
+[   33.691272] wltrace-tx wl1 len 168
+[   33.694727] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 7c 01
+[   33.702147] wltrace-tx 00000010: 01 74 00 00 00 00 00 00 45 00 00 00 00 00 8b 2f
+[   33.709582] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   33.717017] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.724436] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.731863] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.739288] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   33.746714] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.754126] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   33.761553] wltrace-tx 00000090: ac 67 84 36 40 fe 00 00 32 00 00 60 00 00 00 00
+[   33.768977] wltrace-tx 000000a0: aa aa 03 00 00 00 08 00
+[   33.828493] wltrace-tx wl1 len 168
+[   33.831927] wltrace-tx 00000000: 02 00 00 00 00 00 00 48 02 00 80 d0 18 00 62 00
+[   33.839382] wltrace-tx 00000010: 01 76 00 00 00 00 00 00 45 00 00 00 00 00 4b 0c
+[   33.846813] wltrace-tx 00000020: 00 00 00 00 03 00 0c 00 20 00 00 00 00 00 00 00
+[   33.854231] wltrace-tx 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.861657] wltrace-tx 00000040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.869087] wltrace-tx 00000050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.876511] wltrace-tx 00000060: 00 00 00 00 00 00 00 00 50 01 00 00 00 00 00 00
+[   33.883928] wltrace-tx 00000070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   33.891354] wltrace-tx 00000080: 08 42 00 00 ff ff ff ff ff ff a0 04 60 89 45 d8
+[   33.898778] wltrace-tx 00000090: 6a c4 9f 5a 5f b1 00 00 33 00 00 60 00 00 00 00
+[   33.906200] wltrace-tx 000000a0: aa aa 03 00 00 00 08 06
+[   40.579396] b53-srab-switch 18007000.ethernet-switch wan: Link is Up - 100Mbps/Full - flow control off

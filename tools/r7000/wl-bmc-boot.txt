@@ -1,0 +1,653 @@
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Linux version 6.12.112 (runner@runnervmmprz5) (arm-openwrt-linux-muslgnueabi-gcc (OpenWrt GCC 14.3.0 r0-58efa99) 14.3.0, GNU ld (GNU Binutils) 2.44) #0 SMP Fri Oct  9 22:38:59 2026
+[    0.000000] CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c5387d
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+[    0.000000] OF: fdt: Machine model: Netgear R7000
+[    0.000000] Memory policy: Data cache writealloc
+[    0.000000] Hit pending asynchronous external abort (FSR=0x00001c06) during first unmask, this is most likely caused by a firmware/bootloader bug.
+[    0.000000] Zone ranges:
+[    0.000000]   Normal   [mem 0x0000000000000000-0x0000000007ffffff]
+[    0.000000]   HighMem  [mem 0x0000000008000000-0x000000008fffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000000000000-0x0000000007ffffff]
+[    0.000000]   node   0: [mem 0x0000000088000000-0x000000008fffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000000000000-0x000000008fffffff]
+[    0.000000] OF: reserved mem: Reserved memory: No reserved-memory node in the DT
+[    0.000000] percpu: Embedded 12 pages/cpu s19276 r8192 d21684 u49152
+[    0.000000] pcpu-alloc: s19276 r8192 d21684 u49152 alloc=12*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 
+[    0.000000] Kernel command line: console=ttyS0,115200
+[    0.000000] Dentry cache hash table entries: 16384 (order: 4, 65536 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 8192 (order: 3, 32768 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 65536
+[    0.000000] mem auto-init: stack:off, heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
+[    0.000000] RCU Tasks Trace: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.000000] NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
+[    0.000000] L2C: DT/platform modifies aux control register: 0x0a130000 -> 0x3a530000
+[    0.000000] L2C-310 enabling early BRESP for Cortex-A9
+[    0.000000] L2C-310 full line of zeros enabled for Cortex-A9
+[    0.000000] L2C-310 ID prefetch enabled, offset 1 lines
+[    0.000000] L2C-310 dynamic clock gating enabled, standby mode enabled
+[    0.000000] L2C-310 cache controller enabled, 16 ways, 256 kB
+[    0.000000] L2C-310: CACHE_ID 0x410000c8, AUX_CTRL 0x7e530001
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+[    0.000004] sched_clock: 64 bits at 500MHz, resolution 2ns, wraps every 4398046511103ns
+[    0.000021] clocksource: arm_global_timer: mask: 0xffffffffffffffff max_cycles: 0xe6a171a037, max_idle_ns: 881590485102 ns
+[    0.000044] Switching to timer-based delay loop, resolution 2ns
+[    0.000335] Calibrating delay loop (skipped), value calculated using timer frequency.. 1000.00 BogoMIPS (lpj=5000000)
+[    0.000348] CPU: Testing write buffer coherency: ok
+[    0.000374] CPU0: Spectre v2: using BPIALL workaround
+[    0.000380] pid_max: default: 32768 minimum: 301
+[    0.006848] Mount-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.006862] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.009948] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+[    0.011213] Setting up static identity map for 0x100000 - 0x10003c
+[    0.011406] rcu: Hierarchical SRCU implementation.
+[    0.011412] rcu: 	Max phase no-delay instances is 1000.
+[    0.012023] smp: Bringing up secondary CPUs ...
+[    0.012774] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+[    0.012792] CPU1: Spectre v2: using BPIALL workaround
+[    0.012917] smp: Brought up 1 node, 2 CPUs
+[    0.012928] SMP: Total of 2 processors activated (2000.00 BogoMIPS).
+[    0.012937] CPU: WARNING: CPU(s) started in wrong/inconsistent modes (primary CPU mode 0x13)
+[    0.012941] CPU: This may indicate a broken bootloader or firmware.
+[    0.013374] Memory: 246676K/262144K available (7501K kernel code, 587K rwdata, 1832K rodata, 1024K init, 294K bss, 14748K reserved, 0K cma-reserved, 131072K highmem)
+[    0.016419] futex hash table entries: 512 (order: 3, 32768 bytes, linear)
+[    0.019790] pinctrl core: initialized pinctrl subsystem
+[    0.021294] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.021918] DMA: preallocated 256 KiB pool for atomic coherent allocations
+[    0.022686] thermal_sys: Registered thermal governor 'step_wise'
+[    0.034697] clocksource: Switched to clocksource arm_global_timer
+[    0.038586] NET: Registered PF_INET protocol family
+[    0.038757] IP idents hash table entries: 2048 (order: 2, 16384 bytes, linear)
+[    0.039237] tcp_listen_portaddr_hash hash table entries: 512 (order: 0, 4096 bytes, linear)
+[    0.039262] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.039277] TCP established hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.039294] TCP bind hash table entries: 1024 (order: 2, 16384 bytes, linear)
+[    0.039324] TCP: Hash tables configured (established 1024 bind 1024)
+[    0.039603] MPTCP token hash table entries: 256 (order: 0, 4096 bytes, linear)
+[    0.039819] UDP hash table entries: 256 (order: 1, 8192 bytes, linear)
+[    0.039847] UDP-Lite hash table entries: 256 (order: 1, 8192 bytes, linear)
+[    0.040382] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.040448] PCI: CLS 0 bytes, default 64
+[    0.041474] workingset: timestamp_bits=14 max_order=16 bucket_order=2
+[    0.043160] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.043175] jffs2: version 2.2 (NAND) (SUMMARY) (LZMA) (RTIME) (CMODE_PRIORITY) (c) 2001-2006 Red Hat, Inc.
+[    0.045846] bounce: pool size: 64 pages
+[    0.047786] Serial: 8250/16550 driver, 2 ports, IRQ sharing disabled
+[    0.048595] printk: legacy console [ttyS0] disabled
+[    0.048903] 18000300.serial: ttyS0 at MMIO 0x18000300 (irq = 26, base_baud = 7812500) is a 16550
+[    0.048962] printk: legacy console [ttyS0] enabled
+[    0.605279] bcm2835-rng 18004000.rng: hwrng registered
+[    0.612716] nand: device found, Manufacturer ID: 0xc2, Chip ID: 0xf1
+[    0.619141] nand: Macronix MX30LF1G18AC
+[    0.622994] nand: 128 MiB, SLC, erase size: 128 KiB, page size: 2048, OOB size: 64
+[    0.630628] iproc_nand 18028000.nand-controller: detected 128MiB total, 128KiB blocks, 2KiB pages, 16B OOB, 8-bit, BCH-8
+[    0.641611] Scanning device for bad blocks
+[    1.014725] random: crng init done
+[    1.423527] 13 bcm47xxpart partitions found on MTD device brcmnand.0
+[    1.429933] Creating 13 MTD partitions on "brcmnand.0":
+[    1.435183] 0x000000000000-0x000000080000 : "boot"
+[    1.440704] 0x000000080000-0x000000200000 : "nvram"
+[    1.446330] 0x000000200000-0x000002200000 : "firmware"
+[    1.452890] 2 trx partitions found on MTD device firmware
+[    1.458349] Creating 2 MTD partitions on "firmware":
+[    1.463333] 0x00000000001c-0x000000400000 : "linux"
+[    1.468245] mtd: partition "linux" doesn't start on an erase/write block boundary -- force read-only
+[    1.478110] 0x000000400000-0x000002000000 : "ubi"
+[    1.483593] 0x000002200000-0x000002240000 : "board_data"
+[    1.489675] 0x000002240000-0x000002280000 : "POT"
+[    1.495019] 0x000002280000-0x0000023c0000 : "POT"
+[    1.500394] 0x0000023c0000-0x000002400000 : "ML"
+[    1.505871] 0x000002400000-0x000002440000 : "ML"
+[    1.511159] 0x000002440000-0x000002480000 : "ML"
+[    1.516614] 0x000002480000-0x0000024c0000 : "ML"
+[    1.521921] 0x0000024c0000-0x000002500000 : "ML"
+[    1.527274] 0x000002500000-0x000002540000 : "ML"
+[    1.532526] 0x000002540000-0x000008000000 : "data"
+[    1.542605] bcm_iproc 18029200.spi: using bspi-mspi mode
+[    1.550487] iproc-mdio 18003000.mdio: Broadcom iProc MDIO bus registered
+[    1.558383] b53-srab-switch 18007000.ethernet-switch: found switch: BCM53012, rev 5
+[    1.566424] bgmac_bcma: Broadcom 47xx GBit MAC driver loaded
+[    1.572793] bcma-host-soc 18000000.axi: bus0: Found chip with id 53010, rev 0x00 and package 0x00
+[    1.581878] bcma-host-soc 18000000.axi: bus0: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2A, class 0x0)
+[    1.592582] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.592601] bcma-host-soc 18000000.axi: bus0: Core 1 found: Chipcommon B (manuf 0x4BF, id 0x50B, rev 0x01, class 0x0)
+[    1.603419] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.603433] bcma-host-soc 18000000.axi: bus0: Core 2 found: DMA (manuf 0x4BF, id 0x502, rev 0x01, class 0x0)
+[    1.613522] bcma-host-soc 18000000.axi: bus0: Core 3 found: GBit MAC (manuf 0x4BF, id 0x82D, rev 0x05, class 0x0)
+[    1.624026] bcma-host-soc 18000000.axi: bus0: Core 4 found: GBit MAC (manuf 0x4BF, id 0x82D, rev 0x05, class 0x0)
+[    1.634521] bcma-host-soc 18000000.axi: bus0: Core 5 found: GBit MAC (manuf 0x4BF, id 0x82D, rev 0x05, class 0x0)
+[    1.645027] bcma-host-soc 18000000.axi: bus0: Core 6 found: GBit MAC (manuf 0x4BF, id 0x82D, rev 0x05, class 0x0)
+[    1.655433] bcma-host-soc 18000000.axi: bus0: Core 7 found: PCIe Gen 2 (manuf 0x4BF, id 0x501, rev 0x01, class 0x0)
+[    1.666038] bcma-host-soc 18000000.axi: bus0: Core 8 found: PCIe Gen 2 (manuf 0x4BF, id 0x501, rev 0x01, class 0x0)
+[    1.676649] bcma-host-soc 18000000.axi: bus0: Core 9 found: PCIe Gen 2 (manuf 0x4BF, id 0x501, rev 0x01, class 0x0)
+[    1.687292] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.687304] bcma-host-soc 18000000.axi: bus0: Core 10 found: ARM Cortex A9 core (ihost) (manuf 0x4BF, id 0x510, rev 0x01, class 0x0)
+[    1.699404] bcma-host-soc 18000000.axi: bus0: Core 11 found: USB 2.0 (manuf 0x4BF, id 0x504, rev 0x01, class 0x0)
+[    1.709866] bcma-host-soc 18000000.axi: bus0: Core 12 found: USB 3.0 (manuf 0x4BF, id 0x505, rev 0x01, class 0x0)
+[    1.720342] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.720355] bcma-host-soc 18000000.axi: bus0: Core 13 found: SDIO3 (manuf 0x4BF, id 0x503, rev 0x01, class 0x0)
+[    1.730638] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.730651] bcma-host-soc 18000000.axi: bus0: Core 14 found: I2S (manuf 0x4BF, id 0x834, rev 0x03, class 0x0)
+[    1.740760] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.740772] bcma-host-soc 18000000.axi: bus0: Core 15 found: ARM Cortex A9 JTAG (manuf 0x4BF, id 0x506, rev 0x01, class 0x0)
+[    1.752187] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.752199] bcma-host-soc 18000000.axi: bus0: Core 16 found: Denali DDR2/DDR3 memory controller (manuf 0x4BF, id 0x507, rev 0x01, class 0x0)
+[    1.765013] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.765025] bcma-host-soc 18000000.axi: bus0: Core 17 found: ROM (manuf 0x4BF, id 0x508, rev 0x01, class 0x0)
+[    1.775170] bcma-host-soc 18000000.axi: bus0: Core 18 found: NAND flash controller (manuf 0x4BF, id 0x509, rev 0x01, class 0x0)
+[    1.786852] bcma-host-soc 18000000.axi: bus0: bcma_of_get_irq() failed with rc=-22
+[    1.786865] bcma-host-soc 18000000.axi: bus0: Core 19 found: SPI flash controller (manuf 0x4BF, id 0x50A, rev 0x01, class 0x0)
+[    1.798328] bcma-host-soc 18000000.axi: bus0: Flash type not supported
+[    1.825904] bcma-host-soc 18000000.axi: bus0: Using SPROM revision 11 provided by platform.
+[    1.826197] bgmac_bcma bcma0:3: Found PHY addr: 30 (NOREGS)
+[    1.831799] bgmac_bcma bcma0:3: Support for Roboswitch not implemented
+[    1.839657] b53-srab-switch b53-srab-switch: error -EINVAL: invalid resource (null)
+[    1.847421] b53-srab-switch b53-srab-switch: probe with driver b53-srab-switch failed with error -22
+[    1.857256] bgmac_bcma bcma0:4: Found PHY addr: 0
+[    1.861994] bgmac_bcma bcma0:4: Support for Roboswitch not implemented
+[    1.868587] bgmac_bcma bcma0:4: Invalid MAC addr: 00:00:00:00:00:00
+[    1.874900] bgmac_bcma bcma0:4: Using random MAC: ca:4f:c3:b8:e5:2b
+[    1.882815] bgmac_bcma bcma0:5: Found PHY addr: 0
+[    1.887640] bgmac_bcma bcma0:5: Support for Roboswitch not implemented
+[    1.894207] bgmac_bcma bcma0:5: Invalid MAC addr: 00:00:00:00:00:00
+[    1.900531] bgmac_bcma bcma0:5: Using random MAC: da:e1:d0:c9:51:78
+[    1.908487] bgmac_bcma bcma0:6: Unsupported core_unit 3
+[    1.913747] bgmac_bcma bcma0:6: probe with driver bgmac_bcma failed with error -524
+[    1.921673] pcie_iproc_bcma bcma0:7: host bridge /axi@18000000/pcie@12000 ranges:
+[    1.929244] pcie_iproc_bcma bcma0:7:   No bus range found for /axi@18000000/pcie@12000, using [bus 00-ff]
+[    1.938879] OF: /axi@18000000/pcie@12000: Missing device_type
+[    1.944646] pcie_iproc_bcma bcma0:7: non-prefetchable memory resource required
+[    2.054694] pcie_iproc_bcma bcma0:7: link: UP
+[    2.059304] pcie_iproc_bcma bcma0:7: PCI host bridge to bus 0000:00
+[    2.065626] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    2.071131] pci_bus 0000:00: root bus resource [mem 0x08000000-0x0fffffff]
+[    2.078061] pci_bus 0000:00: 2-byte config write to 0000:00:00.0 offset 0xc8 may corrupt adjacent RW1C bits
+[    2.087897] pci 0000:00:00.0: [14e4:8012] type 01 class 0x060400 PCIe Root Port
+[    2.095263] pci 0000:00:00.0: PCI bridge to [bus 00]
+[    2.100250] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+[    2.107076] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+[    2.114898] pci 0000:00:00.0: PME# supported from D0 D3hot D3cold
+[    2.121853] PCI: bus0: Fast back to back transfers disabled
+[    2.127484] pci 0000:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
+[    2.135658] pci 0000:01:00.0: [14e4:4360] type 00 class 0x028000 PCIe Endpoint
+[    2.142916] pci_bus 0000:01: 2-byte config write to 0000:01:00.0 offset 0x4 may corrupt adjacent RW1C bits
+[    2.152639] pci 0000:01:00.0: BAR 0 [mem 0x00000000-0x00007fff 64bit]
+[    2.159244] pci 0000:01:00.0: supports D1 D2
+[    2.163737] PCI: bus1: Fast back to back transfers disabled
+[    2.169362] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
+[    2.176043] pci 0000:00:00.0: bridge window [mem 0x08000000-0x080fffff]: assigned
+[    2.183556] pci 0000:01:00.0: BAR 0 [mem 0x08000000-0x08007fff 64bit]: assigned
+[    2.190913] pci 0000:00:00.0: PCI bridge to [bus 01]
+[    2.195904] pci 0000:00:00.0:   bridge window [mem 0x08000000-0x080fffff]
+[    2.202721] pci_bus 0000:00: resource 4 [mem 0x08000000-0x0fffffff]
+[    2.209019] pci_bus 0000:01: resource 1 [mem 0x08000000-0x080fffff]
+[    2.215429] pci 0000:00:00.0: 4.000 Gb/s available PCIe bandwidth (5.0 GT/s PCIe x1 link)
+[    2.223786] pcie_iproc_bcma bcma0:8: host bridge /axi@18000000/pcie@13000 ranges:
+[    2.231342] pcie_iproc_bcma bcma0:8:   No bus range found for /axi@18000000/pcie@13000, using [bus 00-ff]
+[    2.240987] pcie_iproc_bcma bcma0:8: non-prefetchable memory resource required
+[    2.354694] pcie_iproc_bcma bcma0:8: link: UP
+[    2.359207] pcie_iproc_bcma bcma0:8: PCI host bridge to bus 0001:00
+[    2.365529] pci_bus 0001:00: root bus resource [bus 00-ff]
+[    2.371036] pci_bus 0001:00: root bus resource [mem 0x40000000-0x47ffffff]
+[    2.377966] pci_bus 0001:00: 2-byte config write to 0001:00:00.0 offset 0xc8 may corrupt adjacent RW1C bits
+[    2.387771] pci 0001:00:00.0: [14e4:8012] type 01 class 0x060400 PCIe Root Port
+[    2.395125] pci 0001:00:00.0: PCI bridge to [bus 00]
+[    2.400111] pci 0001:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+[    2.406936] pci 0001:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+[    2.414757] pci 0001:00:00.0: PME# supported from D0 D3hot D3cold
+[    2.421701] PCI: bus0: Fast back to back transfers disabled
+[    2.427331] pci 0001:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
+[    2.435506] pci 0001:01:00.0: [14e4:4360] type 00 class 0x028000 PCIe Endpoint
+[    2.442759] pci_bus 0001:01: 2-byte config write to 0001:01:00.0 offset 0x4 may corrupt adjacent RW1C bits
+[    2.452483] pci 0001:01:00.0: BAR 0 [mem 0x00000000-0x00007fff 64bit]
+[    2.459091] pci 0001:01:00.0: supports D1 D2
+[    2.463579] PCI: bus1: Fast back to back transfers disabled
+[    2.469205] pci_bus 0001:01: busn_res: [bus 01-ff] end is updated to 01
+[    2.475887] pci 0001:00:00.0: bridge window [mem 0x40000000-0x400fffff]: assigned
+[    2.483400] pci 0001:01:00.0: BAR 0 [mem 0x40000000-0x40007fff 64bit]: assigned
+[    2.490756] pci 0001:00:00.0: PCI bridge to [bus 01]
+[    2.495749] pci 0001:00:00.0:   bridge window [mem 0x40000000-0x400fffff]
+[    2.502565] pci_bus 0001:00: resource 4 [mem 0x40000000-0x47ffffff]
+[    2.508864] pci_bus 0001:01: resource 1 [mem 0x40000000-0x400fffff]
+[    2.515274] pci 0001:00:00.0: 4.000 Gb/s available PCIe bandwidth (5.0 GT/s PCIe x1 link)
+[    2.523627] pcie_iproc_bcma bcma0:9: host bridge /axi@18000000/pcie@14000 ranges:
+[    2.531186] pcie_iproc_bcma bcma0:9:   No bus range found for /axi@18000000/pcie@14000, using [bus 00-ff]
+[    2.540819] pcie_iproc_bcma bcma0:9: non-prefetchable memory resource required
+[    2.654698] pcie_iproc_bcma bcma0:9: PHY or data link is INACTIVE!
+[    2.660906] pcie_iproc_bcma bcma0:9: no PCIe EP device detected
+[    2.667322] gpio gpiochip0: Static allocation of GPIO base is deprecated, use dynamic allocation.
+[    2.676890] bcm47xx-wdt bcm47xx-wdt.0: BCM47xx Watchdog Timer enabled (30 seconds, Software Timer)
+[    2.686002] bcma-host-soc 18000000.axi: bus0: Bus registered
+[    2.692189] pci 0000:00:00.0: enabling device (0140 -> 0142)
+[    2.697937] bcma-pci-bridge 0000:01:00.0: enabling device (0140 -> 0142)
+[    2.704730] bcma-pci-bridge 0000:01:00.0: bus1: Found chip with id 0x4360, rev 0x03 and package 0x01
+[    2.713925] bcma-pci-bridge 0000:01:00.0: bus1: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2B, class 0x0)
+[    2.724613] bcma-pci-bridge 0000:01:00.0: bus1: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x2A, class 0x0)
+[    2.735377] bcma-pci-bridge 0000:01:00.0: bus1: Core 2 found: ARM CR4 (manuf 0x4BF, id 0x83E, rev 0x02, class 0x0)
+[    2.745795] bcma-pci-bridge 0000:01:00.0: bus1: Core 3 found: PCIe Gen2 (manuf 0x4BF, id 0x83C, rev 0x01, class 0x0)
+[    2.756376] bcma-pci-bridge 0000:01:00.0: bus1: Core 4 found: USB 2.0 Device (manuf 0x4BF, id 0x81A, rev 0x11, class 0x0)
+[    2.767425] bcma-pci-bridge 0000:01:00.0: bus1: Found rev 17 PMU (capabilities 0x10A22B11)
+[    2.767489] bcma-pci-bridge 0000:01:00.0: bus1: SPROM offset 0x800
+[    2.798926] bcma-pci-bridge 0000:01:00.0: bus1: Invalid SPROM read from the PCIe card, trying to use fallback SPROM
+[    2.826213] bcma-pci-bridge 0000:01:00.0: bus1: Using SPROM revision 11 provided by platform.
+[    2.826235] bcma-pci-bridge 0000:01:00.0: bus1: PMU resource config unknown or not needed for device 0x4360
+[    2.828766] bcma-pci-bridge 0000:01:00.0: bus1: Workarounds unknown or not needed for device 0x4360
+[    2.828794] bcma-pci-bridge 0000:01:00.0: bus1: Switched to core: 0x83C
+[    2.829158] bcma-pci-bridge 0000:01:00.0: bus1: Bus registered
+[    2.835328] pci 0001:00:00.0: enabling device (0140 -> 0142)
+[    2.841040] bcma-pci-bridge 0001:01:00.0: enabling device (0140 -> 0142)
+[    2.847836] bcma-pci-bridge 0001:01:00.0: bus2: Found chip with id 0x4360, rev 0x03 and package 0x01
+[    2.857042] bcma-pci-bridge 0001:01:00.0: bus2: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2B, class 0x0)
+[    2.867718] bcma-pci-bridge 0001:01:00.0: bus2: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x2A, class 0x0)
+[    2.878484] bcma-pci-bridge 0001:01:00.0: bus2: Core 2 found: ARM CR4 (manuf 0x4BF, id 0x83E, rev 0x02, class 0x0)
+[    2.888894] bcma-pci-bridge 0001:01:00.0: bus2: Core 3 found: PCIe Gen2 (manuf 0x4BF, id 0x83C, rev 0x01, class 0x0)
+[    2.899478] bcma-pci-bridge 0001:01:00.0: bus2: Core 4 found: USB 2.0 Device (manuf 0x4BF, id 0x81A, rev 0x11, class 0x0)
+[    2.910527] bcma-pci-bridge 0001:01:00.0: bus2: Found rev 17 PMU (capabilities 0x10A22B11)
+[    2.910593] bcma-pci-bridge 0001:01:00.0: bus2: SPROM offset 0x800
+[    2.942020] bcma-pci-bridge 0001:01:00.0: bus2: Invalid SPROM read from the PCIe card, trying to use fallback SPROM
+[    2.967232] bcma-pci-bridge 0001:01:00.0: bus2: Using SPROM revision 11 provided by platform.
+[    2.967256] bcma-pci-bridge 0001:01:00.0: bus2: PMU resource config unknown or not needed for device 0x4360
+[    2.969783] bcma-pci-bridge 0001:01:00.0: bus2: Workarounds unknown or not needed for device 0x4360
+[    2.969800] bcma-pci-bridge 0001:01:00.0: bus2: Switched to core: 0x83C
+[    2.970157] bcma-pci-bridge 0001:01:00.0: bus2: Bus registered
+[    2.976605] NET: Registered PF_INET6 protocol family
+[    2.982917] Segment Routing with IPv6
+[    2.986716] In-situ OAM (IOAM) with IPv6
+[    2.990743] NET: Registered PF_PACKET protocol family
+[    2.996057] 8021q: 802.1Q VLAN Support v1.8
+[    3.000333] Registering SWP/SWPB emulation handler
+[    3.022658] b53-srab-switch 18007000.ethernet-switch: found switch: BCM53012, rev 5
+[    3.087755] b53-srab-switch 18007000.ethernet-switch: OF node /ethernet-switch@18007000/ports/port@5 of CPU port 5 lacks the required "phy-mode" property
+[    3.101605] b53-srab-switch 18007000.ethernet-switch: OF node /ethernet-switch@18007000/ports/port@5 of CPU port 5 lacks the required "phy-handle", "fixed-link" or "managed" properties
+[    3.118139] b53-srab-switch 18007000.ethernet-switch: Skipping phylink registration for CPU port 5
+[    3.128620] b53-srab-switch 18007000.ethernet-switch wan (uninitialized): PHY [dsa-0.0:00] driver [Generic PHY] (irq=POLL)
+[    3.142083] b53-srab-switch 18007000.ethernet-switch lan1 (uninitialized): PHY [dsa-0.0:01] driver [Generic PHY] (irq=POLL)
+[    3.155691] b53-srab-switch 18007000.ethernet-switch lan2 (uninitialized): PHY [dsa-0.0:02] driver [Generic PHY] (irq=POLL)
+[    3.169201] b53-srab-switch 18007000.ethernet-switch lan3 (uninitialized): PHY [dsa-0.0:03] driver [Generic PHY] (irq=POLL)
+[    3.182826] b53-srab-switch 18007000.ethernet-switch lan4 (uninitialized): PHY [dsa-0.0:04] driver [Generic PHY] (irq=POLL)
+[    3.195215] bgmac_bcma bcma0:3 eth0: entered promiscuous mode
+[    3.201065] DSA: tree 0 setup
+[    3.204719] UBI: auto-attach mtd4
+[    3.208069] ubi0: attaching mtd4
+[    3.357304] ubi0: scanning is finished
+[    3.415450] ubi0: attached mtd4 (name "ubi", size 28 MiB)
+[    3.420887] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: 126976 bytes
+[    3.427818] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page size 2048
+[    3.434629] ubi0: VID header offset: 2048 (aligned 2048), data offset: 4096
+[    3.441619] ubi0: good PEBs: 224, bad PEBs: 0, corrupted PEBs: 0
+[    3.447652] ubi0: user volume: 2, internal volumes: 1, max. volumes count: 128
+[    3.454900] ubi0: max/mean erase counter: 24/15, WL threshold: 4096, image sequence number: 593528849
+[    3.464143] ubi0: available PEBs: 0, total reserved PEBs: 224, PEBs reserved for bad PEB handling: 20
+[    3.473416] ubi0: background thread "ubi_bgt0d" started, PID 472
+[    3.474324] block ubiblock0_0: created from ubi0:0(rootfs)
+[    3.485043] ubiblock: device ubiblock0_0 (rootfs) set to be root filesystem
+[    3.492222] clk: Disabling unused clocks
+[    3.500450] VFS: Mounted root (squashfs filesystem) readonly on device 254:0.
+[    3.508615] Freeing unused kernel image (initmem) memory: 1024K
+[    3.514817] Run /sbin/init as init process
+[    3.518927]   with arguments:
+[    3.518933]     /sbin/init
+[    3.518938]   with environment:
+[    3.518942]     HOME=/
+[    3.518947]     TERM=linux
+[    3.844784] init: Console is alive
+[    3.848438] init: - watchdog -
+[    4.308326] kmodloader: loading kernel modules from /etc/modules-boot.d/*
+[    4.346822] bcma_hcd bcma0:12: error -EBUSY: error obtaining VCC GPIO
+[    4.353305] bcma_hcd bcma0:12: probe with driver bcma_hcd failed with error -16
+[    4.371170] usbcore: registered new interface driver usbfs
+[    4.376797] usbcore: registered new interface driver hub
+[    4.382180] usbcore: registered new device driver usb
+[    4.388250] gpio_button_hotplug: loading out-of-tree module taints kernel.
+[    4.407066] ehci-platform 18021000.usb: EHCI Host Controller
+[    4.408085] bcma-host-soc 18000000.axi: Failed to create device link (0x180) with mdio_mux-0.0:10
+[    4.412784] ehci-platform 18021000.usb: new USB bus registered, assigned bus number 1
+[    4.429794] ehci-platform 18021000.usb: irq 41, io mem 0x18021000
+[    4.454757] ehci-platform 18021000.usb: USB 2.0 started, EHCI 1.00
+[    4.461647] hub 1-0:1.0: USB hub found
+[    4.465581] hub 1-0:1.0: 2 ports detected
+[    4.473732] ohci-platform 18022000.usb: Generic Platform OHCI controller
+[    4.480556] ohci-platform 18022000.usb: new USB bus registered, assigned bus number 2
+[    4.488539] ohci-platform 18022000.usb: irq 41, io mem 0x18022000
+[    4.559380] hub 2-0:1.0: USB hub found
+[    4.563270] hub 2-0:1.0: 2 ports detected
+[    4.615787] kmodloader: done loading kernel modules from /etc/modules-boot.d/*
+[    4.627022] init: - preinit -
+[    5.207473] mtdblock: MTD device 'nvram' is NAND, please consider using UBI block devices instead.
+[    5.488231] mtdblock: MTD device 'nvram' is NAND, please consider using UBI block devices instead.
+[    5.933826] b53-srab-switch 18007000.ethernet-switch lan1: configuring for phy/gmii link mode
+[    5.942550] bgmac_bcma bcma0:3 eth0: Link is Up - 1Gbps/Full - flow control off
+[    5.952258] b53-srab-switch 18007000.ethernet-switch lan1: Link is Up - 100Mbps/Full - flow control rx/tx
+[   10.326374] ubi1: attaching mtd14
+[   10.806964] ubi1: scanning is finished
+[   10.855491] ubi1: attached mtd14 (name "data", size 90 MiB)
+[   10.861101] ubi1: PEB size: 131072 bytes (128 KiB), LEB size: 126976 bytes
+[   10.868011] ubi1: min./max. I/O unit sizes: 2048/2048, sub-page size 2048
+[   10.874833] ubi1: VID header offset: 2048 (aligned 2048), data offset: 4096
+[   10.881815] ubi1: good PEBs: 726, bad PEBs: 0, corrupted PEBs: 0
+[   10.887853] ubi1: user volume: 1, internal volumes: 1, max. volumes count: 128
+[   10.895105] ubi1: max/mean erase counter: 21/10, WL threshold: 4096, image sequence number: 1540480622
+[   10.904437] ubi1: available PEBs: 0, total reserved PEBs: 726, PEBs reserved for bad PEB handling: 20
+[   10.913707] ubi1: background thread "ubi_bgt1d" started, PID 649
+[   11.030694] mount_root: loading kmods from internal overlay
+[   11.046408] kmodloader: loading kernel modules from //etc/modules-boot.d/*
+[   11.054756] kmodloader: done loading kernel modules from //etc/modules-boot.d/*
+[   11.170802] block: attempting to load /tmp/overlay/upper/etc/config/fstab
+[   11.179513] block: unable to load configuration (fstab: Entry not found)
+[   11.186470] block: attempting to load /tmp/overlay/etc/config/fstab
+[   11.192912] block: unable to load configuration (fstab: Entry not found)
+[   11.199779] block: attempting to load /etc/config/fstab
+[   11.207347] block: unable to load configuration (fstab: Entry not found)
+[   11.214195] block: no usable configuration
+[   11.221782] UBIFS (ubi0:1): Mounting in unauthenticated mode
+[   11.227664] UBIFS (ubi0:1): background thread "ubifs_bgt0_1" started, PID 658
+[   11.334263] UBIFS (ubi0:1): UBIFS: mounted UBI device 0, volume 1, name "rootfs_data"
+[   11.342158] UBIFS (ubi0:1): LEB size: 126976 bytes (124 KiB), min./max. I/O unit sizes: 2048 bytes/2048 bytes
+[   11.352111] UBIFS (ubi0:1): FS size: 16379904 bytes (15 MiB, 129 LEBs), max 139 LEBs, journal size 1015809 bytes (0 MiB, 6 LEBs)
+[   11.363718] UBIFS (ubi0:1): reserved for root: 773663 bytes (755 KiB)
+[   11.370245] UBIFS (ubi0:1): media format: w5/r0 (latest is w5/r0), UUID 5C8A60CB-CEB6-4950-8799-3269D607A40F, small LPT model
+[   11.382922] block: attempting to load /tmp/ubifs_cfg/upper/etc/config/fstab
+[   11.397586] UBIFS (ubi1:0): Mounting in unauthenticated mode
+[   11.403418] UBIFS (ubi1:0): background thread "ubifs_bgt1_0" started, PID 660
+[   11.451979] UBIFS (ubi1:0): recovery needed
+[   11.576736] UBIFS (ubi1:0): recovery completed
+[   11.581292] UBIFS (ubi1:0): UBIFS: mounted UBI device 1, volume 0, name "extroot"
+[   11.588814] UBIFS (ubi1:0): LEB size: 126976 bytes (124 KiB), min./max. I/O unit sizes: 2048 bytes/2048 bytes
+[   11.598769] UBIFS (ubi1:0): FS size: 87740416 bytes (83 MiB, 691 LEBs), max 702 LEBs, journal size 4444160 bytes (4 MiB, 35 LEBs)
+[   11.610462] UBIFS (ubi1:0): reserved for root: 4144196 bytes (4047 KiB)
+[   11.617099] UBIFS (ubi1:0): media format: w5/r0 (latest is w5/r0), UUID B95881FE-E8F0-48F2-9E45-068F357382D6, small LPT model
+[   11.633693] UBIFS (ubi0:1): un-mount UBI device 0
+[   11.638480] UBIFS (ubi0:1): background thread "ubifs_bgt0_1" stops
+[   11.657950] mount_root: switched to extroot
+[   11.668080] urandom-seed: Seeding with /etc/urandom.seed
+[   11.750027] b53-srab-switch 18007000.ethernet-switch lan1: Link is Down
+[   11.767068] procd: - early -
+[   11.770103] procd: - watchdog -
+[   12.348730] procd: - watchdog -
+[   12.354308] procd: - ubus -
+[   12.524558] procd: - init -
+[   13.460959] kmodloader: loading kernel modules from /etc/modules.d/*
+[   13.554135] urngd: v1.0.2 started.
+[   13.612628] PPP generic driver version 2.4.2
+[   13.635617] NET: Registered PF_PPPOX protocol family
+[   13.644217] wireguard: WireGuard 1.0.0 loaded. See www.wireguard.com for information.
+[   13.652170] wireguard: Copyright (C) 2015-2019 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+[   13.695036] kmodloader: done loading kernel modules from /etc/modules.d/*
+[   17.650249] wl: module license 'Proprietary' taints kernel.
+[   17.655902] Disabling lock debugging due to kernel taint
+[   17.661234] wl: module license taints kernel.
+[   17.687371] wltrace: buffer de 524288 registros
+[   17.692136] wl 0000:01:00.0: wl0: dominio PCI 0, slot 0
+[   17.742904] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   17.750291] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   17.757652] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   17.764741] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   17.771818] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   17.779957] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   17.787326] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   17.794668] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   17.801755] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   17.808849] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   17.943867] wltrace-ioc disable core 812/1 ioctrl 00000000 ioctrl_le 00000000
+[   18.055268] wl 0000:01:00.0 wl0: Broadcom BCM4360 802.11 Wireless Controller 7.14.164.18 (r692288)
+[   18.064596] wl 0001:01:00.0: wl1: dominio PCI 1, slot 0
+[   18.117141] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   18.124503] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   18.131939] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   18.139144] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   18.146275] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   18.154463] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   18.161903] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   18.169384] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   18.176528] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   18.183623] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   18.295873] wltrace-ioc disable core 812/1 ioctrl 00000000 ioctrl_le 00000000
+[   18.410724] wl 0001:01:00.0 wl1: Broadcom BCM4360 802.11 Wireless Controller 7.14.164.18 (r692288)
+[   20.136416] bgmac_bcma bcma0:3 eth0: Link is Up - 1Gbps/Full - flow control off
+[   20.161985] b53-srab-switch 18007000.ethernet-switch lan1: configuring for phy/gmii link mode
+[   20.195100] br-lan: port 1(lan1) entered blocking state
+[   20.200394] br-lan: port 1(lan1) entered disabled state
+[   20.205781] b53-srab-switch 18007000.ethernet-switch lan1: entered allmulticast mode
+[   20.213585] bgmac_bcma bcma0:3 eth0: entered allmulticast mode
+[   20.219913] b53-srab-switch 18007000.ethernet-switch lan1: entered promiscuous mode
+[   20.234296] b53-srab-switch 18007000.ethernet-switch lan2: configuring for phy/gmii link mode
+[   20.245270] br-lan: port 2(lan2) entered blocking state
+[   20.250549] br-lan: port 2(lan2) entered disabled state
+[   20.255986] b53-srab-switch 18007000.ethernet-switch lan2: entered allmulticast mode
+[   20.264202] b53-srab-switch 18007000.ethernet-switch lan2: entered promiscuous mode
+[   20.279852] b53-srab-switch 18007000.ethernet-switch lan3: configuring for phy/gmii link mode
+[   20.290851] br-lan: port 3(lan3) entered blocking state
+[   20.296257] br-lan: port 3(lan3) entered disabled state
+[   20.301593] b53-srab-switch 18007000.ethernet-switch lan3: entered allmulticast mode
+[   20.309924] b53-srab-switch 18007000.ethernet-switch lan3: entered promiscuous mode
+[   20.322888] b53-srab-switch 18007000.ethernet-switch lan4: configuring for phy/gmii link mode
+[   20.333479] br-lan: port 4(lan4) entered blocking state
+[   20.338889] br-lan: port 4(lan4) entered disabled state
+[   20.344195] b53-srab-switch 18007000.ethernet-switch lan4: entered allmulticast mode
+[   20.352437] b53-srab-switch 18007000.ethernet-switch lan4: entered promiscuous mode
+[   20.401058] b53-srab-switch 18007000.ethernet-switch wan: configuring for phy/gmii link mode
+[   20.621158] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   20.628602] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   20.636038] wltrace-ioc disable core 812/1 ioctrl 00000000 ioctrl_le 00000000
+[   20.652647] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   20.660099] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   20.667559] wltrace-ioc disable core 812/1 ioctrl 00000000 ioctrl_le 00000000
+[   20.674847] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   20.682210] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   20.689635] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   20.696811] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   20.703923] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   20.711166] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   20.718303] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   20.725435] wltrace-ioc cflags core 812/1 ioctrl 00000141 ioctrl_le 00000141
+[   20.732574] wltrace-ioc cflags core 812/1 ioctrl 00000145 ioctrl_le 00000145
+[   20.739799] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   20.747199] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   20.754554] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   20.761686] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   20.768821] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   20.776051] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   20.783146] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   20.790282] wltrace-ioc cflags core 812/1 ioctrl 00000141 ioctrl_le 00000141
+[   20.797419] wltrace-ioc cflags core 812/1 ioctrl 00000145 ioctrl_le 00000145
+[   20.804533] wltrace-ioc cflags core 812/1 ioctrl 00002145 ioctrl_le 00002145
+[   20.816553] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.828968] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.841389] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.853800] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.866203] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.878624] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.891004] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.903392] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.915762] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.928133] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.940501] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.952881] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.965278] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.977674] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   20.990048] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.002446] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.014835] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.027226] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.039610] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.051989] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.064361] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.076731] wltrace-bmc 530: 520=000b 530=0007 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.089099] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.101494] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.113893] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.126273] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.138656] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.151058] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.163466] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.175851] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.188246] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.200639] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.213013] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.225401] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.237784] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.250199] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.262608] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.275008] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.287432] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.299845] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.312251] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.324620] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.336966] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.349291] wltrace-bmc 530: 520=000b 530=0017 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.361617] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.374039] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.386462] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.398886] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.411312] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.423733] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.436123] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.448538] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.460975] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.473377] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.485818] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.498240] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.510640] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.523073] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.535487] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.547939] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.560362] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.572782] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.585210] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.597625] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.610039] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.622444] wltrace-bmc 530: 520=000b 530=0027 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.634821] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.647216] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.659621] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.672046] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.684461] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.696888] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.709287] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.721688] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.734102] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.746525] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.758940] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.771354] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.783757] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.796165] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.808589] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.820997] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.833409] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.845818] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.858211] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.870614] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.883018] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.895417] wltrace-bmc 530: 520=000b 530=0037 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.907813] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.920231] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.932646] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.945044] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.957456] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.969865] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.982278] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   21.994693] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.007105] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.019510] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.031932] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.044337] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.056738] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.069126] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.081542] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.093955] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.106370] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.118803] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.131219] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.143625] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.156030] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.168433] wltrace-bmc 530: 520=000b 530=0047 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.180835] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.193254] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.205674] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.218103] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.230520] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.242939] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.255332] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.267741] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.280147] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.292575] wltrace-bmc 530: 520=000b 530=0057 532=0000 534=0000 536=0000 540=0004 542=0600 548=0005 54a=05d6 54c=0020 54e=1216 550=740c
+[   22.313108] wltrace-ioc cflags core 812/1 ioctrl 00002155 ioctrl_le 00002155
+[   22.320314] wltrace-dma wl0: ddtable tx pa 00000000:02280000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   22.330269] wltrace-dma wl0: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:02280000
+[   22.339994] wltrace-dma wl0: ddtable tx pa 00000000:0229c000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   22.349974] wltrace-dma wl0: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:0229c000
+[   22.359704] wltrace-dma wl0: ddtable tx pa 00000000:022a0000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   22.369685] wltrace-dma wl0: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:022a0000
+[   22.379381] wltrace-dma wl0: ddtable tx pa 00000000:022b0000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   22.389340] wltrace-dma wl0: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:022b0000
+[   22.399033] wltrace-dma wl0: ddtable tx pa 00000000:022b8000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   22.408993] wltrace-dma wl0: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:022b8000
+[   22.418684] wltrace-dma wl0: ddtable rx pa 00000000:02288000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   22.428652] wltrace-dma wl0: rxenable control 00500851 (rxoffset 40 bl 4 pc 2 pt 0 flags 0) le 00500851
+[   22.449199] wltrace-ioc cflags core 812/1 ioctrl 00002155 ioctrl_le 00002155
+[   22.480622] b53-srab-switch 18007000.ethernet-switch lan1: Link is Up - 100Mbps/Full - flow control rx/tx
+[   22.490563] br-lan: port 1(lan1) entered blocking state
+[   22.495931] br-lan: port 1(lan1) entered forwarding state
+[   22.920004] br-lan: port 5(wl0) entered blocking state
+[   22.925273] br-lan: port 5(wl0) entered disabled state
+[   22.930561] wl 0000:01:00.0 wl0: entered allmulticast mode
+[   22.936481] wl 0000:01:00.0 wl0: entered promiscuous mode
+[   22.942199] br-lan: port 5(wl0) entered blocking state
+[   22.947477] br-lan: port 5(wl0) entered forwarding state
+[   23.064410] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   23.071834] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   23.079239] wltrace-ioc disable core 812/1 ioctrl 00000000 ioctrl_le 00000000
+[   23.094738] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   23.102130] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   23.109540] wltrace-ioc disable core 812/1 ioctrl 00000000 ioctrl_le 00000000
+[   23.116783] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   23.124134] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   23.131526] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   23.138689] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   23.145826] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   23.153000] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   23.160158] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   23.167316] wltrace-ioc cflags core 812/1 ioctrl 00000141 ioctrl_le 00000141
+[   23.174419] wltrace-ioc cflags core 812/1 ioctrl 00000145 ioctrl_le 00000145
+[   23.181596] wltrace-ioc reset_ini core 812/1 ioctrl 00000007 ioctrl_le 00000007
+[   23.188978] wltrace-ioc reset_fim core 812/1 ioctrl 00000005 ioctrl_le 00000005
+[   23.196340] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   23.203419] wltrace-ioc cflags core 812/1 ioctrl 00000101 ioctrl_le 00000101
+[   23.210551] wltrace-ioc cflags core 812/1 ioctrl 00000105 ioctrl_le 00000105
+[   23.217769] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   23.224897] wltrace-ioc cflags core 812/1 ioctrl 0000014f ioctrl_le 0000014f
+[   23.232006] wltrace-ioc cflags core 812/1 ioctrl 00000141 ioctrl_le 00000141
+[   23.239147] wltrace-ioc cflags core 812/1 ioctrl 00000145 ioctrl_le 00000145
+[   23.246289] wltrace-ioc cflags core 812/1 ioctrl 00000145 ioctrl_le 00000145
+[   23.267662] wltrace-ioc cflags core 812/1 ioctrl 00000155 ioctrl_le 00000155
+[   23.274837] wltrace-dma wl1: ddtable tx pa 00000000:02318000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   23.284758] wltrace-dma wl1: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:02318000
+[   23.294377] wltrace-dma wl1: ddtable tx pa 00000000:02314000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   23.304302] wltrace-dma wl1: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:02314000
+[   23.313989] wltrace-dma wl1: ddtable tx pa 00000000:02328000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   23.323933] wltrace-dma wl1: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:02328000
+[   23.333604] wltrace-dma wl1: ddtable tx pa 00000000:02338000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   23.343549] wltrace-dma wl1: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:02338000
+[   23.353237] wltrace-dma wl1: ddtable tx pa 00000000:02340000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   23.363184] wltrace-dma wl1: txinit control 03700841 (bl 4 mr 1 pc 3 pt 3 flags 0) addr 80000000:02340000
+[   23.372862] wltrace-dma wl1: ddtable rx pa 00000000:02320000 offs 80000000:00000000 aligndesc_4k 0 addrext 1
+[   23.382766] wltrace-dma wl1: rxenable control 00500851 (rxoffset 40 bl 4 pc 2 pt 0 flags 0) le 00500851
+[   23.400510] wltrace-ioc cflags core 812/1 ioctrl 00000155 ioctrl_le 00000155
+[   23.579863] b53-srab-switch 18007000.ethernet-switch lan2: Link is Up - 1Gbps/Full - flow control rx/tx
+[   23.589460] br-lan: port 2(lan2) entered blocking state
+[   23.594810] br-lan: port 2(lan2) entered forwarding state
+[   23.830436] br-lan: port 6(wl1) entered blocking state
+[   23.835714] br-lan: port 6(wl1) entered disabled state
+[   23.840929] wl 0001:01:00.0 wl1: entered allmulticast mode
+[   23.846771] wl 0001:01:00.0 wl1: entered promiscuous mode
+[   23.852501] br-lan: port 6(wl1) entered blocking state
+[   23.857719] br-lan: port 6(wl1) entered forwarding state
+[   41.288847] b53-srab-switch 18007000.ethernet-switch wan: Link is Up - 100Mbps/Full - flow control off
