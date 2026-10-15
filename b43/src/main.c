@@ -1341,6 +1341,16 @@ static void handle_irq_transmit_status(struct b43_wldev *dev)
 		if (!(v0 & 0x00000001))
 			break;
 		v1 = b43_read32(dev, B43_MMIO_XMITSTAT_1);
+		if (dev->phy.type == B43_PHYTYPE_AC) {
+			/* rev >= 40: status de 4 palavras; layout a confirmar */
+			static unsigned int n;
+			u32 v2 = b43_read32(dev, 0x178);
+			u32 v3 = b43_read32(dev, 0x17c);
+
+			if (n++ < 16)
+				b43info(dev->wl, "txstatus %08x %08x %08x %08x\n",
+					v0, v1, v2, v3);
+		}
 
 		stat.cookie = (v0 >> 16);
 		stat.seq = (v1 & 0x0000FFFF);
