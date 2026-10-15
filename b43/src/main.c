@@ -3240,6 +3240,60 @@ static void b43_chip_exit(struct b43_wldev *dev)
 /* Initialize the chip
  * https://bcm-specs.sipsolutions.net/ChipInit
  */
+/* d11 rev >= 40: Buffer Memory Controller.  Sem ele o DMA de TX para no
+ * primeiro descritor (o FIFO de TX nao tem memoria).  Sequencia do
+ * wlc_bmac_bmc_init do wl para o rev 42 (config em .rodata 0x354 do
+ * wlc_bmac.o, conferida com o log do polling no R7000): 0x600 blocos,
+ * FIFOs 7,0..5; depois 42 comandos de faixa em 0x530. */
+static bool b43_bmc_poll(struct b43_wldev *dev, u16 reg, u16 mask)
+{
+	unsigned int i;
+
+	for (i = 0; i < 20; i++) {
+		if (!(b43_read16(dev, reg) & mask))
+			return true;
+		udelay(10);
+	}
+	return false;
+}
+
+static void b43_bmc_init(struct b43_wldev *dev)
+{
+	static const u8 fifos[] = { 7, 0, 1, 2, 3, 4, 5 };
+	const u16 total = 0x600, rsv = 42;
+	unsigned int i, to = 0;
+
+	if (dev->dev->core_rev != 42)
+		return;
+	b43_write16(dev, 0x542, total);
+	b43_write16(dev, 0x540, 0x0005);
+	if (!b43_bmc_poll(dev, 0x540, 0x0001))
+		b43warn(dev->wl, "BMC: init nao terminou (0x540 %04x)\n",
+			b43_read16(dev, 0x540));
+	for (i = 0; i < ARRAY_SIZE(fifos); i++) {
+		bool f7 = fifos[i] == 7;
+
+		b43_write16(dev, 0x54a, f7 ? rsv : total - rsv);
+		b43_write16(dev, 0x54c, f7 ? rsv : 0x20);
+		b43_write16(dev, 0x520, f7 ? rsv : 0xb);
+		b43_write16(dev, 0x54e, f7 ? (rsv | ((rsv - 4) << 8)) : 0x1216);
+		b43_write16(dev, 0x550, 0x740c);
+		b43_write16(dev, 0x548, fifos[i] | 0x10);
+	}
+	for (i = 0; i < rsv; i++) {
+		u16 hi = min_t(u16, i + 2, rsv - 1);
+
+		b43_write16(dev, 0x534, i);
+		b43_write16(dev, 0x536, hi);
+		b43_write16(dev, 0x532, 1 - i + hi);
+		b43_write16(dev, 0x530, 0x8007 | (i << 4));
+		if (!b43_bmc_poll(dev, 0x530, 0xffff))
+			to++;
+	}
+	b43info(dev->wl, "BMC: %u blocos, %u FIFOs, %u/%u comandos 0x530 sem fim\n",
+		total, (unsigned int)ARRAY_SIZE(fifos), to, rsv);
+}
+
 static int b43_chip_init(struct b43_wldev *dev)
 {
 	struct b43_phy *phy = &dev->phy;
@@ -3269,6 +3323,8 @@ static int b43_chip_init(struct b43_wldev *dev)
 	err = b43_upload_initvals_band(dev);
 	if (err)
 		goto err_gpio_clean;
+
+	b43_bmc_init(dev);
 
 	/* Turn the Analog on and initialize the PHY. */
 	phy->ops->switch_analog(dev, 1);
