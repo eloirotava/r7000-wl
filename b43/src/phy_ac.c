@@ -149,8 +149,9 @@ static void b43_phy_ac_pmu_dump(struct b43_wldev *dev, const char *quando)
 {
 	struct bcma_drv_cc *cc = &dev->dev->bdev->bus->drv_cc;
 	static const u16 dir[] = { 0x28, 0x2c, 0x600, 0x604, 0x608, 0x60c,
-				   0x610, 0x618, 0x61c };
-	u32 v[49];
+				   0x610, 0x618, 0x61c, 0x58, 0x5c, 0x60, 0x64,
+				   0x68, 0x6c, 0x70, 0x74 };
+	u32 v[57];
 	unsigned int i, n = 0;
 
 	for (i = 0; i < ARRAY_SIZE(dir); i++)
