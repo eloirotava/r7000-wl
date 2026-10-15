@@ -723,7 +723,33 @@ extern void wlc_bmac_copyfrom_objmem(void *wlc_hw, uint offset, void *buf,
 	int len, uint32 sel);
 
 #define WLSHM_SHM	0x2000
-#define WLSHM_UNIT	WLSHM_SHM
+#define WLSHM_PMU	0x100
+#define WLSHM_UNIT	(WLSHM_SHM + WLSHM_PMU)
+
+/* chipcommon do cartao em bar0 + 12K (PCI_16KB0_CCREGS_OFFSET): mesma
+ * lista que o b43 despeja no init do AC-PHY (b43_phy_ac_pmu_dump) */
+static void wlshm_pmu(struct wl_info *wl, u32 *o)
+{
+	void __iomem *cc = wl->regsva + 0x3000;
+	static const u16 dir[] = { 0x28, 0x2c, 0x600, 0x604, 0x608, 0x60c,
+				   0x610, 0x618, 0x61c };
+	unsigned int i, n = 0;
+
+	for (i = 0; i < ARRAY_SIZE(dir); i++)
+		o[n++] = readl(cc + dir[i]);
+	for (i = 0; i < 8; i++) {
+		writel(i, cc + 0x650);
+		o[n++] = readl(cc + 0x654);
+	}
+	for (i = 0; i < 16; i++) {
+		writel(i, cc + 0x658);
+		o[n++] = readl(cc + 0x65c);
+	}
+	for (i = 0; i < 16; i++) {
+		writel(i, cc + 0x660);
+		o[n++] = readl(cc + 0x664);
+	}
+}
 
 static struct wl_info *wlshm_wl[2];
 static u8 *wlshm_buf;
@@ -735,6 +761,7 @@ static void wlshm_snap(struct wl_info *wl, u8 *out)
 	WL_LOCK(wl);
 	if (WLPUB_HW_UP(wl->pub)) {
 		wlc_bmac_copyfrom_objmem(hw, 0, out, WLSHM_SHM, 0x10000);
+		wlshm_pmu(wl, (u32 *)(out + WLSHM_SHM));
 	}
 	WL_UNLOCK(wl);
 }

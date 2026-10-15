@@ -124,6 +124,34 @@ static void b43_phy_ac_table_write(struct b43_wldev *dev, u16 id, u16 offset,
 	}
 }
 
+/* chipcommon/PMU do cartao (mesma lista do /proc/wlshm do wl) */
+static void b43_phy_ac_pmu_dump(struct b43_wldev *dev, const char *quando)
+{
+	struct bcma_drv_cc *cc = &dev->dev->bdev->bus->drv_cc;
+	static const u16 dir[] = { 0x28, 0x2c, 0x600, 0x604, 0x608, 0x60c,
+				   0x610, 0x618, 0x61c };
+	u32 v[49];
+	unsigned int i, n = 0;
+
+	for (i = 0; i < ARRAY_SIZE(dir); i++)
+		v[n++] = bcma_cc_read32(cc, dir[i]);
+	for (i = 0; i < 8; i++) {
+		bcma_cc_write32(cc, 0x650, i);
+		v[n++] = bcma_cc_read32(cc, 0x654);
+	}
+	for (i = 0; i < 16; i++) {
+		bcma_cc_write32(cc, 0x658, i);
+		v[n++] = bcma_cc_read32(cc, 0x65c);
+	}
+	for (i = 0; i < 16; i++) {
+		bcma_cc_write32(cc, 0x660, i);
+		v[n++] = bcma_cc_read32(cc, 0x664);
+	}
+	for (i = 0; i < n; i += 8)
+		b43info(dev->wl, "pmu %s %02u: %*ph\n", quando, i,
+			(int)(min(8u, n - i) * 4), &v[i]);
+}
+
 static void b43_phy_ac_replay(struct b43_wldev *dev)
 {
 	struct bcma_drv_cc *cc = &dev->dev->bdev->bus->drv_cc;
@@ -201,7 +229,9 @@ static int b43_phy_ac_op_init(struct b43_wldev *dev)
 	}
 	if (ac_replay_ckpt > 0)
 		mdelay(1500);
+	b43_phy_ac_pmu_dump(dev, "antes");
 	b43_phy_ac_replay(dev);
+	b43_phy_ac_pmu_dump(dev, "depois");
 	if (dev->dev->bus_type == B43_BUS_BCMA) {
 		/* o wl termina o init do core d11 de 5 GHz com ioctrl 0x155:
 		 * 0x145 do b43 + 0x10 (SICF_MPCLKE, clock do PHY pelo MAC) */
