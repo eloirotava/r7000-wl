@@ -256,6 +256,12 @@ static int b43_phy_ac_op_init(struct b43_wldev *dev)
 	}
 	if (ac_replay_ckpt > 0)
 		mdelay(1500);
+	/* GPIOs 0-2 do chipcommon do cartao: o wl os deixa como saida
+	 * (outen 0x7) com 0x2 no radio de 2,4 GHz e 0x4 no de 5 GHz (front-end);
+	 * soltos, o RX de 2,4 GHz so via glitches */
+	bcma_chipco_gpio_out(&dev->dev->bdev->bus->drv_cc, 0x7,
+			     ac_band == 2 ? 0x2 : 0x4);
+	bcma_chipco_gpio_outen(&dev->dev->bdev->bus->drv_cc, 0x7, 0x7);
 	b43_phy_ac_pmu_dump(dev, "antes");
 	/* regcontrol 0: o wl no ar tem 0x00200004; depois do wl down (e no
 	 * b43) fica 0x00200006.  O bit 1 nao aparece no rastro do PHY. */
