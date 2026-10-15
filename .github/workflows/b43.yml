@@ -38,6 +38,10 @@ jobs:
           BP=$(ls -d $PWD/build_dir/target-*/linux-*/mac80211-regular/backports-*)
           echo "BP=$BP"
           cp ../b43/src/* $BP/drivers/net/wireless/broadcom/b43/
+          # objetos novos do AC-PHY (o Makefile do cache vem do patch antigo)
+          sed -i -E 's/^(b43-\$\(CPTCFG_B43_PHY_AC\)\t\+= radio_2069\.o).*$/\1 phy_ac_replay.o phy_ac_replay2g.o/' \
+            $BP/drivers/net/wireless/broadcom/b43/Makefile
+          grep -n 'PHY_AC' $BP/drivers/net/wireless/broadcom/b43/Makefile
           echo "MAC80211=$(dirname $(find feeds -path '*kernel/mac80211/Makefile' | head -1))" >> $GITHUB_ENV
           T=$(ls -d $PWD/staging_dir/toolchain-*)
           export PATH=$T/bin:$PATH STAGING_DIR=$PWD/staging_dir

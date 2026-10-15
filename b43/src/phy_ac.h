@@ -37,4 +37,6 @@ struct b43_phy_ac {
 
 extern const struct b43_phy_operations b43_phyops_ac;
 
+bool b43_phy_ac_band_2ghz(void);
+
 #endif /* B43_PHY_AC_H_ */

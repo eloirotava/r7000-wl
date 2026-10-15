@@ -43,6 +43,26 @@ struct b43_ac_replay_pmu {
 /* canal em que o init gravado termina */
 #define B43_AC_REPLAY_CHANNEL	44
 
+/* conjunto de dados de um init gravado (5 GHz: phy_ac_replay.c;
+ * 2,4 GHz: phy_ac_replay2g.c) */
+struct b43_ac_replay_set {
+	const struct b43_ac_replay_op *ops;
+	const unsigned int *nops;
+	const struct b43_ac_replay_tbl *tbls;
+	const struct b43_ac_replay_pmu *pmus;
+	const u32 *data;
+	unsigned int channel;
+};
+
+/* canal em que o init gravado de 2,4 GHz termina */
+#define B43_AC_REPLAY2G_CHANNEL	6
+
+extern const struct b43_ac_replay_op b43_ac_replay2g_ops[];
+extern const unsigned int b43_ac_replay2g_nops;
+extern const struct b43_ac_replay_tbl b43_ac_replay2g_tbls[];
+extern const struct b43_ac_replay_pmu b43_ac_replay2g_pmus[];
+extern const u32 b43_ac_replay2g_data[];
+
 extern const struct b43_ac_replay_op b43_ac_replay_ops[];
 extern const unsigned int b43_ac_replay_nops;
 extern const struct b43_ac_replay_tbl b43_ac_replay_tbls[];

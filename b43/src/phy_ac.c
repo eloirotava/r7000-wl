@@ -67,6 +67,26 @@ static void b43_phy_ac_op_prepare_structs(struct b43_wldev *dev)
  * Init gravado do wl (phy_ac_replay.c)
  **************************************************/
 
+/* banda do cartao (o 4360 do R7000 tem o mesmo PCI ID nos dois radios):
+ * 5 = wl1 (0001:01:00.0), 2 = wl0 (0000:01:00.0) */
+static int ac_band = 5;
+module_param(ac_band, int, 0444);
+
+static const struct b43_ac_replay_set b43_ac_rs5 = {
+	b43_ac_replay_ops, &b43_ac_replay_nops, b43_ac_replay_tbls,
+	b43_ac_replay_pmus, b43_ac_replay_data, B43_AC_REPLAY_CHANNEL,
+};
+static const struct b43_ac_replay_set b43_ac_rs2 = {
+	b43_ac_replay2g_ops, &b43_ac_replay2g_nops, b43_ac_replay2g_tbls,
+	b43_ac_replay2g_pmus, b43_ac_replay2g_data, B43_AC_REPLAY2G_CHANNEL,
+};
+static const struct b43_ac_replay_set *rs = &b43_ac_rs5;
+
+bool b43_phy_ac_band_2ghz(void)
+{
+	return ac_band == 2;
+}
+
 /* depuracao no R7000: quantas ops do replay rodar (-1 = todas) e intervalo
  * de checkpoints (mensagem + 1,5 s de espera para o log chegar ao flash) */
 static int ac_replay_ops = -1;
@@ -78,7 +98,7 @@ module_param(ac_replay_skip, int, 0444);
 
 static void b43_phy_ac_ckpt(struct b43_wldev *dev, unsigned int i)
 {
-	const struct b43_ac_replay_op *op = &b43_ac_replay_ops[i];
+	const struct b43_ac_replay_op *op = &rs->ops[i];
 
 	b43info(dev->wl, "replay: op %u tipo %u addr 0x%x\n", i, op->type,
 		op->addr);
@@ -98,7 +118,7 @@ static void b43_phy_ac_delay(unsigned int us)
 static void b43_phy_ac_table_write(struct b43_wldev *dev, u16 id, u16 offset,
 				   const struct b43_ac_replay_tbl *t)
 {
-	const u32 *d = &b43_ac_replay_data[t->start];
+	const u32 *d = &rs->data[t->start];
 	unsigned int i;
 
 	b43_phy_write(dev, B43_PHY_AC_TABLE_ID, id);
@@ -159,14 +179,14 @@ static void b43_phy_ac_replay(struct b43_wldev *dev)
 	const struct b43_ac_replay_pmu *pmu;
 	unsigned int i;
 
-	for (i = 0; i < b43_ac_replay_nops; i++) {
+	for (i = 0; i < *rs->nops; i++) {
 		if (ac_replay_ops >= 0 && i >= ac_replay_ops)
 			break;
 		if (ac_replay_ckpt > 0 && i % ac_replay_ckpt == 0)
 			b43_phy_ac_ckpt(dev, i);
 		if (i == ac_replay_skip)
 			continue;
-		op = &b43_ac_replay_ops[i];
+		op = &rs->ops[i];
 		switch (op->type) {
 		case B43_AC_OP_PHY_W:
 			b43_phy_write(dev, op->addr, op->val);
@@ -192,13 +212,13 @@ static void b43_phy_ac_replay(struct b43_wldev *dev)
 			break;
 		case B43_AC_OP_TBL_W:
 			b43_phy_ac_table_write(dev, op->addr, op->mask,
-					       &b43_ac_replay_tbls[op->val]);
+					       &rs->tbls[op->val]);
 			break;
 		case B43_AC_OP_DELAY:
 			b43_phy_ac_delay(op->val);
 			break;
 		case B43_AC_OP_PMU:
-			pmu = &b43_ac_replay_pmus[op->val];
+			pmu = &rs->pmus[op->val];
 			bcma_chipco_regctl_maskset(cc, op->addr, ~pmu->mask,
 						   pmu->val & pmu->mask);
 			break;
@@ -206,7 +226,7 @@ static void b43_phy_ac_replay(struct b43_wldev *dev)
 			b43_shm_write16(dev, B43_SHM_SHARED, op->addr, op->val);
 			break;
 		case B43_AC_OP_CC:
-			pmu = &b43_ac_replay_pmus[op->val];
+			pmu = &rs->pmus[op->val];
 			bcma_cc_maskset32(cc, op->addr, ~pmu->mask, pmu->val);
 			break;
 		case B43_AC_OP_FGC:
@@ -220,15 +240,17 @@ static int b43_phy_ac_op_init(struct b43_wldev *dev)
 {
 	struct b43_phy *phy = &dev->phy;
 
-	b43info(dev->wl, "AC-PHY rev %u, radio 0x%04x rev %u: init gravado do wl (%u ops, canal %d)\n",
-		phy->rev, phy->radio_ver, phy->radio_rev, b43_ac_replay_nops,
-		B43_AC_REPLAY_CHANNEL);
+	rs = ac_band == 2 ? &b43_ac_rs2 : &b43_ac_rs5;
+	b43info(dev->wl, "AC-PHY rev %u, radio 0x%04x rev %u: init gravado do wl (%u ops, %d GHz, canal %u)\n",
+		phy->rev, phy->radio_ver, phy->radio_rev, *rs->nops,
+		ac_band, rs->channel);
 	if (phy->rev != 1 || phy->radio_ver != 0x2069 || phy->radio_rev != 4) {
 		b43err(dev->wl, "init gravado e do 4360 B1 (AC rev 1, 2069 rev 4)\n");
 		return -EOPNOTSUPP;
 	}
-	if (b43_current_band(dev->wl) != NL80211_BAND_5GHZ) {
-		b43err(dev->wl, "init gravado e do radio de 5 GHz\n");
+	if (b43_current_band(dev->wl) !=
+	    (ac_band == 2 ? NL80211_BAND_2GHZ : NL80211_BAND_5GHZ)) {
+		b43err(dev->wl, "banda atual difere de ac_band=%d\n", ac_band);
 		return -EOPNOTSUPP;
 	}
 	if (ac_replay_ckpt > 0)
@@ -249,7 +271,7 @@ static int b43_phy_ac_op_init(struct b43_wldev *dev)
 			bcma_aread32(dev->dev->bdev, BCMA_IOCTL));
 	}
 	b43info(dev->wl, "replay: fim\n");
-	dev->phy.ac->channel = B43_AC_REPLAY_CHANNEL;
+	dev->phy.ac->channel = rs->channel;
 	return 0;
 }
 
