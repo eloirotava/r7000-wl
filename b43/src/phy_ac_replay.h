@@ -55,7 +55,7 @@ struct b43_ac_replay_set {
 };
 
 /* canal em que o init gravado de 2,4 GHz termina */
-#define B43_AC_REPLAY2G_CHANNEL	6
+#define B43_AC_REPLAY2G_CHANNEL	11
 
 extern const struct b43_ac_replay_op b43_ac_replay2g_ops[];
 extern const unsigned int b43_ac_replay2g_nops;
