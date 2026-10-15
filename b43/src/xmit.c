@@ -235,7 +235,7 @@ static u8 b43_calc_fallback_rate(u8 bitrate, int gmode)
  * frames de gerencia (dump do hnddma no R7000):
  *   0x00     prefixo 02 00 00 00 00 00
  *   0x06     MacTxControlLow 0x4880   0x08 MacTxControlHigh 0x0002
- *   0x0a     0xd080 (sempre)           0x0c tamanho do cabecalho 802.11
+ *   0x0a     canal da SHM (0xa0)       0x0c tamanho do cabecalho 802.11
  *   0x0e     tamanho do frame + FCS    0x10 TxFrameID (slot << 3 | fifo)
  *   0x18     PHY ctl word 0 0x0045     0x1e PLCP OFDM (taxa | len << 5)
  *   0x24     0x0003                    0x26 taxa em 500 kbit/s
@@ -253,7 +253,10 @@ static int b43_generate_txhdr_ac(struct b43_wldev *dev, u8 *h,
 	h[0x00] = 0x02;
 	put_unaligned_le16(0x4880, h + 0x06);
 	put_unaligned_le16(0x0002, h + 0x08);
-	put_unaligned_le16(0xd080, h + 0x0a);	/* constante em todos os do wl */
+	/* o ucode compara com o canal atual na SHM (0xa0) e suprime o frame
+	 * com BADCH (status 0x0143) se diferirem; no wl os dois sao 0xd080 */
+	put_unaligned_le16(b43_shm_read16(dev, B43_SHM_SHARED, B43_SHM_SH_CHAN),
+			   h + 0x0a);
 	h[0x0c] = ieee80211_hdrlen(wlhdr->frame_control);
 	put_unaligned_le16(flen, h + 0x0e);
 	/* TxFrameID: o ucode quer o FIFO nos 3 bits baixos (o wl usa
