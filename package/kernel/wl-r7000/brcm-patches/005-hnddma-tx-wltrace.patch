@@ -1,0 +1,25 @@
+--- a/shared/hnddma.c	2026-10-15 07:04:10.155683848 -0300
++++ b/shared/hnddma.c	2026-10-15 07:04:19.931946876 -0300
+@@ -3327,6 +3327,22 @@
+ 	bool war;
+ 
+ 	DMA_TRACE(("%s: dma_txfast\n", di->name));
++#ifdef WLTRACE
++	/* primeiros pacotes de TX de cada canal: cabecalho de TX do ucode
++	 * (d11 rev >= 40) + frame, para o b43 montar o mesmo formato */
++	{
++		static int wlt_txn;
++
++		if (wlt_txn < 60 && PKTDATA(di->osh, p0)) {
++			wlt_txn++;
++			printk(KERN_INFO "wltrace-tx %s len %u\n", di->name,
++			       PKTLEN(di->osh, p0));
++			print_hex_dump(KERN_INFO, "wltrace-tx ", DUMP_PREFIX_OFFSET,
++				       16, 1, PKTDATA(di->osh, p0),
++				       min_t(uint, PKTLEN(di->osh, p0), 192), false);
++		}
++	}
++#endif
+ 	/* new DMA routine for LFRAGS */
+ 	if (BCMLFRAG_ENAB()) {
+ 		if (PKTISTXFRAG(di->osh, p0))
