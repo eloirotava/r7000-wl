@@ -21,13 +21,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # SDK com o mac80211 ja compilado: a chave so muda com a release, o
+      # workflow ou os patches fora do b43.  Com cache, so o b43 recompila.
+      - name: Cache do SDK compilado
+        id: sdk
+        uses: actions/cache/restore@v4
+        with:
+          path: sdk
+          key: sdk-mac80211-${{ env.RELEASE }}-${{ hashFiles('.github/workflows/b43.yml', 'b43/patches/subsys/*.patch', 'tools/b43-patch.sh') }}
+
+      - name: b43 incremental (cache)
+        if: steps.sdk.outputs.cache-hit == 'true'
+        run: |
+          set -o pipefail
+          cd sdk
+          BP=$(ls -d $PWD/build_dir/target-*/linux-*/mac80211-regular/backports-*)
+          cp ../b43/src/* $BP/drivers/net/wireless/broadcom/b43/
+          echo "MAC80211=$(dirname $(find feeds -path '*kernel/mac80211/Makefile' | head -1))" >> $GITHUB_ENV
+          T=$(ls -d $PWD/staging_dir/toolchain-*)
+          export PATH=$T/bin:$PATH STAGING_DIR=$PWD/staging_dir
+          LX=$(ls -d $PWD/build_dir/target-*/linux-*/linux-6.*)
+          SYMV=$(ls $PWD/build_dir/target-*/linux-*/symvers/*.symvers | tr '\n' ' ')
+          make -j$(nproc) -C "$BP" CROSS_COMPILE=arm-openwrt-linux-muslgnueabi- ARCH=arm \
+            CC=arm-openwrt-linux-muslgnueabi-gcc KBUILD_HAVE_NLS=no CONFIG_SHELL=bash \
+            KCFLAGS="-fno-caller-saves -falign-functions=32" \
+            KBUILD_EXTRA_SYMBOLS="$SYMV" KERNELRELEASE=$(basename $LX | sed 's/linux-//') \
+            EXTRA_CFLAGS="-I$BP/include" KLIB_BUILD="$LX" MODPROBE=true \
+            KLIB=/lib/modules/$(basename $LX | sed 's/linux-//') KBUILD_LDFLAGS_MODULE_PREREQ= \
+            modules 2>&1 | tee ../build.log | tail -30
+
       - name: Dependencias
+        if: steps.sdk.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential gawk gettext libncurses-dev \
             python3-setuptools rsync unzip zlib1g-dev file wget zstd
 
       - name: SDK da release
+        if: steps.sdk.outputs.cache-hit != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -35,6 +66,7 @@ jobs:
           mkdir sdk && tar -I zstd -xf sdk.tar.zst -C sdk --strip-components=1
 
       - name: Configura mac80211 com b43 AC
+        if: steps.sdk.outputs.cache-hit != 'true'
         run: |
           cd sdk
           ./scripts/feeds update base
@@ -69,6 +101,7 @@ jobs:
       # de b43/src por tools/b43-patch.sh); 951 = mac80211 sem CRYPTO_CMAC
       # (o kernel da imagem nao tem; o cmac(aes) so e pedido para 802.11w)
       - name: Patches do b43 e do mac80211
+        if: steps.sdk.outputs.cache-hit != 'true'
         run: |
           cp b43/patches/brcm/*.patch sdk/$MAC80211/patches/brcm/
           cp b43/patches/subsys/*.patch sdk/$MAC80211/patches/subsys/
@@ -81,11 +114,25 @@ jobs:
           done
 
       - name: Compila
+        if: steps.sdk.outputs.cache-hit != 'true'
         run: |
           cd sdk
           set -o pipefail
           make package/mac80211/compile V=s -j$(nproc) 2>&1 | tee ../build.log | tail -40
           grep -E 'CPTCFG_B43_PHY_AC|CPTCFG_B43_DEBUG' build_dir/target-*/linux-*/*/backports-*/.config
+
+      # o Compila sempre termina com erro no empacotamento (cordic), mas os
+      # .ko saem: salva se o b43.ko existe
+      - name: Salva o SDK compilado
+        if: always() && steps.sdk.outputs.cache-hit != 'true'
+        run: |
+          ls sdk/build_dir/target-*/linux-*/*/backports-*/drivers/net/wireless/broadcom/b43/b43.ko
+          echo "OK_SAVE=1" >> $GITHUB_ENV
+      - uses: actions/cache/save@v4
+        if: always() && env.OK_SAVE == '1'
+        with:
+          path: sdk
+          key: ${{ steps.sdk.outputs.cache-primary-key }}
 
       - name: Config do backports
         if: always()
