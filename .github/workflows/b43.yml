@@ -126,7 +126,7 @@ jobs:
       - name: Salva o SDK compilado
         if: always() && steps.sdk.outputs.cache-hit != 'true'
         run: |
-          ls sdk/build_dir/target-*/linux-*/*/backports-*/drivers/net/wireless/broadcom/b43/b43.ko
+          find sdk/build_dir/target-*/linux-*/*/backports-* -name b43.ko | grep -q .
           echo "OK_SAVE=1" >> $GITHUB_ENV
       - uses: actions/cache/save@v4
         if: always() && env.OK_SAVE == '1'
