@@ -202,6 +202,15 @@ static int b43_phy_ac_op_init(struct b43_wldev *dev)
 	if (ac_replay_ckpt > 0)
 		mdelay(1500);
 	b43_phy_ac_replay(dev);
+	if (dev->dev->bus_type == B43_BUS_BCMA) {
+		/* o wl termina o init do core d11 de 5 GHz com ioctrl 0x155:
+		 * 0x145 do b43 + 0x10 (SICF_MPCLKE, clock do PHY pelo MAC) */
+		u32 ioc = bcma_aread32(dev->dev->bdev, BCMA_IOCTL);
+
+		bcma_awrite32(dev->dev->bdev, BCMA_IOCTL, ioc | 0x10);
+		b43info(dev->wl, "AC-PHY: ioctrl %08x -> %08x\n", ioc,
+			bcma_aread32(dev->dev->bdev, BCMA_IOCTL));
+	}
 	b43info(dev->wl, "replay: fim\n");
 	dev->phy.ac->channel = B43_AC_REPLAY_CHANNEL;
 	return 0;
