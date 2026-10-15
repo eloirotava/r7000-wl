@@ -2932,6 +2932,10 @@ static int b43_gpio_init(struct b43_wldev *dev)
 	switch (dev->dev->bus_type) {
 #ifdef CPTCFG_B43_BCMA
 	case B43_BUS_BCMA:
+		/* AC-PHY (R7000): os GPIOs do chipcommon do cartao podem ser do
+		 * front-end; o wl nao os entrega ao core (teste: deixa como esta) */
+		if (dev->phy.type == B43_PHYTYPE_AC)
+			break;
 		bcma_chipco_gpio_control(&dev->dev->bdev->bus->drv_cc, mask, set);
 		break;
 #endif
