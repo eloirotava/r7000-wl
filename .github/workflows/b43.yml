@@ -28,7 +28,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: sdk
-          key: sdk-mac80211-v1-${{ env.RELEASE }}-${{ hashFiles('b43/patches/subsys/*.patch') }}
+          key: sdk-mac80211-v2-${{ env.RELEASE }}-${{ hashFiles('b43/patches/subsys/*.patch') }}
 
       - name: b43 incremental (cache)
         if: steps.sdk.outputs.cache-hit == 'true'
@@ -81,8 +81,9 @@ jobs:
           grep -n 'B43_PHY_AC' $M/broadcom.mk
           make defconfig
           # o SDK liga todos os kmods (ALL_KMODS): so o b43 e dependencias
-          sed -i -E '/^CONFIG_ALL(_KMODS|_NONSHARED)?=y/d; /^CONFIG_PACKAGE_kmod-.*=m$/d' .config
+          sed -i -E '/^CONFIG_(ALL(_KMODS|_NONSHARED)?|AUTOREMOVE)=y/d; /^CONFIG_PACKAGE_kmod-.*=m$/d' .config
           cat >> .config <<'EOF'
+          # CONFIG_AUTOREMOVE is not set
           # CONFIG_ALL_KMODS is not set
           # CONFIG_ALL is not set
           # CONFIG_ALL_NONSHARED is not set
