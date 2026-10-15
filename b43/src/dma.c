@@ -1245,6 +1245,9 @@ struct b43_dmaring *parse_cookie(struct b43_wldev *dev, u16 cookie, int *slot)
 	return ring;
 }
 
+static int tx_hexdump;
+module_param(tx_hexdump, int, 0644);
+
 static int dma_tx_fragment(struct b43_dmaring *ring,
 			   struct sk_buff *skb)
 {
@@ -1283,6 +1286,14 @@ static int dma_tx_fragment(struct b43_dmaring *ring,
 		return err;
 	}
 
+	if (tx_hexdump > 0) {
+		/* comparar com o dump do wl (patch 005): cabecalho + frame */
+		tx_hexdump--;
+		print_hex_dump(KERN_INFO, "b43 txh: ", DUMP_PREFIX_OFFSET, 16, 1,
+			       header, hdrsize, false);
+		print_hex_dump(KERN_INFO, "b43 txf: ", DUMP_PREFIX_OFFSET, 16, 1,
+			       skb->data, min_t(unsigned int, skb->len, 64), false);
+	}
 	meta_hdr->dmaaddr = map_descbuffer(ring, (unsigned char *)header,
 					   hdrsize, 1);
 	if (b43_dma_mapping_error(ring, meta_hdr->dmaaddr, hdrsize, 1)) {
