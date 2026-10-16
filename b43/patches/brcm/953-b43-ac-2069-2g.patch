@@ -1,3 +1,20 @@
+diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+--- a/drivers/net/wireless/broadcom/b43/main.c	2026-10-16 15:21:02.309650118 -0300
++++ b/drivers/net/wireless/broadcom/b43/main.c	2026-10-16 15:31:53.962449583 -0300
+@@ -7285,6 +7285,13 @@
+ 		return;
+ 	}
+ 
++	/* BCM4360 2.4 GHz only (R7000 0000:01:00.0, NVRAM devid 0x43a1) */
++	if (dev_id == 0x43a1) {
++		*have_2ghz_phy = true;
++		*have_5ghz_phy = false;
++		return;
++	}
++
+ 	/* As a fallback, try to guess using PHY type */
+ 	switch (dev->phy.type) {
+ 	case B43_PHYTYPE_G:
 diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/broadcom/b43/phy_ac.c
 --- a/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-16 15:21:02.345651052 -0300
 +++ b/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-16 15:23:32.429532958 -0300
