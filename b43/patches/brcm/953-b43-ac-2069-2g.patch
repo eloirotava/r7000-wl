@@ -1,7 +1,33 @@
 diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
 --- a/drivers/net/wireless/broadcom/b43/main.c	2026-10-16 15:21:02.309650118 -0300
-+++ b/drivers/net/wireless/broadcom/b43/main.c	2026-10-16 15:31:53.962449583 -0300
-@@ -7285,6 +7285,13 @@
++++ b/drivers/net/wireless/broadcom/b43/main.c	2026-10-16 15:46:15.620709104 -0300
+@@ -5394,8 +5394,11 @@
+ 
+ 		/* Switch the band (if necessary). */
+ 		err = b43_switch_band(dev, conf->chandef.chan);
+-		if (err)
++		if (err) {
++			b43info(dev->wl, "config: band switch for channel %u failed %d\n",
++				phy->channel, err);
+ 			goto out_mac_enable;
++		}
+ 
+ 		/* Switch to the requested channel.
+ 		 * The firmware takes care of races with the TX handler.
+@@ -5403,7 +5406,11 @@
+ 		 * (b43_phy_ac_chanspec); mac80211 flags a width
+ 		 * change as a channel change too.
+ 		 */
+-		b43_switch_channel(dev, phy->channel);
++		err = b43_switch_channel(dev, phy->channel);
++		b43info(dev->wl, "config: channel %u (%u MHz, width %d) -> switch %d\n",
++			phy->channel, conf->chandef.chan->center_freq,
++			conf->chandef.width, err);
++		err = 0;
+ 	}
+ 
+ 	if (changed & IEEE80211_CONF_CHANGE_RETRY_LIMITS)
+@@ -7285,6 +7292,13 @@
  		return;
  	}
  
