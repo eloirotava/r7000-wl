@@ -12,7 +12,7 @@ scp -O -q /root/r7000-b43/fw630/b43/ucode42.fw /root/r7000-b43/fw630/b43/ac1*ini
 scp -O -q $T/b43pr5.sh $R:/tmp/b43test.sh || exit 1
 # WPA=1: busca o wpad pelo apk e grava /tmp/wpa.conf (WPA2-PSK, box-ap.sh ... wpa)
 if [ "$WPA" = 1 ]; then
-	timeout 200 ssh $R 'mkdir -p /tmp/wpx/r; cd /tmp/wpx; for i in 1 2 3; do apk fetch -R wpad-basic-mbedtls >/dev/null 2>&1 && break; done; for p in *.apk; do apk extract --allow-untrusted --destination /tmp/wpx/r "$p" >/dev/null 2>&1; done; ls /tmp/wpx/r/usr/sbin/wpad' || exit 1
+	timeout 200 ssh $R 'apk update >/dev/null 2>&1; mkdir -p /tmp/wpx/r; cd /tmp/wpx; for i in 1 2 3; do apk fetch -R wpad-basic-mbedtls >/dev/null 2>&1 && break; done; for p in *.apk; do apk extract --allow-untrusted --destination /tmp/wpx/r "$p" >/dev/null 2>&1; done; ls /tmp/wpx/r/usr/sbin/wpad' || exit 1
 	timeout 20 ssh $R 'printf "network={\n ssid=\"b43-teste\"\n psk=\"b43teste123\"\n key_mgmt=WPA-PSK\n proto=RSN\n pairwise=CCMP\n}\n" > /tmp/wpa.conf' || exit 1
 fi
 timeout 30 ssh $R 'echo 0 > /etc/wl-r7000.fails; testguard 10; start-stop-daemon -S -b -n b43test -x /bin/sh -- /tmp/b43test.sh; echo disparado'
