@@ -47,8 +47,8 @@ sleep 6
 $IW dev wlb0 scan dump 2>&1 | grep -E '^BSS|SSID|freq|signal|Probe Response|Beacon frame' | head -40
 if [ -f /tmp/wpa.conf ]; then
 	# cripto: wpad do apk em /tmp/wpx (ver runpr5.sh WPA=1)
-	LD_LIBRARY_PATH=/tmp/wpx/r/usr/lib:/tmp/wpx/r/lib /tmp/wpx/r/usr/sbin/wpad wpa_supplicant -B -D nl80211 -i wlb0 -c /tmp/wpa.conf -f /root/wpa.log -dd
-	sleep 4
+	LD_LIBRARY_PATH=/tmp/wpx/r/usr/lib:/tmp/wpx/r/lib /tmp/wpx/r/usr/sbin/wpad wpa_supplicant -D nl80211 -i wlb0 -c /tmp/wpa.conf -d > /root/wpa.log 2>&1 &
+	sleep 15
 else
 	$IW dev wlb0 connect b43-teste
 fi
