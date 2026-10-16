@@ -5,7 +5,7 @@ name: b43
 
 on:
   push:
-    branches: [b43, b43-pr25788]
+    branches: [b43, b43-pr25788, b43-gonsolo]
     paths:
       - 'b43/**'
       - '.github/workflows/b43.yml'
