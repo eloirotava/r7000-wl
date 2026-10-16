@@ -45,11 +45,21 @@ regs
 $IW dev wlb0 scan trigger freq 5220 ssid b43-teste 2>&1 | head -3
 sleep 6
 $IW dev wlb0 scan dump 2>&1 | grep -E '^BSS|SSID|freq|signal|Probe Response|Beacon frame' | head -40
-$IW dev wlb0 connect b43-teste
+if [ -f /tmp/wpa.conf ]; then
+	# cripto: wpad do apk em /tmp/wpx (ver runpr5.sh WPA=1)
+	LD_LIBRARY_PATH=/tmp/wpx/r/usr/lib:/tmp/wpx/r/lib /tmp/wpx/r/usr/sbin/wpad wpa_supplicant -B -D nl80211 -i wlb0 -c /tmp/wpa.conf -f /root/wpa.log -dd
+	sleep 4
+else
+	$IW dev wlb0 connect b43-teste
+fi
 sleep 10
 $IW dev wlb0 link
 $IW dev wlb0 station dump | grep -E "Station|signal|bitrate|packets"
 dmesg | grep -E "wlb0: (auth|assoc|associated)" | tail -8
+grep -E "CTRL-EVENT-CONNECTED|WPA: Key negotiation completed|4-Way|reason" /root/wpa.log 2>/dev/null | tail -6
+nft insert rule inet fw4 input iifname "wlb0" accept
+ip addr add 192.168.77.2/24 dev wlb0
+ping -c 10 192.168.77.1 | tail -3
 dmesg | grep -E 'b43' | tail -15
 regs
 a=0; while [ $a -lt 8192 ]; do echo "0x1 $(printf 0x%x $a)" > /sys/kernel/debug/b43/phy0/shm16read; cat /sys/kernel/debug/b43/phy0/shm16read; a=$((a+2)); done > /root/b43shm.txt

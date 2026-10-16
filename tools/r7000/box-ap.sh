@@ -1,6 +1,6 @@
 #!/bin/sh
 # Roda NA box BCM4335 (10.8.0.20): AP aberto de teste para o b43.
-# uso: box-ap.sh start [canal] | stop
+# uso: box-ap.sh start [canal] [wpa] | stop
 # start: para o cliente wifi do netplan e sobe o hostapd (log -dd em
 # /root/b43ap.log); stop: derruba o hostapd e devolve o wlan0 ao netplan.
 set -e
@@ -21,6 +21,10 @@ channel=$CH
 ieee80211n=1
 auth_algs=1
 EOF
+	# box-ap.sh start <canal> wpa: WPA2-PSK/CCMP (senha b43teste123)
+	if [ "$3" = wpa ]; then
+		printf 'wpa=2\nwpa_key_mgmt=WPA-PSK\nrsn_pairwise=CCMP\nwpa_passphrase=b43teste123\n' >> /root/b43ap.conf
+	fi
 	hostapd -B -dd -f /root/b43ap.log /root/b43ap.conf
 	sleep 3
 	iw dev wlan0 info | grep -E 'type|channel'
