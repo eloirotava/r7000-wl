@@ -28,12 +28,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: sdk
-          key: sdk-mac80211-pr25788-v1-${{ env.RELEASE }}-${{ hashFiles('b43/patches/subsys/*.patch', 'b43/patches/brcm/*.patch') }}
-
-      # o cache so casa com os mesmos patches: os .ko ja estao nele
-      - name: b43 do cache
-        if: steps.sdk.outputs.cache-hit == 'true'
-        run: echo "SDK e modulos do cache (patches iguais)"
+          key: sdk-mac80211-v3-${{ env.RELEASE }}-${{ hashFiles('b43/patches/subsys/*.patch') }}
 
       - name: Dependencias
         if: steps.sdk.outputs.cache-hit != 'true'
@@ -119,6 +114,33 @@ jobs:
         with:
           path: sdk
           key: ${{ steps.sdk.outputs.cache-primary-key }}
+
+      # sempre (com ou sem cache): b43 do backports puro + patches brcm do
+      # OpenWrt (81x) + os nossos, e so os modulos recompilam
+      - name: b43 incremental
+        run: |
+          set -o pipefail
+          cd sdk
+          MAC80211=$(dirname $(find feeds -path '*kernel/mac80211/Makefile' | head -1))
+          BP=$(ls -d $PWD/build_dir/target-*/linux-*/mac80211-regular/backports-*)
+          V=$(basename $BP | sed 's/backports-//')
+          curl -sL https://github.com/openwrt/backports/releases/download/backports-v$V/backports-$V.tar.zst | tar --zstd -x -C /tmp
+          B=$BP/drivers/net/wireless/broadcom/b43
+          rm -rf $B && cp -a /tmp/backports-$V/drivers/net/wireless/broadcom/b43 $B
+          for p in $MAC80211/patches/brcm/81*-b43*.patch ../b43/patches/brcm/*.patch; do
+            echo "== $p"; patch -d $BP -p1 -F0 -s < $p
+          done
+          T=$(ls -d $PWD/staging_dir/toolchain-*)
+          export PATH=$T/bin:$PATH STAGING_DIR=$PWD/staging_dir
+          LX=$(ls -d $PWD/build_dir/target-*/linux-*/linux-6.*)
+          SYMV=$(ls $PWD/build_dir/target-*/linux-*/symvers/*.symvers | tr '\n' ' ')
+          make -j$(nproc) -C "$BP" CROSS_COMPILE=arm-openwrt-linux-muslgnueabi- ARCH=arm \
+            CC=arm-openwrt-linux-muslgnueabi-gcc KBUILD_HAVE_NLS=no CONFIG_SHELL=bash \
+            KCFLAGS="-fno-caller-saves -falign-functions=32" \
+            KBUILD_EXTRA_SYMBOLS="$SYMV" KERNELRELEASE=$(basename $LX | sed 's/linux-//') \
+            EXTRA_CFLAGS="-I$BP/include" KLIB_BUILD="$LX" MODPROBE=true \
+            KLIB=/lib/modules/$(basename $LX | sed 's/linux-//') KBUILD_LDFLAGS_MODULE_PREREQ= \
+            modules 2>&1 | tee -a ../build.log | tail -30
 
       - name: Config do backports
         if: always()
