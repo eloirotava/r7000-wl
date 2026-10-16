@@ -43,7 +43,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broa
  	case B43_PHYTYPE_G:
 diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/broadcom/b43/phy_ac.c
 --- a/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-16 15:21:02.345651052 -0300
-+++ b/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-16 16:36:03.500898306 -0300
++++ b/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-16 17:09:00.484201599 -0300
 @@ -2551,8 +2551,23 @@
  	  0x04, 0x29, 0x06, 0x2b, 0x04, 0x29, 0x06, 0x2b },
  };
@@ -253,12 +253,22 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  			b43_ac_tbl_read8(dev, 0x15, 6,
  					 b43_ac_lna1_rout_off_5g[c], r); /* 0x27700 */
  			for (i = 0; i < 6; i++) {
-@@ -4353,8 +4513,20 @@
+@@ -4353,8 +4513,30 @@
  	 * 4, 0x44cf0: wlc_phy_ac_gains_load @0x50390, 5 GHz ePA rev 4:
  	 * table 0x20, 128 entries, 48 bits (0x5064c).
  	 */
 -	b43_ac_tbl_write(dev, 0x20, ARRAY_SIZE(b43_ac2069_txgain_epa_5g_rev4), 0,
 -			 48, b43_ac2069_txgain_epa_5g_rev4);
++	if (acphy_fem_gpio > 0 && dev->dev->bus_type == B43_BUS_BCMA) {
++		struct bcma_drv_cc *cc = &dev->dev->bdev->bus->drv_cc;
++		u32 v = b43_current_band(dev->wl) == NL80211_BAND_5GHZ ? 0x4 : 0x2;
++
++		bcma_chipco_gpio_outen(cc, 0x7, 0x7);
++		bcma_chipco_gpio_out(cc, 0x7, v);
++		b43info(dev->wl, "FEM: ChipCommon GPIO out 0x%08x outen 0x%08x (band select 0x%x)\n",
++			bcma_cc_read32(cc, BCMA_CC_GPIOOUT),
++			bcma_cc_read32(cc, BCMA_CC_GPIOOUTEN), v);
++	}
 +	if (b43_current_band(dev->wl) != NL80211_BAND_5GHZ) {
 +		/*
 +		 * 2.4 GHz: acphy_txgain_epa_2g_2069rev4, and the RF sequencer
@@ -276,7 +286,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  	/*
  	 * 5: PHY rev 0 only. 6, 0x44f10: table 7 offset 0x18e only if
  	 * pi_ac[0x475] (pdgain5g) is 9 or 16; this board's pdgain5g is 4.
-@@ -4494,13 +4666,15 @@
+@@ -4494,13 +4676,15 @@
  	for (i = 0; i < ARRAY_SIZE(v->v181); i++)		/* 0x2bdbc..0x2c2dc */
  		b43_ac_phy_mod(dev, 0x181 + i, 0x7ff, v->v181[i]);
  	b43_ac_phy_mod(dev, 0x1b5, 0xff, v->r1b5);		/* 0x2c30c */
@@ -299,7 +309,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  	/* 0x2c40c..0x2c45c: chip 0x4335 only */
  	for (c = 0; c < phy_ac->ncores; c++) {			/* 0x2c468..0x2c5e4 */
  		b43_ac_phy_mod(dev, 0x6ed + (c << 9), 0xff, v->r6ed);	/* 0x2c4e8 */
-@@ -4593,6 +4767,49 @@
+@@ -4593,6 +4777,49 @@
  };
  
  static const struct b43_ac2069_chan b43_ac2069_rev4_chans[] = {
@@ -349,7 +359,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  	{ 184, 4920, {
  		0x0005, 0x001e, 0x0a09, 0x0ccf, 0x00a4, 0x0000, 0x0290, 0x0000,
  		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-@@ -5188,14 +5405,20 @@
+@@ -5188,14 +5415,20 @@
  		b43_radio_write(dev, b43_ac2069_tune_regs[i], ci->radio[i]);
  
  	b43_ac2069_mod(dev, 0x645, 0x7000, 0x7000);		/* 3, 0x4b9ac */
@@ -378,7 +388,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  	b43_radio_write(dev, 0x723, 0x83e0);			/* 5, 0x4ba20, rev >= 4 */
  	/* 6..8: major-1/2 blocks and the PHY rev 6 vco_opt are skipped */
  	b43_ac2069_vcocal(dev);					/* 9, 0x4c44c */
-@@ -5232,6 +5455,22 @@
+@@ -5232,6 +5465,30 @@
   * are read from there. Without acphy_maxp5g every core gets the lowest-power
   * row.
   */
@@ -398,10 +408,18 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
 +module_param_named(acphy_txidx2g, acphy_txidx2g, int, 0444);
 +MODULE_PARM_DESC(acphy_txidx2g, "2.4 GHz TX gain row 0..127 (fixed, no power control yet; default 24)");
 +
++/*
++ * FEM band select on ChipCommon GPIOs 0..2 (state seen with wl up on the
++ * R7000: outen 0x7, out 0x2 on 2.4 GHz, 0x4 on 5 GHz). -1: leave alone.
++ */
++static int acphy_fem_gpio = 1;
++module_param_named(acphy_fem_gpio, acphy_fem_gpio, int, 0444);
++MODULE_PARM_DESC(acphy_fem_gpio, "Drive ChipCommon GPIO 0..2 band select (out 0x2 2.4 GHz, 0x4 5 GHz) on a band change (default 1)");
++
  static int acphy_maxp5g[12];
  static int acphy_maxp5g_n;
  module_param_array_named(acphy_maxp5g, acphy_maxp5g, int, &acphy_maxp5g_n, 0444);
-@@ -6112,14 +6351,14 @@
+@@ -6112,14 +6369,14 @@
  
  	/* 2, 0x3e0d8..0x3e0e4: txchain (sh+144) is 7 here, so no return */
  	/* 3: u16 sh+184 + 2*sb; sb 1..4 are rpcal5gb0..3 (sb 0 is 2 GHz) */
@@ -419,7 +437,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  
  	b1 = b43_phy_read(dev, 0x19e) & 0x2;			/* 5, 0x3e260 */
  	b43_ac_phy_mod(dev, 0x19e, 0x2, 0x2);			/* 0x3e280 */
-@@ -6285,9 +6524,11 @@
+@@ -6285,9 +6542,11 @@
  	u8 elnagaina[3];
  	u8 trisoa[3];
  	u8 trelnabypa[3];
@@ -432,7 +450,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  };
  
  /*
-@@ -6552,7 +6793,8 @@
+@@ -6552,7 +6811,8 @@
  
  	for (c = 0; c < a->ncores; c++) {			/* 0x28518, every core */
  		/* 0x27cd8..0x27d24: 5g slot for channel <= 99, else 5gh */
@@ -442,7 +460,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  		a->rx_elna[c] = (b43_ac2069_board_rxgains[slot].elnagaina[c] + 3) * 2;
  		a->rx_triso[c] = (b43_ac2069_board_rxgains[slot].trisoa[c] + 4) * 2;
  		a->rx_trelnabyp[c] = b43_ac2069_board_rxgains[slot].trelnabypa[c];
-@@ -6575,7 +6817,9 @@
+@@ -6575,7 +6835,9 @@
  		 * Stage 3, 5 GHz (0x282a4..0x28420), eLNA on 5 GHz (pi_ac[0x381],
  		 * boardflags bit 28): C.145 gain and C.146 bits.
  		 */
@@ -453,7 +471,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  		b43_phy_write(dev, 0x1726, 0x0c);		/* 0x283c8 */
  		b43_ac_tbl_write(dev, gtbl[c], 10, 32, 8,
  				 b43_ac_stage3_5g_elna_gain);	/* 0x283ec */
-@@ -7575,7 +7819,19 @@
+@@ -7575,7 +7837,19 @@
  	 * channel's row. Lowest-power row when the inputs are missing.
  	 */
  	ci = b43_ac2069_find_chan(phy_ac->chanspec & 0xff);
@@ -474,7 +492,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  		txok = b43_ac2069_txpwr_calc(dev, ci, &txp);
  		b43_ac2069_txpwr_log(dev, ci, &txp, txok);
  	} else {
-@@ -7662,8 +7918,8 @@
+@@ -7662,8 +7936,8 @@
  		       c->ncores, phy_ac->ncores);
  		return -EOPNOTSUPP;
  	}
@@ -485,7 +503,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  		return -EOPNOTSUPP;
  	}
  	if (dev->phy.chandef) {
-@@ -7687,7 +7943,18 @@
+@@ -7687,7 +7961,18 @@
  			return -EOPNOTSUPP;
  		}
  	}
@@ -505,7 +523,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  	    sprom->boardflags2 != B43_AC2069_BOARD_BFL2 ||
  	    (sprom->boardflags3 & ~0x10000000) != B43_AC2069_BOARD_BFL3) {
  		/*
-@@ -7723,7 +7990,8 @@
+@@ -7723,7 +8008,8 @@
  		return b43_ac2069_chan_gap(dev,
  			"femctrl boardtype 0x6aa shm writes (source of sh+0x44 not traced)");
  	/* the rpcal5gb* words are not in the SPROM */
@@ -515,7 +533,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  		b43err(dev->wl, "radio 0x2069: channel set needs acphy_rpcal5g=<rpcal5gb0>,<b1>,<b2>,<b3> from NVRAM pci/2/1/ (R6400: 0x96e7,0,0,0xa30b), refusing\n");
  		return -EOPNOTSUPP;
  	}
-@@ -9713,7 +9981,7 @@
+@@ -9713,7 +9999,7 @@
  	struct b43_phy_ac *phy_ac = dev->phy.ac;
  	const struct b43_ac2069_chan *ci;
  	struct b43_ac2069 c = { };
@@ -524,7 +542,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  	u16 chanspec, saved19e, bw;
  	int err;
  
-@@ -9853,13 +10121,14 @@
+@@ -9853,13 +10139,14 @@
  		b43_ac2069_bmac_bw_set(dev, bw);
  
  	/* 5, band: 0x47990..0x47a34; pi_ac[0x36a] is 1 for 2 GHz */
@@ -541,7 +559,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  	}
  	/*
  	 * 6, 0x47a38..0x47aa0: wlc_phy_ed_thres_acphy on a band change, only
-@@ -9891,7 +10160,7 @@
+@@ -9891,7 +10178,7 @@
  		udelay(2);					/* 0x47b64 */
  	}
  
