@@ -5,7 +5,7 @@ name: b43
 
 on:
   push:
-    branches: [b43]
+    branches: [b43, b43-pr25788]
     paths:
       - 'b43/**'
       - '.github/workflows/b43.yml'
@@ -28,32 +28,12 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: sdk
-          key: sdk-mac80211-v2-${{ env.RELEASE }}-${{ hashFiles('b43/patches/subsys/*.patch') }}
+          key: sdk-mac80211-pr25788-v1-${{ env.RELEASE }}-${{ hashFiles('b43/patches/subsys/*.patch', 'b43/patches/brcm/*.patch') }}
 
-      - name: b43 incremental (cache)
+      # o cache so casa com os mesmos patches: os .ko ja estao nele
+      - name: b43 do cache
         if: steps.sdk.outputs.cache-hit == 'true'
-        run: |
-          set -o pipefail
-          cd sdk
-          BP=$(ls -d $PWD/build_dir/target-*/linux-*/mac80211-regular/backports-*)
-          echo "BP=$BP"
-          cp ../b43/src/* $BP/drivers/net/wireless/broadcom/b43/
-          # objetos novos do AC-PHY (o Makefile do cache vem do patch antigo)
-          sed -i -E 's/^(b43-\$\(CPTCFG_B43_PHY_AC\)\t\+= radio_2069\.o).*$/\1 phy_ac_replay.o phy_ac_replay2g.o/' \
-            $BP/drivers/net/wireless/broadcom/b43/Makefile
-          grep -n 'PHY_AC' $BP/drivers/net/wireless/broadcom/b43/Makefile
-          echo "MAC80211=$(dirname $(find feeds -path '*kernel/mac80211/Makefile' | head -1))" >> $GITHUB_ENV
-          T=$(ls -d $PWD/staging_dir/toolchain-*)
-          export PATH=$T/bin:$PATH STAGING_DIR=$PWD/staging_dir
-          LX=$(ls -d $PWD/build_dir/target-*/linux-*/linux-6.*)
-          SYMV=$(ls $PWD/build_dir/target-*/linux-*/symvers/*.symvers | tr '\n' ' ')
-          make -j$(nproc) -C "$BP" CROSS_COMPILE=arm-openwrt-linux-muslgnueabi- ARCH=arm \
-            CC=arm-openwrt-linux-muslgnueabi-gcc KBUILD_HAVE_NLS=no CONFIG_SHELL=bash \
-            KCFLAGS="-fno-caller-saves -falign-functions=32" \
-            KBUILD_EXTRA_SYMBOLS="$SYMV" KERNELRELEASE=$(basename $LX | sed 's/linux-//') \
-            EXTRA_CFLAGS="-I$BP/include" KLIB_BUILD="$LX" MODPROBE=true \
-            KLIB=/lib/modules/$(basename $LX | sed 's/linux-//') KBUILD_LDFLAGS_MODULE_PREREQ= \
-            modules 2>&1 | tee ../build.log | tail -30
+        run: echo "SDK e modulos do cache (patches iguais)"
 
       - name: Dependencias
         if: steps.sdk.outputs.cache-hit != 'true'
@@ -148,6 +128,16 @@ jobs:
             echo "== $c"; grep -E 'B43|BCMA|MAC80211=|CFG80211=' $c || true
           done
 
+      # firmware que o PR 25788 usa: ucode42 do broadcom-wl 6.30.163.46
+      - name: Firmware 6.30.163.46
+        if: always()
+        run: |
+          sudo apt-get install -y b43-fwcutter >/dev/null
+          wget -q https://www.lwfinger.com/b43-firmware/broadcom-wl-6.30.163.46.tar.bz2
+          tar xjf broadcom-wl-6.30.163.46.tar.bz2
+          mkdir -p fw && b43-fwcutter -w fw broadcom-wl-6.30.163.46.wl_apsta.o
+          ls -la fw/b43 | grep -E '42|ac1' || true
+
       - name: Junta os modulos
         if: always()
         run: |
@@ -164,4 +154,5 @@ jobs:
           path: |
             build.log
             out/*.ko
+            fw/b43/*42*.fw
           if-no-files-found: warn
