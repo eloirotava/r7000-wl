@@ -127,6 +127,9 @@ jobs:
           curl -sL https://github.com/openwrt/backports/releases/download/backports-v$V/backports-$V.tar.zst | tar --zstd -x -C /tmp
           B=$BP/drivers/net/wireless/broadcom/b43
           rm -rf $B && cp -a /tmp/backports-$V/drivers/net/wireless/broadcom/b43 $B
+          # so a parte do b43 do build/400 (debugfs na API do 6.12)
+          sudo apt-get install -y patchutils >/dev/null
+          filterdiff -i '*/drivers/net/wireless/broadcom/b43/*' $MAC80211/patches/build/400-*.patch | patch -d $BP -p1 -F0
           for p in $MAC80211/patches/brcm/81*-b43*.patch ../b43/patches/brcm/*.patch; do
             echo "== $p"; patch -d $BP -p1 -F0 -s < $p
           done
