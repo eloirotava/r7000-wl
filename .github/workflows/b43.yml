@@ -153,16 +153,6 @@ jobs:
             echo "== $c"; grep -E 'B43|BCMA|MAC80211=|CFG80211=' $c || true
           done
 
-      # firmware que o PR 25788 usa: ucode42 do broadcom-wl 6.30.163.46
-      - name: Firmware 6.30.163.46
-        if: always()
-        run: |
-          sudo apt-get install -y b43-fwcutter >/dev/null
-          wget -q https://www.lwfinger.com/b43-firmware/broadcom-wl-6.30.163.46.tar.bz2
-          tar xjf broadcom-wl-6.30.163.46.tar.bz2
-          mkdir -p fw && b43-fwcutter -w fw broadcom-wl-6.30.163.46.wl_apsta.o
-          ls -la fw/b43 | grep -E '42|ac1' || true
-
       - name: Junta os modulos
         if: always()
         run: |
@@ -179,5 +169,4 @@ jobs:
           path: |
             build.log
             out/*.ko
-            fw/b43/*42*.fw
           if-no-files-found: warn
