@@ -2,7 +2,7 @@
 # Na VPS: espera o build do HEAD (b43.yml), o R7000 voltar com o wl, roda o
 # teste do 2.4 (runpr24.sh) e conta pacotes em monitor nos canais 6 e 1.
 cd "$(dirname "$0")/../.."
-H=$(git rev-parse HEAD)
+H=$(git log -1 --format=%H -- b43 .github/workflows/b43.yml)
 until R=$(gh run list -b b43-pr25788 -L5 --json databaseId,headSha --jq ".[]|select(.headSha==\"$H\")|.databaseId" | head -1); [ -n "$R" ]; do sleep 5; done
 echo "run=$R"
 gh run watch "$R" --exit-status >/dev/null 2>&1 || { echo BUILD_FALHOU; exit 1; }
