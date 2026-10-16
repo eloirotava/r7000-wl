@@ -1,7 +1,24 @@
 diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
 --- a/drivers/net/wireless/broadcom/b43/main.c	2026-10-16 15:21:02.309650118 -0300
-+++ b/drivers/net/wireless/broadcom/b43/main.c	2026-10-16 15:46:15.620709104 -0300
-@@ -5394,8 +5394,11 @@
++++ b/drivers/net/wireless/broadcom/b43/main.c	2026-10-16 17:51:07.144285482 -0300
+@@ -1436,8 +1436,14 @@
+ 		wrote = true;
+ 	}
+ 
+-	/* PLL control 6 and 14, chip rev <= 3 only, then PLL_UPD */
+-	if (bus->chipinfo.rev <= 3) {
++	/*
++	 * PLL control 6 and 14, chip rev <= 3 only, then PLL_UPD.
++	 * Not on the R7000's 2.4 GHz only 4360 (devid 0x43a1): wl leaves
++	 * 0x09048562 there (bpdump of the running wl, 2026-10-16), and the
++	 * 0x...560 the R6400's 5 GHz card wants keeps the 2.4 GHz PHY from
++	 * syncing (glitches, no frames).
++	 */
++	if (bus->chipinfo.rev <= 3 && dev->dev->bus_sprom->dev_id != 0x43a1) {
+ 		for (i = 0; i < ARRAY_SIZE(pll_regs); i++) {
+ 			val = bcma_chipco_pll_read(cc, pll_regs[i]);
+ 			if (val == 0x09048560)
+@@ -5394,8 +5400,11 @@
  
  		/* Switch the band (if necessary). */
  		err = b43_switch_band(dev, conf->chandef.chan);
@@ -14,7 +31,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broa
  
  		/* Switch to the requested channel.
  		 * The firmware takes care of races with the TX handler.
-@@ -5403,7 +5406,11 @@
+@@ -5403,7 +5412,11 @@
  		 * (b43_phy_ac_chanspec); mac80211 flags a width
  		 * change as a channel change too.
  		 */
@@ -27,7 +44,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broa
  	}
  
  	if (changed & IEEE80211_CONF_CHANGE_RETRY_LIMITS)
-@@ -7285,6 +7292,13 @@
+@@ -7285,6 +7298,13 @@
  		return;
  	}
  
