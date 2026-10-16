@@ -43,7 +43,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broa
  	case B43_PHYTYPE_G:
 diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/broadcom/b43/phy_ac.c
 --- a/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-16 15:21:02.345651052 -0300
-+++ b/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-16 17:09:00.484201599 -0300
++++ b/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-16 17:11:22.251643260 -0300
 @@ -2551,8 +2551,23 @@
  	  0x04, 0x29, 0x06, 0x2b, 0x04, 0x29, 0x06, 0x2b },
  };
@@ -253,7 +253,22 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  			b43_ac_tbl_read8(dev, 0x15, 6,
  					 b43_ac_lna1_rout_off_5g[c], r); /* 0x27700 */
  			for (i = 0; i < 6; i++) {
-@@ -4353,8 +4513,30 @@
+@@ -4340,6 +4500,14 @@
+  * rev 1, radio 0x2069, 5 GHz. Step numbers are the decode's. No callee is
+  * left undecoded on this board.
+  */
++/*
++ * FEM band select on ChipCommon GPIOs 0..2 (state seen with wl up on the
++ * R7000: outen 0x7, out 0x2 on 2.4 GHz, 0x4 on 5 GHz). -1: leave alone.
++ */
++static int acphy_fem_gpio = 1;
++module_param_named(acphy_fem_gpio, acphy_fem_gpio, int, 0444);
++MODULE_PARM_DESC(acphy_fem_gpio, "Drive ChipCommon GPIO 0..2 band select (out 0x2 2.4 GHz, 0x4 5 GHz) on a band change (default 1)");
++
+ static void b43_ac2069_band_change(struct b43_wldev *dev)
+ {
+ 	struct b43_phy_ac *phy_ac = dev->phy.ac;
+@@ -4353,8 +4521,30 @@
  	 * 4, 0x44cf0: wlc_phy_ac_gains_load @0x50390, 5 GHz ePA rev 4:
  	 * table 0x20, 128 entries, 48 bits (0x5064c).
  	 */
@@ -286,7 +301,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  	/*
  	 * 5: PHY rev 0 only. 6, 0x44f10: table 7 offset 0x18e only if
  	 * pi_ac[0x475] (pdgain5g) is 9 or 16; this board's pdgain5g is 4.
-@@ -4494,13 +4676,15 @@
+@@ -4494,13 +4684,15 @@
  	for (i = 0; i < ARRAY_SIZE(v->v181); i++)		/* 0x2bdbc..0x2c2dc */
  		b43_ac_phy_mod(dev, 0x181 + i, 0x7ff, v->v181[i]);
  	b43_ac_phy_mod(dev, 0x1b5, 0xff, v->r1b5);		/* 0x2c30c */
@@ -309,7 +324,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  	/* 0x2c40c..0x2c45c: chip 0x4335 only */
  	for (c = 0; c < phy_ac->ncores; c++) {			/* 0x2c468..0x2c5e4 */
  		b43_ac_phy_mod(dev, 0x6ed + (c << 9), 0xff, v->r6ed);	/* 0x2c4e8 */
-@@ -4593,6 +4777,49 @@
+@@ -4593,6 +4785,49 @@
  };
  
  static const struct b43_ac2069_chan b43_ac2069_rev4_chans[] = {
@@ -359,7 +374,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  	{ 184, 4920, {
  		0x0005, 0x001e, 0x0a09, 0x0ccf, 0x00a4, 0x0000, 0x0290, 0x0000,
  		0x0000, 0x0488, 0x0cff, 0x0000, 0x000b, 0x1d6f, 0x1f00, 0x0700,
-@@ -5188,14 +5415,20 @@
+@@ -5188,14 +5423,20 @@
  		b43_radio_write(dev, b43_ac2069_tune_regs[i], ci->radio[i]);
  
  	b43_ac2069_mod(dev, 0x645, 0x7000, 0x7000);		/* 3, 0x4b9ac */
@@ -388,7 +403,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
  	b43_radio_write(dev, 0x723, 0x83e0);			/* 5, 0x4ba20, rev >= 4 */
  	/* 6..8: major-1/2 blocks and the PHY rev 6 vco_opt are skipped */
  	b43_ac2069_vcocal(dev);					/* 9, 0x4c44c */
-@@ -5232,6 +5465,30 @@
+@@ -5232,6 +5473,22 @@
   * are read from there. Without acphy_maxp5g every core gets the lowest-power
   * row.
   */
@@ -407,14 +422,6 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/br
 +static int acphy_txidx2g = 24;
 +module_param_named(acphy_txidx2g, acphy_txidx2g, int, 0444);
 +MODULE_PARM_DESC(acphy_txidx2g, "2.4 GHz TX gain row 0..127 (fixed, no power control yet; default 24)");
-+
-+/*
-+ * FEM band select on ChipCommon GPIOs 0..2 (state seen with wl up on the
-+ * R7000: outen 0x7, out 0x2 on 2.4 GHz, 0x4 on 5 GHz). -1: leave alone.
-+ */
-+static int acphy_fem_gpio = 1;
-+module_param_named(acphy_fem_gpio, acphy_fem_gpio, int, 0444);
-+MODULE_PARM_DESC(acphy_fem_gpio, "Drive ChipCommon GPIO 0..2 band select (out 0x2 2.4 GHz, 0x4 5 GHz) on a band change (default 1)");
 +
  static int acphy_maxp5g[12];
  static int acphy_maxp5g_n;
