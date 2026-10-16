@@ -1,0 +1,16 @@
+--- a/drivers/net/wireless/broadcom/b43/phy_ac.c
++++ b/drivers/net/wireless/broadcom/b43/phy_ac.c
+@@ -7689,7 +7689,12 @@
+ 	}
+ 	if (sprom->boardflags != B43_AC2069_BOARD_BFL ||
+ 	    sprom->boardflags2 != B43_AC2069_BOARD_BFL2 ||
+-	    sprom->boardflags3 != B43_AC2069_BOARD_BFL3) {
++	    (sprom->boardflags3 & ~0x10000000) != B43_AC2069_BOARD_BFL3) {
++		/*
++		 * boardflags3 bit 28 = BFL3_EN_BRCM_IMPBF (implicit TxBF
++		 * allowed): not RF. The R7000 sets it, otherwise its 4360
++		 * board matches the R6400's.
++		 */
+ 		b43err(dev->wl, "radio 0x2069: boardflags 0x%08x/0x%08x/0x%08x, the channel set is ported for the R6400 board (0x%08x/0x%08x/0x%08x) only\n",
+ 		       sprom->boardflags, sprom->boardflags2, sprom->boardflags3,
+ 		       B43_AC2069_BOARD_BFL, B43_AC2069_BOARD_BFL2,
