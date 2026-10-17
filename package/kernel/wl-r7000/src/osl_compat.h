@@ -81,4 +81,7 @@ extern void wl_dma_sync_for_cpu(struct device *dev, dma_addr_t addr,
 	wl_dma_sync_for_cpu((struct device *)(d), a, s, dir)
 #endif
 
+/* pacote imitado para o nucleo binario (sem patch de sk_buff no kernel) */
+#include "wl_pkt.h"
+
 #endif /* _OSL_COMPAT_H_ */

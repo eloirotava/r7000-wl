@@ -81,25 +81,10 @@ struct wl_info {
 static uint wl_units;
 
 /*
- * O nucleo binario acessa sk_buff por offset fixo (ABI do kernel 4.4
- * do DD-WRT).  O kernel precisa do patch 990-skbuff-bcm-wl-abi.
+ * O nucleo binario acessa o pacote por offset fixo (ABI do kernel 4.4 do
+ * DD-WRT): ele e o codigo Broadcom trabalham com a imitacao struct wl_pkt
+ * (wl_pkt.h, offsets conferidos la); o sk_buff do kernel fica intacto.
  */
-#define WL_SKB_AT(f, off) \
-	static_assert(offsetof(struct sk_buff, f) == (off), \
-		"sk_buff." #f " fora do offset do nucleo wl")
-WL_SKB_AT(next, 0x00);
-WL_SKB_AT(prev, 0x04);
-WL_SKB_AT(pktc_cb, 0x10);
-WL_SKB_AT(cb, 0x30);
-WL_SKB_AT(ctfpool, 0x70);
-WL_SKB_AT(pktc_flags, 0x74);
-WL_SKB_AT(len, 0x94);
-WL_SKB_AT(data_len, 0x98);
-WL_SKB_AT(priority, 0xb4);
-WL_SKB_AT(tail, 0xdc);
-WL_SKB_AT(end, 0xe0);
-WL_SKB_AT(head, 0xe4);
-WL_SKB_AT(data, 0xe8);
 
 #define WL_LOCK(wl)	spin_lock_bh(&(wl)->lock)
 #define WL_UNLOCK(wl)	spin_unlock_bh(&(wl)->lock)
@@ -340,7 +325,7 @@ void wl_free_timer(struct wl_info *wl, struct wl_timer *wt)
 void wl_sendup(struct wl_info *wl, struct wl_if *wlif, void *p, int numpkt)
 {
 	struct net_device *dev = wlif ? wlif->dev : wl->dev;
-	struct sk_buff *skb;
+	wl_native_skb *skb;
 	void *next;
 
 	for (; p; p = next) {
@@ -352,7 +337,9 @@ void wl_sendup(struct wl_info *wl, struct wl_if *wlif, void *p, int numpkt)
 			continue;
 		}
 
-		skb = PKTTONATIVE(wl->osh, p);
+		skb = wlp_to_native(PKTTONATIVE(wl->osh, p));
+		if (!skb)
+			continue;
 		skb->dev = dev;
 		skb->protocol = eth_type_trans(skb, dev);
 		dev->stats.rx_packets++;
@@ -361,47 +348,32 @@ void wl_sendup(struct wl_info *wl, struct wl_if *wlif, void *p, int numpkt)
 	}
 }
 
-/*
- * Os campos Broadcom do sk_buff (patch 990) so sao zerados pelo
- * __alloc_skb(): clones (o TCP clona tudo que transmite) e copias saem
- * com lixo, e o osl_pktfree() trataria o pacote como buffer do ctfpool
- * (PKTISFAST) e travaria num ponteiro invalido.  Zera antes de o pacote
- * entrar no nucleo.
- */
-static inline void wl_skb_clear_bcm(struct sk_buff *skb)
-{
-	memset(skb->pktc_cb, 0, sizeof(skb->pktc_cb));
-	memset(skb->ctf_pppoe_cb, 0, sizeof(skb->ctf_pppoe_cb));
-	skb->ctfmap = NULL;
-	skb->bcm_sk = NULL;
-	skb->bcm_dev = NULL;
-	skb->bcm_sp = NULL;
-	skb->ctfpool = NULL;
-	skb->pktc_flags = 0;
-	skb->ctf_ipc_txif = NULL;
-	skb->napt_idx = 0;
-	skb->napt_flags = 0;
-}
-
-static netdev_tx_t wl_start_xmit(struct sk_buff *skb, struct net_device *dev)
+static netdev_tx_t wl_start_xmit(wl_native_skb *skb, struct net_device *dev)
 {
 	struct wl_if *wlif = dev_wlif(dev);
 	struct wl_info *wl = wlif->wl;
+	unsigned int len = skb->len;
+	struct wl_pkt *wp;
 	void *pkt;
 
-	wl_skb_clear_bcm(skb);
+	/* imitacao do pacote; em falha o skb ja foi liberado */
+	wp = wlp_from_native(skb);
+	if (!wp) {
+		dev->stats.tx_dropped++;
+		return NETDEV_TX_OK;
+	}
 
 	WL_LOCK(wl);
-	pkt = PKTFRMNATIVE(wl->osh, skb);
+	pkt = PKTFRMNATIVE(wl->osh, wp);
 	if (!pkt) {
 		WL_UNLOCK(wl);
-		dev_kfree_skb_any(skb);
+		wlp_free(wp);
 		dev->stats.tx_dropped++;
 		return NETDEV_TX_OK;
 	}
 	pktsetprio(pkt, FALSE);
 	dev->stats.tx_packets++;
-	dev->stats.tx_bytes += skb->len;
+	dev->stats.tx_bytes += len;
 	/* o nucleo e dono do pacote a partir daqui, enviado ou nao */
 	wlc_sendpkt(wl->wlc, pkt, wlif->wlcif);
 	WL_UNLOCK(wl);
@@ -848,13 +820,21 @@ static struct pci_driver wl_pci_driver = {
 
 static int __init wl_module_init(void)
 {
-	return pci_register_driver(&wl_pci_driver);
+	int err = wlp_init();
+
+	if (err)
+		return err;
+	err = pci_register_driver(&wl_pci_driver);
+	if (err)
+		wlp_exit();
+	return err;
 }
 
 static void __exit wl_module_exit(void)
 {
 	pci_unregister_driver(&wl_pci_driver);
 	wl_nvram_free();
+	wlp_exit();
 }
 
 module_init(wl_module_init);
