@@ -37,6 +37,11 @@ jobs:
       - name: OpenWrt
         run: |
           git clone --depth 1 -b "$OPENWRT_BRANCH" https://github.com/openwrt/openwrt.git openwrt
+          git -C openwrt log -1 --format='%h %cd %s'
+          # o clone deixa tudo com data de agora e o make acharia o toolchain
+          # restaurado do cache mais velho que os fontes (refaria tudo): datas
+          # fixas antigas, so o que a gente copia depois fica "novo"
+          find openwrt -path openwrt/.git -prune -o -exec touch -h -d '2020-01-01 00:00:00' {} +
           cp patches/*.patch openwrt/target/linux/bcm53xx/patches-6.12/
           cp -r files openwrt/files
           sudo apt-get install -y binutils-arm-linux-gnueabi
@@ -54,6 +59,7 @@ jobs:
           # seed so depois dos feeds: o feeds install reescreve o .config e marca
           # como 'not set' o que ainda nao existia (luci-base caia por isso)
           cp ../config.seed .config
+          echo 'CONFIG_CCACHE=y' >> .config
           # libiwinfo com o backend wl (Broadcom) do proprio iwinfo + htmode,
           # center_chan1, survey (o rpcd chama sem checar NULL), scan, canais,
           # potencia e clientes direto nos ioctls do wl (sem wext); release
@@ -77,6 +83,34 @@ jobs:
             grep -q "^CONFIG_PACKAGE_$p=y" .config || { echo "falta $p"; exit 1; }
           done
           grep -q "^CONFIG_FSTOOLS_UBIFS_EXTROOT=y" .config || { echo "falta UBIFS_EXTROOT"; exit 1; }
+
+      - name: Cache do dl
+        uses: actions/cache@v4
+        with:
+          path: openwrt/dl
+          key: dl-${{ env.OPENWRT_BRANCH }}-${{ hashFiles('config.seed') }}
+          restore-keys: dl-${{ env.OPENWRT_BRANCH }}-
+
+      # toolchain e ferramentas do host: o grosso do tempo, nao mudam entre
+      # builds do mesmo branch/alvo
+      - name: Cache do toolchain
+        uses: actions/cache@v4
+        with:
+          path: |
+            openwrt/staging_dir/host
+            openwrt/staging_dir/hostpkg
+            openwrt/staging_dir/toolchain-*
+            openwrt/build_dir/host
+            openwrt/build_dir/hostpkg
+            openwrt/build_dir/toolchain-*
+          key: toolchain-${{ env.OPENWRT_BRANCH }}-bcm53xx-v1
+
+      - name: Cache do ccache
+        uses: actions/cache@v4
+        with:
+          path: openwrt/.ccache
+          key: ccache-${{ env.OPENWRT_BRANCH }}-bcm53xx-${{ github.sha }}
+          restore-keys: ccache-${{ env.OPENWRT_BRANCH }}-bcm53xx-
 
       - name: Download
         run: cd openwrt && make download -j8
@@ -128,3 +162,12 @@ jobs:
             openwrt/bin/targets/bcm53xx/generic/packages/kmod-wl-r7000*
             openwrt/build_dir/target-*/linux-bcm53xx_generic/wl-r7000/wl.ko
           if-no-files-found: warn
+
+      # o Post do actions/cache salva os caches depois deste passo: sem espaco
+      # (build_dir/target, bin com o SDK) o tar falha com "No space left on
+      # device" e o toolchain nunca entra no cache
+      - name: Libera disco para os caches
+        if: always()
+        run: |
+          rm -rf openwrt/build_dir/target-* openwrt/bin openwrt/tmp openwrt/logs openwrt/staging_dir/target-*
+          df -h . | tail -1
