@@ -3,7 +3,8 @@
  * wlbss - liga/desliga um BSS extra (MBSS) e define o MAC dele no driver wl
  * da Broadcom.  O utilitario wl do DD-WRT nao tem o comando "bss" (trata
  * como iovar inteiro e o driver responde "Buffer too short") nem MAC por
- * bsscfg.  Usa o prefixo "bsscfg:" (nome, '\0', indice int32, dado).
+ * bsscfg.  O "bss" leva {indice, valor} no dado; o MAC vai com o prefixo
+ * "bsscfg:" (nome, '\0', indice int32, dado).
  * Uso: wlbss <if> <n>                (mostra 0/1)
  *      wlbss <if> <n> up|down
  *      wlbss <if> <n> mac XX:XX:XX:XX:XX:XX   (com o BSS em down)
@@ -77,7 +78,8 @@ int main(int argc, char **argv)
 
 	if (argc == 3) {
 		memset(buf, 0, sizeof(buf));
-		bsscfg_buf(buf, "bss", idx, NULL, 0);
+		len = sprintf(buf, "bss") + 1;
+		memcpy(buf + len, &idx, sizeof(idx));
 		if (wl_ioctl(argv[1], WLC_GET_VAR, buf, sizeof(buf), 0)) {
 			perror("get bss");
 			return 1;
@@ -88,8 +90,13 @@ int main(int argc, char **argv)
 	}
 
 	if (!strcmp(argv[3], "up") || !strcmp(argv[3], "down")) {
-		val = !strcmp(argv[3], "up");
-		len = bsscfg_buf(buf, "bss", idx, &val, sizeof(val));
+		/* "bss" leva o indice dentro do dado ({cfg, val}), sem o prefixo
+		 * bsscfg: (com ele o driver responde BCME_BUFTOOSHORT) */
+		int32_t sb[2] = { idx, !strcmp(argv[3], "up") };
+
+		len = sprintf(buf, "bss") + 1;
+		memcpy(buf + len, sb, sizeof(sb));
+		len += sizeof(sb);
 		if (wl_ioctl(argv[1], WLC_SET_VAR, buf, len, 1)) {
 			perror("set bss");
 			return 1;
