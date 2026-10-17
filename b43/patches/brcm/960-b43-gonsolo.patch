@@ -728,7 +728,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/Kconfig b/drivers/net/wireless/bro
  	  PCI: BCM4352, BCM4360
 diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
 --- a/drivers/net/wireless/broadcom/b43/main.c	2026-10-16 18:20:17.506737985 -0300
-+++ b/drivers/net/wireless/broadcom/b43/main.c	2026-10-16 18:20:44.339494338 -0300
++++ b/drivers/net/wireless/broadcom/b43/main.c	2026-10-16 21:56:11.740293519 -0300
 @@ -36,6 +36,7 @@
  #include "main.h"
  #include "debugfs.h"
@@ -1312,7 +1312,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broa
  {
  	struct b43_wl *wl = hw_to_b43_wl(hw);
 -	struct b43_wldev *dev = wl->current_dev;
- 
+-
 -	if (tx_ant == 1 && rx_ant == 1) {
 -		dev->tx_antenna = B43_ANTENNA0;
 -		dev->rx_antenna = B43_ANTENNA0;
@@ -1328,7 +1328,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broa
 -	else {
 -		return -EINVAL;
 -	}
--
+ 
 -	return 0;
 -}
 -
@@ -1422,7 +1422,21 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broa
  	} else {
  		if (have_5ghz_phy)
  			hw->wiphy->bands[NL80211_BAND_5GHZ] = &b43_band_5GHz_aphy;
-@@ -5555,8 +5838,6 @@
+@@ -5411,6 +5694,13 @@
+ 		return;
+ 	}
+ 
++	/* BCM4360 2.4 GHz only (R7000 0000:01:00.0, NVRAM devid 0x43a1) */
++	if (dev_id == 0x43a1) {
++		*have_2ghz_phy = true;
++		*have_5ghz_phy = false;
++		return;
++	}
++
+ 	/* As a fallback, try to guess using PHY type */
+ 	switch (dev->phy.type) {
+ 	case B43_PHYTYPE_G:
+@@ -5555,8 +5845,6 @@
  	if (!wldev)
  		goto out;
  
@@ -1431,7 +1445,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broa
  	wldev->use_pio = b43_modparam_pio;
  	wldev->dev = dev;
  	wldev->wl = wl;
-@@ -5638,6 +5919,7 @@
+@@ -5638,6 +5926,7 @@
  	ieee80211_hw_set(hw, RX_INCLUDES_FCS);
  	ieee80211_hw_set(hw, SIGNAL_DBM);
  	ieee80211_hw_set(hw, MFP_CAPABLE);
@@ -1439,7 +1453,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broa
  	hw->wiphy->interface_modes =
  		BIT(NL80211_IFTYPE_AP) |
  		BIT(NL80211_IFTYPE_MESH_POINT) |
-@@ -5648,9 +5930,6 @@
+@@ -5648,9 +5937,6 @@
  
  	wiphy_ext_feature_set(hw->wiphy, NL80211_EXT_FEATURE_CQM_RSSI_LIST);
  
@@ -1449,7 +1463,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broa
  	wl->hw_registered = false;
  	hw->max_rates = 2;
  	SET_IEEE80211_DEV(hw, dev->dev);
-@@ -5725,6 +6004,7 @@
+@@ -5725,6 +6011,7 @@
  {
  	struct b43_wldev *wldev = bcma_get_drvdata(core);
  	struct b43_wl *wl = wldev->wl;
@@ -1457,7 +1471,7 @@ diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broa
  
  	/* We must cancel any work here before unregistering from ieee80211,
  	 * as the ieee80211 unreg will destroy the workqueue. */
-@@ -5739,14 +6019,15 @@
+@@ -5739,14 +6026,15 @@
  		ieee80211_unregister_hw(wl->hw);
  	}
  
