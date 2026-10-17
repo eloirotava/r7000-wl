@@ -67,19 +67,62 @@ chanspec() {
 	esac
 }
 
-VIF=; BRIDGE=
+# cada wifi-iface "ap" do radio vira um BSS: o 1o na interface primaria
+# (wlN), os demais em wlN.1, wlN.2... criados pelo wl (bss -C n up, MBSS)
+NVIF=0
 setup_vif() {
-	[ -z "$VIF" ] || { wireless_setup_vif_failed ONLY_ONE_AP_PER_RADIO; return; }
-	VIF=$1
-	BRIDGE=$network_bridge
+	local ssid encryption key hidden
 	json_select config
 	json_get_vars ssid encryption key hidden
 	json_select ..
+	eval "VIF_$NVIF=\$1 SSID_$NVIF=\$ssid ENC_$NVIF=\$encryption"
+	eval "KEY_$NVIF=\$key HID_$NVIF=\${hidden:-0} BR_$NVIF=\$network_bridge"
+	NVIF=$((NVIF + 1))
+}
+
+# cripto de um BSS (wsec/wpa_auth/closed na interface dele)
+bss_sec() {
+	local W="wl -i $1" enc=$2 hidden=$3
+	$W closed "$hidden"
+	case "$enc" in
+	psk2*)	$W wsec 4; $W wpa_auth 128 ;;
+	none|"")	$W wsec 0; $W wpa_auth 0 ;;
+	*)	return 1 ;;
+	esac
+}
+
+# nas (autenticador WPA2 do DD-WRT) de um BSS
+nas_start() {
+	local ifn=$1 ssid=$2 key=$3 br=$4 conf=/var/run/wl-nvram-$1.conf
+	cat > "$conf" <<-EOT
+	lan_ifname=${br:-br-lan}
+	${ifn}_ifname=$ifn
+	${ifn}_mode=ap
+	${ifn}_akm=psk2
+	${ifn}_crypto=aes
+	${ifn}_ssid=$ssid
+	${ifn}_wpa_gtk_rekey=3600
+	EOT
+	LD_LIBRARY_PATH=/usr/lib/ddwrt WL_NVRAM=$conf /usr/sbin/nas \
+		-P "/var/run/nas.$ifn.pid" -H 34954 -l "${br:-$ifn}" \
+		-i "$ifn" -A -m 128 -k "$key" -s "$ssid" -w 4 -g 3600 &
+	echo $! > "/var/run/wl-nas.$ifn.pid"
+	wireless_add_process $! /usr/sbin/nas 1
+}
+
+# BSS extras que o setup anterior deixou (lista em /var/run/wl-bss.<if>)
+bss_down() {
+	local ifname=$1 n
+	for n in $(cat "/var/run/wl-bss.$ifname" 2>/dev/null); do
+		nas_stop "$ifname.$n"
+		wl -i "$ifname" bss -C "$n" down 2>/dev/null
+	done
+	rm -f "/var/run/wl-bss.$ifname"
 }
 
 drv_broadcom_setup() {
-	local ifname country txpower channel htmode band W conf
-	local ssid encryption key hidden
+	local ifname country txpower channel htmode band W i n vif ifn
+	local ssid enc key hidden br mac t
 
 	json_select config
 	json_get_vars ifname country txpower channel htmode band
@@ -88,48 +131,57 @@ drv_broadcom_setup() {
 	[ -d "/sys/class/net/$ifname" ] || { wireless_setup_failed NO_IFACE; return; }
 
 	for_each_interface "ap" setup_vif
-	[ -n "$VIF" ] || { wireless_setup_failed NO_INTERFACES; return; }
+	[ "$NVIF" -gt 0 ] || { wireless_setup_failed NO_INTERFACES; return; }
+	[ "$NVIF" -le 8 ] || { wireless_setup_failed TOO_MANY_INTERFACES; return; }
 	[ -z "$channel" ] || [ "$channel" = auto ] && channel=$([ "$band" = 5g ] && echo 36 || echo 6)
 
+	bss_down "$ifname"
 	nas_stop "$ifname"
 	$W down
 	$W ap 1
 	$W infra 1
+	$W mbss $([ "$NVIF" -gt 1 ] && echo 1 || echo 0)
 	# packet chaining na recepcao: wlc_rxframe_chainable le um ponteiro
 	# NULL (+0x54) no primeiro trafego de cliente WPA e da panic em irq
 	$W pktc 0
 	[ -n "$country" ] && wlcountry "$ifname" "$country" > /dev/null
 	$W chanspec "$(chanspec "$channel" "$htmode" "$band")"
 	[ -n "$txpower" ] && $W txpwr1 -o -d "$txpower"
-	$W closed "${hidden:-0}"
-	case "$encryption" in
-	psk2*)	$W wsec 4; $W wpa_auth 128 ;;
-	none|"")	$W wsec 0; $W wpa_auth 0 ;;
-	*)	wireless_setup_vif_failed UNSUPPORTED_ENCRYPTION; return ;;
-	esac
-	$W up
-	$W ssid "$ssid"
-	ip link set "$ifname" up
-	wireless_add_vif "$VIF" "$ifname"
 
-	if [ "$encryption" != none ] && [ -n "$encryption" ]; then
-		[ ${#key} -ge 8 ] || { wireless_setup_vif_failed INVALID_WPA_PSK; return; }
-		conf=/var/run/wl-nvram-$ifname.conf
-		cat > "$conf" <<-EOT
-		lan_ifname=${BRIDGE:-br-lan}
-		${ifname}_ifname=$ifname
-		${ifname}_mode=ap
-		${ifname}_akm=psk2
-		${ifname}_crypto=aes
-		${ifname}_ssid=$ssid
-		${ifname}_wpa_gtk_rekey=3600
-		EOT
-		LD_LIBRARY_PATH=/usr/lib/ddwrt WL_NVRAM=$conf /usr/sbin/nas \
-			-P "/var/run/nas.$ifname.pid" -H 34954 -l "${BRIDGE:-$ifname}" \
-			-i "$ifname" -A -m 128 -k "$key" -s "$ssid" -w 4 -g 3600 &
-		echo $! > "/var/run/wl-nas.$ifname.pid"
-		wireless_add_process $! /usr/sbin/nas 1
-	fi
+	i=0
+	while [ $i -lt "$NVIF" ]; do
+		eval "vif=\$VIF_$i ssid=\$SSID_$i enc=\$ENC_$i key=\$KEY_$i hidden=\$HID_$i br=\$BR_$i"
+		case "$enc" in
+		psk2*)	[ ${#key} -ge 8 ] || { wireless_setup_vif_failed INVALID_WPA_PSK; i=$((i + 1)); continue; } ;;
+		none|"")	;;
+		*)	wireless_setup_vif_failed UNSUPPORTED_ENCRYPTION; i=$((i + 1)); continue ;;
+		esac
+		if [ $i = 0 ]; then
+			ifn=$ifname
+			bss_sec "$ifn" "$enc" "$hidden"
+			$W up
+			$W ssid "$ssid"
+		else
+			n=$i; ifn=$ifname.$n
+			$W ssid -C "$n" "$ssid"
+			$W bss -C "$n" up
+			# a netdev do BSS e registrada num work do driver
+			t=0
+			while [ ! -d "/sys/class/net/$ifn" ] && [ $t -lt 20 ]; do
+				sleep 0.1; t=$((t + 1))
+			done
+			[ -d "/sys/class/net/$ifn" ] || { wireless_setup_vif_failed NO_BSS_IFACE; i=$((i + 1)); continue; }
+			echo "$n" >> "/var/run/wl-bss.$ifname"
+			# MAC que o wl gerou para o BSS (MBSS) tambem na netdev
+			mac=$(wl -i "$ifn" cur_etheraddr | awk '{print $2}')
+			[ -n "$mac" ] && ip link set "$ifn" address "$mac"
+			bss_sec "$ifn" "$enc" "$hidden"
+		fi
+		ip link set "$ifn" up
+		wireless_add_vif "$vif" "$ifn"
+		case "$enc" in psk2*) nas_start "$ifn" "$ssid" "$key" "$br" ;; esac
+		i=$((i + 1))
+	done
 	wireless_set_up
 }
 
@@ -138,6 +190,7 @@ drv_broadcom_teardown() {
 	json_select config
 	json_get_vars ifname
 	json_select ..
+	bss_down "$ifname"
 	nas_stop "$ifname"
 	[ -d "/sys/class/net/$ifname" ] || return 0
 	wl -i "$ifname" down

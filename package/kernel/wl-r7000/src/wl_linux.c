@@ -53,7 +53,9 @@ struct wl_if {
 	struct wl_if		*next;
 	uint			unit;
 	bool			registered;
+	bool			dead;		/* wl_del_if: o nucleo ja largou */
 	struct work_struct	reg_work;
+	struct work_struct	del_work;
 	char			name[IFNAMSIZ];
 };
 
@@ -332,7 +334,7 @@ void wl_sendup(struct wl_info *wl, struct wl_if *wlif, void *p, int numpkt)
 		next = PKTCLINK(p);
 		PKTSETCLINK(p, NULL);
 
-		if (wlif && !wlif->registered) {
+		if (wlif && (!wlif->registered || wlif->dead)) {
 			PKTFREE(wl->osh, p, FALSE);
 			continue;
 		}
@@ -364,6 +366,12 @@ static netdev_tx_t wl_start_xmit(wl_native_skb *skb, struct net_device *dev)
 	}
 
 	WL_LOCK(wl);
+	if (wlif->dead) {
+		WL_UNLOCK(wl);
+		wlp_free(wp);
+		dev->stats.tx_dropped++;
+		return NETDEV_TX_OK;
+	}
 	pkt = PKTFRMNATIVE(wl->osh, wp);
 	if (!pkt) {
 		WL_UNLOCK(wl);
@@ -636,14 +644,29 @@ struct wl_if *wl_add_if(struct wl_info *wl, struct wlc_if *wlcif, uint unit,
 	return wlif;
 }
 
+/* fora do WL_LOCK: o unregister dorme */
+static void wl_unreg_work(struct work_struct *work)
+{
+	struct wl_if *wlif = container_of(work, struct wl_if, del_work);
+
+	cancel_work_sync(&wlif->reg_work);
+	if (wlif->registered)
+		unregister_netdev(wlif->dev);
+	free_netdev(wlif->dev);
+	kfree(wlif);
+}
+
+/*
+ * chamado com WL_LOCK (bss -C n down, fim do WDS): o xmit passa a descartar
+ * e a netdev sai num work
+ */
 void wl_del_if(struct wl_info *wl, struct wl_if *wlif)
 {
 	wl_unlink_if(wl, wlif);
-	/*
-	 * chamado com WL_LOCK; o unregister dorme.  TODO: adiar para um
-	 * work como no original.  Por enquanto so a primaria existe.
-	 */
+	wlif->dead = true;
 	wlif->wlcif = NULL;
+	INIT_WORK(&wlif->del_work, wl_unreg_work);
+	schedule_work(&wlif->del_work);
 }
 
 /* ---------------- probe / remove ---------------- */

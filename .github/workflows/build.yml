@@ -123,6 +123,7 @@ jobs:
           path: |
             openwrt/bin/targets/bcm53xx/generic/*r7000*
             openwrt/bin/targets/bcm53xx/generic/openwrt-sdk-*
+            openwrt/bin/packages/*/base/libiwinfo*
             openwrt/bin/targets/bcm53xx/generic/*.manifest
             openwrt/bin/targets/bcm53xx/generic/packages/kmod-wl-r7000*
             openwrt/build_dir/target-*/linux-bcm53xx_generic/wl-r7000/wl.ko
