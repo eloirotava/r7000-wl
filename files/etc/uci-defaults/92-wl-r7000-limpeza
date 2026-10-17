@@ -1,4 +1,13 @@
 #!/bin/sh
+# sobras de versoes antigas que o sysupgrade preserva
+
+# secoes radio do /etc/config/wl-r7000 (antes do handler do netifd); hoje
+# so o guard e lido e a senha ficava ali a toa
+for s in $(uci -q show wl-r7000 | sed -n "s/^wl-r7000\.\([^.=]*\)=radio$/\1/p"); do
+	uci delete wl-r7000.$s
+done
+uci commit wl-r7000
+
 # radios mac80211 que o "wifi config" deixou (testes do b43) viram radio2/3
 # fantasmas no LuCI ("PHY is undefined"): sem nenhum phy mac80211, apaga
 ls /sys/class/ieee80211/* >/dev/null 2>&1 && exit 0
