@@ -32,10 +32,24 @@ drv_broadcom_cleanup() {
 
 # o netifd 25.12 nao mata os processos do handler (wireless_process_kill_all
 # nao existe mais no wireless-device.uc): o nas de cada radio fica num pidfile
+# o nas do DD-WRT ignora SIGTERM: sobrava o antigo junto do novo e os dois
+# disputavam o 4-way (cliente WPA2 nao completava apos wifi reload). Mata
+# por pidfile e tambem qualquer nas perdido no mesmo ifname, com KILL no fim
 nas_stop() {
-	local pf=/var/run/wl-nas.$1.pid
-	[ -s "$pf" ] && kill "$(cat "$pf")" 2>/dev/null
-	rm -f "$pf"
+	local pf=/var/run/wl-nas.$1.pid pids p n=0
+	pids="$(cat "$pf" 2>/dev/null)"
+	for p in /proc/[0-9]*; do
+		tr '\0' ' ' < $p/cmdline 2>/dev/null | grep -q "^/usr/sbin/nas .*-i $1 " &&
+			pids="$pids ${p#/proc/}"
+	done
+	rm -f "$pf" "/var/run/nas.$1.pid"
+	[ -n "$pids" ] || return 0
+	kill $pids 2>/dev/null
+	while [ $n -lt 10 ] && kill -0 $pids 2>/dev/null; do
+		sleep 0.2; n=$((n + 1))
+	done
+	kill -9 $pids 2>/dev/null
+	return 0
 }
 
 # canal + htmode do UCI -> chanspec do wl
