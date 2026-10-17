@@ -169,7 +169,7 @@ index 9ec78cd..7debcb5 100644
  }
  
  static int wl_get_encryption(const char *ifname, char *buf)
-@@ -424,11 +532,20 @@ static void wl_get_assoclist_cb(const char *ifname,
+@@ -424,11 +532,31 @@ static void wl_get_assoclist_cb(const char *ifname,
  	if (!wl_iovar(ifname, "sta_info", e->mac, 6, &sta, sizeof(sta)) &&
  		(sta.ver >= 2))
  	{
@@ -177,6 +177,7 @@ index 9ec78cd..7debcb5 100644
 +		 * 16, entao do rateset em diante os campos vem por offset (ver 5) */
 +		const uint8_t *r = (const uint8_t *)&sta;
 +		uint32_t v;
++		uint16_t l;
 +
  		e->inactive     = sta.idle * 1000;
 -		e->rx_packets   = sta.rx_ucast_pkts;
@@ -191,10 +192,20 @@ index 9ec78cd..7debcb5 100644
 +		memcpy(&v, r + 60, 4); e->rx_packets = v;
 +		memcpy(&v, r + 68, 4); e->tx_rate.rate = v;
 +		memcpy(&v, r + 72, 4); e->rx_rate.rate = v;
++
++		/* bytes e retentativas (ver 5): so se o driver mandou a struct inteira */
++		memcpy(&v, r + 56, 4); e->tx_failed = v;
++		memcpy(&l, r + 2, 2);
++		if (l >= 180) {
++			uint64_t b;
++			memcpy(&b, r + 96, 8);  e->tx_bytes = b;
++			memcpy(&b, r + 104, 8); e->rx_bytes = b;
++			memcpy(&v, r + 176, 4); e->tx_retries = v;
++		}
  
  		/* ToDo: 11n */
  		e->rx_rate.mcs = -1;
-@@ -534,14 +651,113 @@ static int wl_get_txpwrlist(const char *ifname, char *buf, int *len)
+@@ -534,14 +662,113 @@ static int wl_get_txpwrlist(const char *ifname, char *buf, int *len)
  	return 0;
  }
  
@@ -310,7 +321,7 @@ index 9ec78cd..7debcb5 100644
  }
  
  static int wl_get_country(const char *ifname, char *buf)
-@@ -596,7 +812,16 @@ static int wl_get_countrylist(const char *ifname, char *buf, int *len)
+@@ -596,7 +823,16 @@ static int wl_get_countrylist(const char *ifname, char *buf, int *len)
  		return 0;
  	}
  
@@ -328,7 +339,7 @@ index 9ec78cd..7debcb5 100644
  }
  
  static int wl_get_hwmodelist(const char *ifname, int *buf)
-@@ -760,6 +985,8 @@ const struct iwinfo_ops wl_ops = {
+@@ -760,6 +996,8 @@ const struct iwinfo_ops wl_ops = {
  	.mbssid_support   = wl_get_mbssid_support,
  	.hwmodelist       = wl_get_hwmodelist,
  	.htmodelist       = wl_get_htmodelist,
