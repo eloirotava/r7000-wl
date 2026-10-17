@@ -34,15 +34,14 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: linux-${{ env.KVER }}
-          key: kernel-${{ env.KVER }}-${{ hashFiles('patches/990-skbuff-bcm-wl-abi.patch', 'kernel/northstar.config') }}-v1
+          key: kernel-${{ env.KVER }}-${{ hashFiles('kernel/northstar.config') }}-v2
 
-      - name: Kernel ${{ env.KVER }} com o patch do sk_buff
+      - name: Kernel ${{ env.KVER }} padrao
         if: steps.kcache.outputs.cache-hit != 'true'
         run: |
           wget -q https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-$KVER.tar.xz
           tar xf linux-$KVER.tar.xz
           cd linux-$KVER
-          patch -p1 < ../patches/990-skbuff-bcm-wl-abi.patch
           make multi_v7_defconfig
           ./scripts/kconfig/merge_config.sh -m .config ../kernel/northstar.config
           make olddefconfig

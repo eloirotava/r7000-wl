@@ -112,14 +112,6 @@ jobs:
             /tmp/wstunnel/target/armv7-unknown-linux-musleabi/release/wstunnel
           file openwrt/files/usr/sbin/* openwrt/files/usr/bin/* openwrt/files/usr/lib/ddwrt/*
 
-      - name: Confere ABI do sk_buff (pahole)
-        run: |
-          VMLINUX=$(ls openwrt/build_dir/target-*/linux-bcm53xx_generic/linux-6.12.*/vmlinux)
-          echo "$VMLINUX"
-          set -o pipefail
-          pahole -C sk_buff "$VMLINUX" | tee skb-pahole.txt
-          python3 scripts/check-skb-abi.py skb-pahole.txt | tee skb-abi.txt
-
       - name: Imagem + SDK
         run: cd openwrt && (make -j$(nproc) IGNORE_ERRORS=m || make -j1 V=s IGNORE_ERRORS=m)
 
@@ -129,8 +121,6 @@ jobs:
         with:
           name: r7000-openwrt
           path: |
-            skb-pahole.txt
-            skb-abi.txt
             openwrt/bin/targets/bcm53xx/generic/*r7000*
             openwrt/bin/targets/bcm53xx/generic/openwrt-sdk-*
             openwrt/bin/targets/bcm53xx/generic/*.manifest

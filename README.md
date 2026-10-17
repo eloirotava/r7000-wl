@@ -5,12 +5,9 @@ o driver `wl` da Broadcom.
 
 Ideia: o nucleo do `wl` (`wlc_*`/`phy`) so depende do kernel atraves do
 layout de `struct sk_buff` e de umas poucas funcoes; a camada de SO
-(`wl_linux.c`) e reescrita aqui.  O kernel recebe um patch que deixa o
-`sk_buff` com os offsets que o nucleo binario espera.
-
-- `patches/990-skbuff-bcm-wl-abi.patch` — layout do `sk_buff` (ARM32).
-- `scripts/check-skb-abi.py` — confere os offsets com `pahole`; o build
-  falha se algum nao bater.
+(`wl_linux.c`) e reescrita aqui.  O kernel nao recebe patch: o nucleo
+opera na `struct wl_pkt` (`src/wl_pkt.h`), que imita os offsets do
+`sk_buff` do 4.4, e `wl_pkt.c` e a unica fronteira com o `sk_buff` real.
 - `.github/workflows/build.yml` — imagem do R7000 + SDK.
 
 Os objetos binarios da Broadcom **nao** estao neste repositorio.

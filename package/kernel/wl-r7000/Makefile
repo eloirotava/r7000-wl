@@ -18,7 +18,8 @@ define KernelPackage/wl-r7000/description
   Driver wl da Broadcom para os BCM4360 do Netgear R7000.  A arvore
   Broadcom (src/brcm) e o nucleo juntado (src/core/wl_core.o) sao
   preparados fora daqui por scripts/fetch-brcm.sh e scripts/prep-core.sh.
-  Exige o patch 990-skbuff-bcm-wl-abi no kernel.
+  Roda em kernel sem patch: o nucleo opera numa imitacao do sk_buff
+  (struct wl_pkt, src/wl_pkt.h).
 endef
 
 define Build/Prepare
