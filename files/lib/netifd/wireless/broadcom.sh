@@ -124,6 +124,9 @@ bss_down() {
 	for n in $(cat "/var/run/wl-bss.$ifname" 2>/dev/null); do
 		nas_stop "$ifname.$n"
 		wlbss "$ifname" "$n" down 2>/dev/null
+		# o wl nao libera o bsscfg no down (a netdev fica): tira da bridge
+		ip link set "$ifname.$n" down 2>/dev/null
+		ip link set "$ifname.$n" nomaster 2>/dev/null
 	done
 	rm -f "/var/run/wl-bss.$ifname"
 }
