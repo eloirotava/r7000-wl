@@ -1,0 +1,97 @@
+name: sdk-rapido
+
+# Iteracao rapida (~10 min): kmod-wl-r7000 + libiwinfo no SDK de uma build
+# de imagem ja feita (mesmo kernel e mesma config). O modpost pega erros de
+# simbolo (ex.: GPL-only) sem esperar a imagem inteira.
+
+on:
+  push:
+    branches-ignore: [main]
+    paths:
+      - 'package/**'
+      - 'scripts/**'
+      - '.github/workflows/sdk-rapido.yml'
+  workflow_dispatch:
+    inputs:
+      sdk_run:
+        description: 'run do build.yml cujo artefato traz o SDK'
+        default: '39053596616'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  SDK_RUN: ${{ inputs.sdk_run || '39053596616' }}
+
+jobs:
+  kmod:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dependencias
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential gawk gettext libncurses-dev \
+            python3-setuptools rsync unzip zlib1g-dev file wget zstd \
+            binutils-arm-linux-gnueabi
+
+      - name: SDK do artefato da imagem
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download "$SDK_RUN" -R "$GITHUB_REPOSITORY" -n r7000-openwrt -D art
+          mkdir sdk
+          tar -I zstd -xf art/bin/targets/bcm53xx/generic/openwrt-sdk-*.tar.zst \
+            -C sdk --strip-components=1
+          rm -rf art
+
+      - name: Arvore Broadcom + nucleo
+        run: |
+          S=package/kernel/wl-r7000/src
+          ./scripts/fetch-brcm.sh $S/brcm
+          mkdir -p $S/core
+          CROSS_COMPILE=arm-linux-gnueabi- ./scripts/prep-core.sh $S/brcm $S/core/wl_core.o
+          cp -r package/kernel/wl-r7000 sdk/package/
+
+      - name: Compila kmod-wl-r7000 e libiwinfo
+        run: |
+          cd sdk
+          ./scripts/feeds update base
+          ./scripts/feeds install iwinfo
+          # mesmo patch e release do build.yml
+          P=$(readlink -f package/feeds/base/iwinfo)
+          mkdir -p $P/patches
+          cp ../package/iwinfo-wl.patch $P/patches/900-wl-htmode.patch
+          sed -i 's/BACKENDS="nl80211"/BACKENDS="nl80211 wl"/; s/^PKG_RELEASE:=.*/PKG_RELEASE:=92/' $P/Makefile
+          make defconfig
+          echo 'CONFIG_PACKAGE_kmod-wl-r7000=m' >> .config
+          echo 'CONFIG_PACKAGE_libiwinfo=m' >> .config
+          make defconfig
+          set -o pipefail
+          make package/wl-r7000/compile V=s -j$(nproc) 2>&1 | tee ../build.log | tail -40
+          make package/iwinfo/compile V=s -j$(nproc) 2>&1 | tee ../iwinfo.log | tail -20
+
+      - name: Resumo
+        if: always()
+        run: |
+          grep -hE 'undefined!|error:|ERROR:' build.log iwinfo.log | sort -u | head -40 || true
+          find sdk/build_dir -name wl.ko -exec ls -la {} \;
+          find sdk/bin \( -name 'kmod-wl-r7000*' -o -name 'libiwinfo*' \) -exec ls -la {} \;
+
+      - name: Artefatos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk-rapido
+          path: |
+            build.log
+            iwinfo.log
+            sdk/build_dir/target-*/linux-*/wl-r7000/wl.ko
+            sdk/bin/targets/*/*/packages/kmod-wl-r7000*
+            sdk/bin/packages/*/*/libiwinfo*
+            sdk/build_dir/target-*/iwinfo-*/libiwinfo.so*
+            files/lib/netifd/wireless/broadcom.sh
+          if-no-files-found: warn
