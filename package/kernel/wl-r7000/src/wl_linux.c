@@ -54,8 +54,8 @@ struct wl_if {
 	uint			unit;
 	bool			registered;
 	bool			dead;		/* wl_del_if: o nucleo ja largou */
+	bool			work_active;	/* reg_work agendado/rodando (WL_LOCK) */
 	struct work_struct	reg_work;
-	struct work_struct	del_work;
 	char			name[IFNAMSIZ];
 };
 
@@ -620,17 +620,44 @@ static void wl_unlink_if(struct wl_info *wl, struct wl_if *wlif)
 	}
 }
 
-/* interfaces virtuais (BSS extra, WDS): registro fora do WL_LOCK */
+/*
+ * interfaces virtuais (BSS extra, WDS): registro e remocao fora do WL_LOCK
+ * (register/unregister dormem), num work so por interface.  Sem
+ * cancel_work_sync (simbolo GPL): o wl_del_if so agenda se o work nao
+ * estiver ativo, e o work confere o "dead" de novo antes de terminar.
+ */
 static void wl_reg_work(struct work_struct *work)
 {
 	struct wl_if *wlif = container_of(work, struct wl_if, reg_work);
+	struct wl_info *wl = wlif->wl;
+	bool dead;
 
-	if (register_netdev(wlif->dev) == 0)
-		wlif->registered = true;
-	else
-		pr_err("%s: register_netdev falhou\n", wlif->name);
+	WL_LOCK(wl);
+	dead = wlif->dead;
+	WL_UNLOCK(wl);
+
+	if (!dead && !wlif->registered) {
+		if (register_netdev(wlif->dev) == 0)
+			wlif->registered = true;
+		else
+			pr_err("%s: register_netdev falhou\n", wlif->name);
+		WL_LOCK(wl);
+		dead = wlif->dead;
+		if (!dead)
+			wlif->work_active = false;
+		WL_UNLOCK(wl);
+	}
+	if (!dead)
+		return;
+
+	/* ja fora da iflist: ninguem mais referencia a interface */
+	if (wlif->registered)
+		unregister_netdev(wlif->dev);
+	free_netdev(wlif->dev);
+	kfree(wlif);
 }
 
+/* chamado com WL_LOCK */
 struct wl_if *wl_add_if(struct wl_info *wl, struct wlc_if *wlcif, uint unit,
 	struct ether_addr *remote)
 {
@@ -640,33 +667,24 @@ struct wl_if *wl_add_if(struct wl_info *wl, struct wlc_if *wlcif, uint unit,
 	if (!wlif)
 		return NULL;
 	INIT_WORK(&wlif->reg_work, wl_reg_work);
+	wlif->work_active = true;
 	schedule_work(&wlif->reg_work);
 	return wlif;
 }
 
-/* fora do WL_LOCK: o unregister dorme */
-static void wl_unreg_work(struct work_struct *work)
-{
-	struct wl_if *wlif = container_of(work, struct wl_if, del_work);
-
-	cancel_work_sync(&wlif->reg_work);
-	if (wlif->registered)
-		unregister_netdev(wlif->dev);
-	free_netdev(wlif->dev);
-	kfree(wlif);
-}
-
 /*
  * chamado com WL_LOCK (bss -C n down, fim do WDS): o xmit passa a descartar
- * e a netdev sai num work
+ * e a netdev sai no work
  */
 void wl_del_if(struct wl_info *wl, struct wl_if *wlif)
 {
 	wl_unlink_if(wl, wlif);
 	wlif->dead = true;
 	wlif->wlcif = NULL;
-	INIT_WORK(&wlif->del_work, wl_unreg_work);
-	schedule_work(&wlif->del_work);
+	if (!wlif->work_active) {
+		wlif->work_active = true;
+		schedule_work(&wlif->reg_work);
+	}
 }
 
 /* ---------------- probe / remove ---------------- */
