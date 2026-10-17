@@ -7,7 +7,7 @@ obj-m := wl.o
 
 BRCM := brcm
 
-wl-y := wl_linux.o shim.o osl_nvram.o core/wl_core.o
+wl-y := wl_linux.o shim.o osl_nvram.o wl_pkt.o core/wl_core.o
 
 wl-y += $(BRCM)/shared/linux_osl.o \
 	$(BRCM)/shared/siutils.o \
@@ -56,3 +56,6 @@ ccflags-y += -Wno-empty-body
 
 # o shim e quem implementa o redirecionamento de dma_sync_* (osl_compat.h)
 CFLAGS_shim.o += -DWL_SHIM_NO_DMA_REDIRECT
+
+# fronteira com o sk_buff real: sem o #define sk_buff -> wl_pkt (wl_pkt.h)
+CFLAGS_wl_pkt.o += -DWL_PKT_NATIVE

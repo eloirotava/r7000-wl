@@ -1,6 +1,8 @@
 #!/bin/sh
 # Junta os objetos binarios do nucleo do wl num unico wl_core.o,
-# renomeando os simbolos do kernel 4.4 que mudaram no 6.12.
+# renomeando os simbolos do kernel 4.4 que mudaram no 6.12 e as funcoes
+# de pacote que o nucleo chama direto (skb_push/skb_pull -> wlp_*, que
+# operam na imitacao struct wl_pkt: ver package/kernel/wl-r7000/src/wl_pkt.h).
 # Uso: prep-core.sh <arvore brcm/arm> <saida wl_core.o>
 set -e
 brcm=$1; out=$2
@@ -25,6 +27,8 @@ tmp=$(mktemp -d)
 	--redefine-sym kmalloc_caches=wl_kmalloc_caches \
 	--redefine-sym kmem_cache_alloc=wl_kmem_cache_alloc \
 	--redefine-sym __kmalloc=wl___kmalloc \
+	--redefine-sym skb_push=wlp_push \
+	--redefine-sym skb_pull=wlp_pull \
 	"$tmp/core.o" "$out"
 rm -rf "$tmp"
 echo "$(echo $objs | wc -w) objetos -> $out"
