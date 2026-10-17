@@ -131,6 +131,7 @@ jobs:
           $CC -shared -fPIC -O2 -Wall -Wl,-soname,libnvram.so \
             -o openwrt/files/usr/lib/ddwrt/libnvram.so tools/libnvram-shim/nvram.c
           $CC -O2 -Wall -o openwrt/files/usr/sbin/wlcountry tools/wlcountry/wlcountry.c
+          $CC -O2 -Wall -o openwrt/files/usr/sbin/wlbss tools/wlbss/wlbss.c
           # wstunnel soft-float: o BCM4708 nao tem VFP
           rustup target add armv7-unknown-linux-musleabi
           git clone --depth 1 -b v10.6.2 https://github.com/erebe/wstunnel /tmp/wstunnel

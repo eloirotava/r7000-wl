@@ -68,7 +68,8 @@ chanspec() {
 }
 
 # cada wifi-iface "ap" do radio vira um BSS: o 1o na interface primaria
-# (wlN), os demais em wlN.1, wlN.2... criados pelo wl (bss -C n up, MBSS)
+# (wlN), os demais em wlN.1, wlN.2... (MBSS).  O wl do DD-WRT nao tem o
+# comando bss nem MAC por bsscfg: isso vai pelo wlbss (tools/wlbss)
 NVIF=0
 setup_vif() {
 	local ssid encryption key hidden
@@ -78,6 +79,13 @@ setup_vif() {
 	eval "VIF_$NVIF=\$1 SSID_$NVIF=\$ssid ENC_$NVIF=\$encryption"
 	eval "KEY_$NVIF=\$key HID_$NVIF=\${hidden:-0} BR_$NVIF=\$network_bridge"
 	NVIF=$((NVIF + 1))
+}
+
+# MAC do BSS n: primaria com o bit de administracao local e +n no fim
+bss_mac() {
+	local n=$2 IFS=:
+	set -- $1
+	printf '%02x:%s:%s:%s:%s:%02x\n' $(( 0x$1 | 2 )) $2 $3 $4 $5 $(( (0x$6 + n) & 255 ))
 }
 
 # cripto de um BSS (wsec/wpa_auth/closed na interface dele)
@@ -115,7 +123,7 @@ bss_down() {
 	local ifname=$1 n
 	for n in $(cat "/var/run/wl-bss.$ifname" 2>/dev/null); do
 		nas_stop "$ifname.$n"
-		wl -i "$ifname" bss -C "$n" down 2>/dev/null
+		wlbss "$ifname" "$n" down 2>/dev/null
 	done
 	rm -f "/var/run/wl-bss.$ifname"
 }
@@ -163,8 +171,8 @@ drv_broadcom_setup() {
 			$W ssid "$ssid"
 		else
 			n=$i; ifn=$ifname.$n
+			# ssid -C cria o bsscfg (e a netdev wlN.n) e ja liga o BSS
 			$W ssid -C "$n" "$ssid"
-			$W bss -C "$n" up
 			# a netdev do BSS e registrada num work do driver
 			t=0
 			while [ ! -d "/sys/class/net/$ifn" ] && [ $t -lt 20 ]; do
@@ -172,10 +180,14 @@ drv_broadcom_setup() {
 			done
 			[ -d "/sys/class/net/$ifn" ] || { wireless_setup_vif_failed NO_BSS_IFACE; i=$((i + 1)); continue; }
 			echo "$n" >> "/var/run/wl-bss.$ifname"
-			# MAC que o wl gerou para o BSS (MBSS) tambem na netdev
-			mac=$(wl -i "$ifn" cur_etheraddr | awk '{print $2}')
-			[ -n "$mac" ] && ip link set "$ifn" address "$mac"
+			# o wl deixa o BSS com o MAC da primaria (mesmo BSSID): MAC proprio
+			# (bit local + n no ultimo octeto), so com o BSS desligado; o
+			# set_mac da casca grava no bsscfg tambem
+			wlbss "$ifname" "$n" down
+			mac=$(bss_mac "$(cat "/sys/class/net/$ifname/address")" "$n")
+			ip link set "$ifn" address "$mac"
 			bss_sec "$ifn" "$enc" "$hidden"
+			wlbss "$ifname" "$n" up
 		fi
 		ip link set "$ifn" up
 		wireless_add_vif "$vif" "$ifn"

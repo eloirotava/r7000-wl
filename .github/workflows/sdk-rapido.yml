@@ -10,6 +10,7 @@ on:
     paths:
       - 'package/**'
       - 'scripts/**'
+      - 'tools/**'
       - '.github/workflows/sdk-rapido.yml'
   workflow_dispatch:
     inputs:
@@ -74,6 +75,15 @@ jobs:
           make package/wl-r7000/compile V=s -j$(nproc) 2>&1 | tee ../build.log | tail -40
           make package/iwinfo/compile V=s -j$(nproc) 2>&1 | tee ../iwinfo.log | tail -20
 
+      - name: Ferramentas (wlcountry, wlbss)
+        run: |
+          export STAGING_DIR=$PWD/sdk/staging_dir
+          CC=$(ls sdk/staging_dir/toolchain-*/bin/arm-openwrt-linux-muslgnueabi-gcc)
+          mkdir -p out
+          $CC -O2 -Wall -o out/wlcountry tools/wlcountry/wlcountry.c
+          $CC -O2 -Wall -o out/wlbss tools/wlbss/wlbss.c
+          file out/*
+
       - name: Resumo
         if: always()
         run: |
@@ -94,4 +104,5 @@ jobs:
             sdk/bin/packages/*/*/libiwinfo*
             sdk/build_dir/target-*/iwinfo-*/libiwinfo.so*
             files/lib/netifd/wireless/broadcom.sh
+            out/
           if-no-files-found: warn
