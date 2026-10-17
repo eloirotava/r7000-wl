@@ -156,38 +156,51 @@ drv_broadcom_setup() {
 	$W chanspec "$(chanspec "$channel" "$htmode" "$band")"
 	[ -n "$txpower" ] && $W txpwr1 -o -d "$txpower"
 
+	# fase 1, radio em down: BSS extras criados e com MAC proprio (o wl so
+	# aceita cur_etheraddr com o radio down; sem isso o BSS herda o BSSID
+	# da primaria).  OK_<i>=1 marca os BSS que seguem para a fase 2
 	i=0
 	while [ $i -lt "$NVIF" ]; do
-		eval "vif=\$VIF_$i ssid=\$SSID_$i enc=\$ENC_$i key=\$KEY_$i hidden=\$HID_$i br=\$BR_$i"
+		eval "ssid=\$SSID_$i enc=\$ENC_$i key=\$KEY_$i hidden=\$HID_$i"
 		case "$enc" in
 		psk2*)	[ ${#key} -ge 8 ] || { wireless_setup_vif_failed INVALID_WPA_PSK; i=$((i + 1)); continue; } ;;
 		none|"")	;;
 		*)	wireless_setup_vif_failed UNSUPPORTED_ENCRYPTION; i=$((i + 1)); continue ;;
 		esac
 		if [ $i = 0 ]; then
-			ifn=$ifname
-			bss_sec "$ifn" "$enc" "$hidden"
-			$W up
-			$W ssid "$ssid"
+			bss_sec "$ifname" "$enc" "$hidden"
 		else
 			n=$i; ifn=$ifname.$n
-			# ssid -C cria o bsscfg (e a netdev wlN.n) e ja liga o BSS
+			# ssid -C cria o bsscfg e a netdev wlN.n (registrada num work)
 			$W ssid -C "$n" "$ssid"
-			# a netdev do BSS e registrada num work do driver
 			t=0
 			while [ ! -d "/sys/class/net/$ifn" ] && [ $t -lt 20 ]; do
 				sleep 0.1; t=$((t + 1))
 			done
 			[ -d "/sys/class/net/$ifn" ] || { wireless_setup_vif_failed NO_BSS_IFACE; i=$((i + 1)); continue; }
 			echo "$n" >> "/var/run/wl-bss.$ifname"
-			# o wl deixa o BSS com o MAC da primaria (mesmo BSSID): MAC proprio
-			# (bit local + n no ultimo octeto), so com o BSS desligado; o
-			# set_mac da casca grava no bsscfg tambem
-			wlbss "$ifname" "$n" down
+			# o set_mac da casca grava o cur_etheraddr do bsscfg desta netdev
 			mac=$(bss_mac "$(cat "/sys/class/net/$ifname/address")" "$n")
-			ip link set "$ifn" address "$mac"
+			ip link set "$ifn" address "$mac" ||
+				{ wireless_setup_vif_failed BSS_MAC; i=$((i + 1)); continue; }
 			bss_sec "$ifn" "$enc" "$hidden"
-			wlbss "$ifname" "$n" up
+		fi
+		eval "OK_$i=1"
+		i=$((i + 1))
+	done
+
+	# fase 2: radio no ar, BSS ligados, interfaces para o netifd e nas
+	$W up
+	i=0
+	while [ $i -lt "$NVIF" ]; do
+		eval "ok=\$OK_$i vif=\$VIF_$i ssid=\$SSID_$i enc=\$ENC_$i key=\$KEY_$i br=\$BR_$i"
+		[ "$ok" = 1 ] || { i=$((i + 1)); continue; }
+		if [ $i = 0 ]; then
+			ifn=$ifname
+			$W ssid "$ssid"
+		else
+			ifn=$ifname.$i
+			wlbss "$ifname" "$i" up
 		fi
 		ip link set "$ifn" up
 		wireless_add_vif "$vif" "$ifn"
