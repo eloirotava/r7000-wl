@@ -1,0 +1,133 @@
+diff -ru a/drivers/net/wireless/broadcom/b43/b43.h b/drivers/net/wireless/broadcom/b43/b43.h
+--- a/drivers/net/wireless/broadcom/b43/b43.h	2026-10-30 17:13:44.606959279 -0300
++++ b/drivers/net/wireless/broadcom/b43/b43.h	2026-10-30 17:13:44.646959279 -0300
+@@ -293,6 +293,10 @@
+ #define B43_SHM_SH_BTL0			0x0018	/* Beacon template length 0 */
+ #define B43_SHM_SH_BT_BASE1		0x0468	/* Beacon template base 1 */
+ #define B43_SHM_SH_BTL1			0x001A	/* Beacon template length 1 */
++/* rev 40+ beacon template: 12 byte PHY header area (wlc_bcn_prb_template) */
++#define B43_AC_TPL_PHYHDR		12
++/* ucode 928: host flags word 1 bit 0 = no ucode probe responses (hostapd answers) */
++#define B43_HF_AC_NOPRBRESP		0x000000010000ULL
+ #define B43_SHM_SH_BTSFOFF		0x001C	/* Beacon TSF offset */
+ #define B43_SHM_SH_TIMBPOS		0x001E	/* TIM B position in beacon */
+ #define B43_SHM_SH_DTIMP		0x0012	/* DTIP period */
+diff -ru a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+--- a/drivers/net/wireless/broadcom/b43/main.c	2026-10-30 17:13:44.606959279 -0300
++++ b/drivers/net/wireless/broadcom/b43/main.c	2026-10-30 17:13:44.646959279 -0300
+@@ -718,7 +718,10 @@
+ 		 * wl uses entry 63 for its own MAC and 62 for the BSSID. */
+ 		bool self = offset == B43_MACFILTER_SELF;
+ 		u16 idx = self ? 0x3f : 0x3e;
+-		u16 attr = is_zero_ether_addr(mac) ? 0 : (self ? 0x8008 : 0x8006);
++		u16 attr = is_zero_ether_addr(mac) ? 0 :
++			   self ? 0x8008 :
++			   b43_is_mode(dev->wl, NL80211_IFTYPE_STATION) ? 0x8006 :
++			   0x8002;	/* AP/IBSS BSSID (wlc_set_bssid) */
+ 
+ 		b43_shm_write32(dev, B43_SHM_RCMTA, idx * 2,
+ 				mac[0] | (mac[1] << 8) | (mac[2] << 16) |
+@@ -1786,6 +1789,7 @@
+ 	struct ieee80211_tx_info *info;
+ 	unsigned long flags;
+ 	struct sk_buff *beacon_skb;
++	unsigned int phyhdr_len;
+ 
+ 	spin_lock_irqsave(&dev->wl->beacon_lock, flags);
+ 	info = IEEE80211_SKB_CB(dev->wl->current_beacon);
+@@ -1801,11 +1805,40 @@
+ 	}
+ 
+ 	bcn = (const struct ieee80211_mgmt *)(beacon_skb->data);
+-	len = min_t(size_t, beacon_skb->len,
+-		    0x200 - sizeof(struct b43_plcp_hdr6));
+-
+-	b43_write_template_common(dev, (const u8 *)bcn,
+-				  len, ram_offset, shm_size_offset, rate);
++	if (dev->phy.type == B43_PHYTYPE_AC) {
++		/* rev 40+ ucode: 640 byte slots, 12 byte PHY header area in
++		 * front of the frame with the PLCP at byte 3 (OFDM) or 6 (CCK);
++		 * length word counts the 12 bytes (wlc_bcn_prb_template). */
++		u8 phyhdr[B43_AC_TPL_PHYHDR] = { 0 };
++		struct b43_plcp_hdr4 plcp;
++		unsigned int j, k, total;
++		u32 tmp;
++
++		len = min_t(size_t, beacon_skb->len,
++			    640 - B43_AC_TPL_PHYHDR);
++		plcp.data = 0;
++		b43_generate_plcp_hdr(&plcp, len + FCS_LEN, rate);
++		memcpy(phyhdr + (b43_is_cck_rate(rate) ? 6 : 3), plcp.raw,
++		       sizeof(plcp.raw));
++		total = B43_AC_TPL_PHYHDR + len;
++		for (i = 0; i < total; i += sizeof(u32)) {
++			tmp = 0;
++			for (k = 0; k < sizeof(u32) && i + k < total; k++) {
++				j = i + k;
++				tmp |= (u32)(j < B43_AC_TPL_PHYHDR ? phyhdr[j] :
++					     ((const u8 *)bcn)[j - B43_AC_TPL_PHYHDR]) << (8 * k);
++			}
++			b43_ram_write(dev, ram_offset + i, tmp);
++		}
++		b43_shm_write16(dev, B43_SHM_SHARED, shm_size_offset, total);
++		phyhdr_len = B43_AC_TPL_PHYHDR;
++	} else {
++		len = min_t(size_t, beacon_skb->len,
++			    0x200 - sizeof(struct b43_plcp_hdr6));
++		b43_write_template_common(dev, (const u8 *)bcn,
++					  len, ram_offset, shm_size_offset, rate);
++		phyhdr_len = sizeof(struct b43_plcp_hdr6);
++	}
+ 
+ 	/* Write the PHY TX control parameters. */
+ 	if (dev->phy.type == B43_PHYTYPE_AC) {
+@@ -1834,6 +1867,9 @@
+ 		b43_shm_write16(dev, B43_SHM_SHARED, 0xcc, phy0);
+ 		b43_shm_write16(dev, B43_SHM_SHARED, 0xce, 0);
+ 		b43_shm_write16(dev, B43_SHM_SHARED, 0xd0, idx);
++		b43_shm_write16(dev, B43_SHM_SHARED, B43_SHM_SH_BTSFOFF,
++				is_ofdm ? 22 + 4 * DIV_ROUND_UP(26 * 8, 2 * rate) :
++					  195 + (24 * 16) / rate);
+ 	} else {
+ 		antenna = B43_ANTENNA_DEFAULT;
+ 		antenna = b43_antenna_to_phyctl(antenna);
+@@ -1872,7 +1908,7 @@
+ 				break;
+ 			tim_found = true;
+ 
+-			tim_position = sizeof(struct b43_plcp_hdr6);
++			tim_position = phyhdr_len;
+ 			tim_position += offsetof(struct ieee80211_mgmt, u.beacon.variable);
+ 			tim_position += i;
+ 
+@@ -1893,7 +1929,7 @@
+ 		 */
+ 		b43_shm_write16(dev, B43_SHM_SHARED,
+ 				B43_SHM_SH_TIMBPOS,
+-				len + sizeof(struct b43_plcp_hdr6));
++				len + phyhdr_len);
+ 		b43_shm_write16(dev, B43_SHM_SHARED,
+ 				B43_SHM_SH_DTIMPER, 0);
+ 	}
+@@ -5078,7 +5114,9 @@
+ 	u16 pretbtt;
+ 
+ 	/* The time value is in microseconds. */
+-	if (b43_is_mode(dev->wl, NL80211_IFTYPE_ADHOC))
++	if (b43_is_mode(dev->wl, NL80211_IFTYPE_ADHOC) ||
++	    (dev->phy.type == B43_PHYTYPE_AC &&
++	     b43_is_mode(dev->wl, NL80211_IFTYPE_AP)))
+ 		pretbtt = 2;
+ 	else
+ 		pretbtt = 250;
+@@ -5198,6 +5236,10 @@
+ 		hf |= B43_HF_PCISCW; /* PCI slow clock workaround. */
+ #endif
+ 	hf &= ~B43_HF_SKCFPUP;
++	/* hostapd answers probe requests; without this the rev 40+ ucode
++	 * answers from a probe response template b43 never writes. */
++	if (dev->phy.type == B43_PHYTYPE_AC)
++		hf |= B43_HF_AC_NOPRBRESP;
+ 	b43_hf_write(dev, hf);
+ 
+ 	/* tell the ucode MAC capabilities */
