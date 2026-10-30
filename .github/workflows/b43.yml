@@ -179,9 +179,6 @@ jobs:
           [ -n "$BP" ] && tar -czf out/backports-tree.tar.gz -C $(dirname $BP) \
             --exclude='*.o' --exclude='*.ko' --exclude='.*.cmd' --exclude='*.mod.c' --exclude='*.a' \
             $(basename $BP)
-          # fonte do b43 ja patchado: base para gerar os proximos patches com diff -u
-          B=$(ls -d sdk/build_dir/target-*/linux-*/mac80211-regular/backports-*/drivers/net/wireless/broadcom/b43 | head -1)
-          [ -n "$B" ] && tar -czf out/b43-src.tar.gz -C $(dirname $B) --exclude='*.o' --exclude='*.ko' --exclude='.*.cmd' --exclude='*.mod*' b43
           ls -la out
           grep -E 'undefined!|error:' build.log | sort -u | head -40 || true
 
@@ -193,5 +190,5 @@ jobs:
           path: |
             build.log
             out/*.ko
-            out/b43-src.tar.gz
+            out/backports-tree.tar.gz
           if-no-files-found: warn
