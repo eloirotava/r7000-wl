@@ -1,9 +1,6 @@
 --- a/drivers/net/wireless/broadcom/b43/main.c
 +++ b/drivers/net/wireless/broadcom/b43/main.c
-@@ -1,6 +1,13 @@
- MODULE_PARM_DESC(pio, "Use PIO accesses by default: 0=DMA, 1=PIO");
- 
- static int modparam_allhwsupport = !IS_ENABLED(CPTCFG_BRCMSMAC);
+@@ -21,6 +21,13 @@
  module_param_named(allhwsupport, modparam_allhwsupport, int, 0444);
  MODULE_PARM_DESC(allhwsupport, "Enable support for all hardware (even it if overlaps with the brcmsmac driver)");
  
@@ -14,22 +11,13 @@
 +static bool b43_ac_rfldo = true;
 +module_param_named(ac_rfldo, b43_ac_rfldo, bool, 0444);
 +MODULE_PARM_DESC(ac_rfldo, "AC-PHY: turn the RF LDO on (PMU regctl 0 bit 1 = 0) as wl does");
-@@ -1,13 +1,37 @@
- 	switch (dev->dev->bus_type) {
- #ifdef CPTCFG_B43_BCMA
+ /*HUNK*/
+ 	CHAN5G(208, 0),		CHAN5G(212, 0),
+ 	CHAN5G(216, 0),
+@@ -347,11 +354,35 @@
  	case B43_BUS_BCMA:
--		if (dev->phy.type == B43_PHYTYPE_AC) {
--			struct bcma_drv_cc *cc = &dev->dev->bdev->bus->drv_cc;
--
--			/* wl keeps the pins host-driven with GPIO1+2 high
--			 * (front-end control on MacBookAir6,1). */
--			bcma_chipco_gpio_control(cc, mask | 0xa7, 0);
--			bcma_chipco_gpio_out(cc, 0xa7, 0x06);
--			bcma_chipco_gpio_outen(cc, 0xa7, 0xa7);
--			break;
--		}
-+		if (dev->phy.type == B43_PHYTYPE_AC) {
-+			struct bcma_drv_cc *cc = &dev->dev->bdev->bus->drv_cc;
+ 		if (dev->phy.type == B43_PHYTYPE_AC) {
+ 			struct bcma_drv_cc *cc = &dev->dev->bdev->bus->drv_cc;
 +			struct bcma_bus *bus = dev->dev->bdev->bus;
 +			u32 out = 0x06;
 +
@@ -54,11 +42,12 @@
 +				bcma_chipco_regctl_maskset(cc, 0, ~0x2, 0);
 +				b43info(dev->wl, "AC: RF LDO on, card GPIO 0..2 out %#x\n", out);
 +			}
-+
-+			/* wl keeps the pins host-driven with GPIO1+2 high
-+			 * (front-end control on MacBookAir6,1). */
-+			bcma_chipco_gpio_control(cc, mask | 0xa7, 0);
+ 
+ 			/* wl keeps the pins host-driven with GPIO1+2 high
+ 			 * (front-end control on MacBookAir6,1). */
+ 			bcma_chipco_gpio_control(cc, mask | 0xa7, 0);
+-			bcma_chipco_gpio_out(cc, 0xa7, 0x06);
 +			bcma_chipco_gpio_out(cc, 0xa7, out);
-+			bcma_chipco_gpio_outen(cc, 0xa7, 0xa7);
-+			break;
-+		}
+ 			bcma_chipco_gpio_outen(cc, 0xa7, 0xa7);
+ 			break;
+ 		}
