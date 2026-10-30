@@ -1,6 +1,6 @@
 --- a/drivers/net/wireless/broadcom/b43/main.c
 +++ b/drivers/net/wireless/broadcom/b43/main.c
-@@ -21,6 +21,13 @@
+@@ -21,5 +21,13 @@
  module_param_named(allhwsupport, modparam_allhwsupport, int, 0444);
  MODULE_PARM_DESC(allhwsupport, "Enable support for all hardware (even it if overlaps with the brcmsmac driver)");
  
@@ -11,9 +11,9 @@
 +static bool b43_ac_rfldo = true;
 +module_param_named(ac_rfldo, b43_ac_rfldo, bool, 0444);
 +MODULE_PARM_DESC(ac_rfldo, "AC-PHY: turn the RF LDO on (PMU regctl 0 bit 1 = 0) as wl does");
- /*HUNK*/
- 	CHAN5G(208, 0),		CHAN5G(212, 0),
- 	CHAN5G(216, 0),
++
+ #ifdef CPTCFG_B43_BCMA
+ static const struct bcma_device_id b43_bcma_tbl[] = {
 @@ -347,11 +354,35 @@
  	case B43_BUS_BCMA:
  		if (dev->phy.type == B43_PHYTYPE_AC) {
