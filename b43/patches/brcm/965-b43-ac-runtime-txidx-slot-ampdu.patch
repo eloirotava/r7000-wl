@@ -1,0 +1,128 @@
+diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+--- a/drivers/net/wireless/broadcom/b43/main.c	2026-10-30 19:10:10.162377922 -0300
++++ b/drivers/net/wireless/broadcom/b43/main.c	2026-10-30 19:10:10.252377921 -0300
+@@ -808,6 +808,18 @@
+ {
+ 	/* slot_time is in usec. */
+ 	/* This test used to exit for all but a G PHY. */
++	/*
++	 * Core rev >= 40: wlc_bmac_update_slot_timing writes the IFS slot
++	 * register and shm 0x10 together; b43 zeroes shm before the ucode
++	 * upload, so without this the rev 40+ ucode runs with slot time 0.
++	 */
++	if (dev->phy.type == B43_PHYTYPE_AC) {
++		if (b43_current_band(dev->wl) == NL80211_BAND_5GHZ)
++			slot_time = 9;
++		b43_write16(dev, B43_MMIO_IFSSLOT, 510 + slot_time);
++		b43_shm_write16(dev, B43_SHM_SHARED, 0x0010, slot_time);
++		return;
++	}
+ 	if (b43_current_band(dev->wl) == NL80211_BAND_5GHZ)
+ 		return;
+ 	b43_write16(dev, B43_MMIO_IFSSLOT, 510 + slot_time);
+@@ -5242,6 +5254,19 @@
+ 		hf |= B43_HF_AC_NOPRBRESP;
+ 	b43_hf_write(dev, hf);
+ 
++	/*
++	 * wl's MAC timing on core rev >= 40 that b43 leaves at the initvals
++	 * or at 0: wlc_bmac_init clears IFS_CTL bits 12..15 and writes MMIO
++	 * 0x69c = 1; wlc_bmac_bsinit sets the slot time (long until mac80211
++	 * asks for short slot).
++	 */
++	if (dev->phy.type == B43_PHYTYPE_AC) {
++		b43_write16(dev, B43_MMIO_IFSCTL,
++			    b43_read16(dev, B43_MMIO_IFSCTL) & 0x0FFF);
++		b43_write16(dev, 0x69C, 1);
++		b43_set_slot_time(dev, 20);
++	}
++
+ 	/* tell the ucode MAC capabilities */
+ 	if (dev->dev->core_rev >= 13) {
+ 		u32 mac_hw_cap = b43_read32(dev, B43_MMIO_MAC_HW_CAP);
+diff -ruN a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/broadcom/b43/phy_ac.c
+--- a/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-30 19:10:10.162377922 -0300
++++ b/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-30 19:10:10.192377922 -0300
+@@ -13,6 +13,9 @@
+ #include "dma.h"
+ #include "main.h"
+ 
++/* last attached AC-PHY device, for module parameters applied at runtime */
++static struct b43_wldev *b43_ac_cur_dev;
++
+ #ifdef CPTCFG_B43_PHY_AC_DEBUG
+ #include <linux/debugfs.h>
+ #include <linux/seq_file.h>
+@@ -432,6 +435,7 @@
+ 	if (!phy_ac)
+ 		return -ENOMEM;
+ 	dev->phy.ac = phy_ac;
++	b43_ac_cur_dev = dev;
+ 
+ #ifdef CPTCFG_B43_PHY_AC_DEBUG
+ 	if (!b43_ac_dbg_dir) {
+@@ -469,6 +473,8 @@
+ 	struct b43_phy *phy = &dev->phy;
+ 	struct b43_phy_ac *phy_ac = phy->ac;
+ 
++	if (b43_ac_cur_dev == dev)
++		b43_ac_cur_dev = NULL;
+ #ifdef CPTCFG_B43_PHY_AC_DEBUG
+ 	if (b43_ac_dbg_dev == dev) {
+ 		debugfs_remove_recursive(b43_ac_dbg_dir);
+@@ -887,10 +893,30 @@
+ module_param_named(ac_fem3_sub3, b43_ac_fem3_sub3, bool, 0444);
+ MODULE_PARM_DESC(ac_fem3_sub3, "program the femctrl 3 sub 3 FEM LUT (R7000 2.4 GHz) when the SROM femctrl is not 2");
+ static unsigned int b43_ac_txidx_2g = 20;
+-module_param_named(ac_txidx_2g, b43_ac_txidx_2g, uint, 0644);
+-MODULE_PARM_DESC(ac_txidx_2g, "2.4 GHz TX gain table index (0 = highest gain), applied on channel switch");
+ static void b43_phy_ac_txpwr_by_index(struct b43_wldev *dev, unsigned int idx);
+ 
++/* Writing the parameter also applies it to the running 2.4 GHz radio. */
++static int b43_ac_txidx_2g_set(const char *val, const struct kernel_param *kp)
++{
++	struct b43_wldev *dev = b43_ac_cur_dev;
++	int err = param_set_uint(val, kp);
++
++	if (err || !dev)
++		return err;
++	mutex_lock(&dev->wl->mutex);
++	if (b43_status(dev) >= B43_STAT_INITIALIZED &&
++	    b43_current_band(dev->wl) == NL80211_BAND_2GHZ)
++		b43_phy_ac_txpwr_by_index(dev, b43_ac_txidx_2g);
++	mutex_unlock(&dev->wl->mutex);
++	return 0;
++}
++static const struct kernel_param_ops b43_ac_txidx_2g_ops = {
++	.set = b43_ac_txidx_2g_set,
++	.get = param_get_uint,
++};
++module_param_cb(ac_txidx_2g, &b43_ac_txidx_2g_ops, &b43_ac_txidx_2g, 0644);
++MODULE_PARM_DESC(ac_txidx_2g, "2.4 GHz TX gain table index (0 = highest gain); applied at once and on channel switch");
++
+ module_param_named(ac_por, b43_ac_por, uint, 0444);
+ MODULE_PARM_DESC(ac_por, "ignored, kept so old command lines still load");
+ 
+diff -ruN a/drivers/net/wireless/broadcom/b43/xmit.c b/drivers/net/wireless/broadcom/b43/xmit.c
+--- a/drivers/net/wireless/broadcom/b43/xmit.c	2026-10-30 19:10:10.162377922 -0300
++++ b/drivers/net/wireless/broadcom/b43/xmit.c	2026-10-30 19:10:10.202377922 -0300
+@@ -20,6 +20,10 @@
+ #include "dma.h"
+ #include "pio.h"
+ 
++static unsigned int b43_ac_ampdu_mpdus = 4;
++module_param_named(ac_ampdu_mpdus, b43_ac_ampdu_mpdus, uint, 0644);
++MODULE_PARM_DESC(ac_ampdu_mpdus, "AC-PHY: max MPDUs per A-MPDU in the TX header (the captured wl value was 4)");
++
+ static const struct b43_tx_legacy_rate_phy_ctl_entry b43_tx_legacy_rate_phy_ctl[] = {
+ 	{ B43_CCK_RATE_1MB,	0x0,			0x0 },
+ 	{ B43_CCK_RATE_2MB,	0x0,			0x1 },
+@@ -352,6 +356,8 @@
+ 
+ 		mac_lo = 0x45c0;
+ 		memcpy(h + 0x64, cache, sizeof(cache));
++		/* MPDUs per aggregate at the primary and the fallback rate */
++		h[0x66] = h[0x67] = clamp(b43_ac_ampdu_mpdus, 1u, 63u);
+ 	}
+ 	put_unaligned_le16(mac_lo, h + 0x02);
+ 	put_unaligned_le16(agg ? 0 : 0x0002, h + 0x04);	/* fixed rate */
