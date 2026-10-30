@@ -1,0 +1,64 @@
+--- a/drivers/net/wireless/broadcom/b43/main.c
++++ b/drivers/net/wireless/broadcom/b43/main.c
+@@ -1,6 +1,13 @@
+ MODULE_PARM_DESC(pio, "Use PIO accesses by default: 0=DMA, 1=PIO");
+ 
+ static int modparam_allhwsupport = !IS_ENABLED(CPTCFG_BRCMSMAC);
+ module_param_named(allhwsupport, modparam_allhwsupport, int, 0444);
+ MODULE_PARM_DESC(allhwsupport, "Enable support for all hardware (even it if overlaps with the brcmsmac driver)");
+ 
++static int b43_ac_gpio_out = -1;
++module_param_named(ac_gpio_out, b43_ac_gpio_out, int, 0444);
++MODULE_PARM_DESC(ac_gpio_out, "AC-PHY: card GPIO 0..7 output value (-1: 0x02 on the R7000 2.4 GHz card, else 0x06)");
++
++static bool b43_ac_rfldo = true;
++module_param_named(ac_rfldo, b43_ac_rfldo, bool, 0444);
++MODULE_PARM_DESC(ac_rfldo, "AC-PHY: turn the RF LDO on (PMU regctl 0 bit 1 = 0) as wl does");
+@@ -1,13 +1,37 @@
+ 	switch (dev->dev->bus_type) {
+ #ifdef CPTCFG_B43_BCMA
+ 	case B43_BUS_BCMA:
+-		if (dev->phy.type == B43_PHYTYPE_AC) {
+-			struct bcma_drv_cc *cc = &dev->dev->bdev->bus->drv_cc;
+-
+-			/* wl keeps the pins host-driven with GPIO1+2 high
+-			 * (front-end control on MacBookAir6,1). */
+-			bcma_chipco_gpio_control(cc, mask | 0xa7, 0);
+-			bcma_chipco_gpio_out(cc, 0xa7, 0x06);
+-			bcma_chipco_gpio_outen(cc, 0xa7, 0xa7);
+-			break;
+-		}
++		if (dev->phy.type == B43_PHYTYPE_AC) {
++			struct bcma_drv_cc *cc = &dev->dev->bdev->bus->drv_cc;
++			struct bcma_bus *bus = dev->dev->bdev->bus;
++			u32 out = 0x06;
++
++			/*
++			 * R7000: the 2.4 GHz-only BCM4360 (PCI devid 0x43a1) has its
++			 * front-end band select on card GPIOs 0..2; wl drives them as
++			 * outputs with 0x2 there (0x4 on the 5 GHz card). The MacBook
++			 * value 0x06 also enables the 5 GHz path.
++			 */
++			if (bus->hosttype == BCMA_HOSTTYPE_PCI && bus->host_pci &&
++			    bus->host_pci->device == 0x43a1)
++				out = 0x02;
++			if (b43_ac_gpio_out >= 0)
++				out = b43_ac_gpio_out;
++			/*
++			 * RF LDO on before the radio calibrations (RCAL/RCCAL time out
++			 * without it): wl does si_pmu_rfldo(sih, 1), PMU regulator
++			 * control 0 bit 1 cleared, before the ucode download, and sets
++			 * it again in wlc_bmac_hw_down (so after rmmod wl).
++			 */
++			if (b43_ac_rfldo && (cc->capabilities & BCMA_CC_CAP_PMU)) {
++				bcma_chipco_regctl_maskset(cc, 0, ~0x2, 0);
++				b43info(dev->wl, "AC: RF LDO on, card GPIO 0..2 out %#x\n", out);
++			}
++
++			/* wl keeps the pins host-driven with GPIO1+2 high
++			 * (front-end control on MacBookAir6,1). */
++			bcma_chipco_gpio_control(cc, mask | 0xa7, 0);
++			bcma_chipco_gpio_out(cc, 0xa7, out);
++			bcma_chipco_gpio_outen(cc, 0xa7, 0xa7);
++			break;
++		}
