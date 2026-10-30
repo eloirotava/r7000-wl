@@ -1,0 +1,15 @@
+diff -ru a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/broadcom/b43/phy_ac.c
+--- a/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-30 17:56:15.043619970 -0300
++++ b/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-30 17:56:15.083619970 -0300
+@@ -882,7 +882,10 @@
+ 
+ 
+ /* 2.4 GHz TX gain table index applied on a channel switch; 0 = highest gain, the reset value 64 is too weak beyond a few metres. The stock power loop ran at 20-38 here (notes/138) */
+-#define B43_AC_TXIDX_2G	20
++#define B43_AC_TXIDX_2G	b43_ac_txidx_2g
++static unsigned int b43_ac_txidx_2g = 20;
++module_param_named(ac_txidx_2g, b43_ac_txidx_2g, uint, 0644);
++MODULE_PARM_DESC(ac_txidx_2g, "2.4 GHz TX gain table index (0 = highest gain), applied on channel switch");
+ static void b43_phy_ac_txpwr_by_index(struct b43_wldev *dev, unsigned int idx);
+ 
+ module_param_named(ac_por, b43_ac_por, uint, 0444);
