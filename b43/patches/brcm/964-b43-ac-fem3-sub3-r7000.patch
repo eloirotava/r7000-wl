@@ -1,0 +1,47 @@
+diff -ru a/drivers/net/wireless/broadcom/b43/phy_ac.c b/drivers/net/wireless/broadcom/b43/phy_ac.c
+--- a/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-30 17:57:03.963619951 -0300
++++ b/drivers/net/wireless/broadcom/b43/phy_ac.c	2026-10-30 17:57:03.993619951 -0300
+@@ -883,6 +883,9 @@
+ 
+ /* 2.4 GHz TX gain table index applied on a channel switch; 0 = highest gain, the reset value 64 is too weak beyond a few metres. The stock power loop ran at 20-38 here (notes/138) */
+ #define B43_AC_TXIDX_2G	b43_ac_txidx_2g
++static bool b43_ac_fem3_sub3 = true;
++module_param_named(ac_fem3_sub3, b43_ac_fem3_sub3, bool, 0444);
++MODULE_PARM_DESC(ac_fem3_sub3, "program the femctrl 3 sub 3 FEM LUT (R7000 2.4 GHz) when the SROM femctrl is not 2");
+ static unsigned int b43_ac_txidx_2g = 20;
+ module_param_named(ac_txidx_2g, b43_ac_txidx_2g, uint, 0644);
+ MODULE_PARM_DESC(ac_txidx_2g, "2.4 GHz TX gain table index (0 = highest gain), applied on channel switch");
+@@ -1638,6 +1641,33 @@
+ 	    (bcma_read16(dev->dev->bdev->bus->drv_cc.core, BCMA_CC_SPROM + 0xaa) >> 11) == 2)
+ 		for (i = 0; i < b43_phy_ac_femctrl2_tbls_n; i++)
+ 			b43_phy_ac_write_table(dev, &b43_phy_ac_femctrl2_tbls[i]);
++	/*
++	 * femctrl 3 with boardflags3 & 7 = 3 ("MCH2"): the R7000's 2.4 GHz
++	 * 4360 (boardflags3 0x10000003). wlc_phy_write_regtbl_fc3_sub3: only
++	 * the FEM control LUT (table 10), no chipcontrol change. Without it
++	 * the external PA/switch is never driven and TX is ~40 dB down.
++	 */
++	/* bcma does not parse boardflags3: key on "not femctrl 2" instead */
++	if (b43_ac_fem3_sub3 && dev->dev->bus_type == B43_BUS_BCMA &&
++	    (bcma_read16(dev->dev->bdev->bus->drv_cc.core, BCMA_CC_SPROM + 0xaa) >> 11) != 2) {
++		static const u8 fem3_sub3[3][32] = {
++			{ 2, 4, 3, 2, 2, 4, 3, 2, 0x22, 0x24, 0x23, 0x25, 0x22, 0x24, 0x23, 0x25,
++			  2, 4, 3, 2, 2, 4, 3, 2, 0x22, 0x24, 0x23, 0x25, 0x22, 0x24, 0x23, 0x25 },
++			{ 2, 1, 6, 2, 2, 1, 6, 2, 0x22, 0x21, 0x26, 0x25, 0x22, 0x21, 0x26, 0x25,
++			  2, 1, 6, 2, 2, 1, 6, 2, 0x22, 0x21, 0x26, 0x25, 0x22, 0x21, 0x26, 0x25 },
++			{ 4, 1, 6, 4, 4, 1, 6, 4, 0x24, 0x21, 0x26, 0x23, 0x24, 0x21, 0x26, 0x23,
++			  4, 1, 6, 4, 4, 1, 6, 4, 0x24, 0x21, 0x26, 0x23, 0x24, 0x21, 0x26, 0x23 },
++		};
++		unsigned int c, k;
++
++		for (c = 0; c < 3; c++) {
++			b43_phy_write(dev, B43_PHY_AC_TABLE_ID, 0x0a);
++			b43_phy_write(dev, B43_PHY_AC_TABLE_OFFSET, 32 * c);
++			for (k = 0; k < 32; k++)
++				b43_phy_write(dev, B43_PHY_AC_TABLE_DATA1, fem3_sub3[c][k]);
++		}
++		b43info(dev->wl, "phy_ac: FEM femctrl 3 sub 3 (MCH2) LUT\n");
++	}
+ 	b43_phy_maskset(dev, 0x19e, ~0x2, save & 0x2);
+ 
+ 	b43_phy_write(dev, 0x1645, 0x25c);
