@@ -1,0 +1,26 @@
+diff -ruN a/drivers/net/wireless/broadcom/b43/dma.c b/drivers/net/wireless/broadcom/b43/dma.c
+--- a/drivers/net/wireless/broadcom/b43/dma.c	2026-10-30 22:18:45.696384260 -0300
++++ b/drivers/net/wireless/broadcom/b43/dma.c	2026-10-30 22:18:45.806384260 -0300
+@@ -1671,7 +1671,21 @@
+ 			--skip;
+ 	}
+ 	if (requeue) {
+-		if (dma_tx_fragment(ring, requeue)) {
++		/*
++		 * The requeue takes slots this status just freed, so the ring
++		 * may still carry the stopped mark from when mac80211 filled it;
++		 * lift it for our own frame (request_slot() WARNs on a stopped
++		 * ring, and a WARN storm under load stalled TX for seconds).
++		 * The mac80211 queue state is handled below.
++		 */
++		bool was_stopped = ring->stopped;
++		int err = -ENOSPC;
++
++		ring->stopped = false;
++		if (free_slots(ring) >= TX_SLOTS_PER_FRAME)
++			err = dma_tx_fragment(ring, requeue);
++		ring->stopped = was_stopped;
++		if (err) {
+ 			struct ieee80211_tx_info *info = IEEE80211_SKB_CB(requeue);
+ 
+ 			b43_fill_txstatus_report(dev, info, status);
