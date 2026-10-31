@@ -1,0 +1,78 @@
+diff -ruN a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+--- a/drivers/net/wireless/broadcom/b43/main.c	2026-10-30 21:09:44.237413495 -0300
++++ b/drivers/net/wireless/broadcom/b43/main.c	2026-10-30 21:09:44.337413495 -0300
+@@ -37,6 +37,8 @@
+ #include "debugfs.h"
+ #include "phy_common.h"
+ #include "phy_ac.h"
++
++extern unsigned int b43_ac_txmask_1ss;
+ #include "phy_g.h"
+ #include "phy_n.h"
+ #include "dma.h"
+@@ -1870,7 +1872,7 @@
+ 		const u8 *tbl = is_ofdm ? ofdm : cck;
+ 		unsigned int n = is_ofdm ? ARRAY_SIZE(ofdm) : ARRAY_SIZE(cck);
+ 		unsigned int idx = 0;
+-		u16 phy0 = (is_ofdm ? 1 : 0) | 0x0004 | (1 << 6);
++		u16 phy0 = (is_ofdm ? 1 : 0) | 0x0004 | ((b43_ac_txmask_1ss & 7) << 6);
+ 
+ 		while (idx < n && tbl[idx] != rate)
+ 			idx++;
+diff -ruN a/drivers/net/wireless/broadcom/b43/xmit.c b/drivers/net/wireless/broadcom/b43/xmit.c
+--- a/drivers/net/wireless/broadcom/b43/xmit.c	2026-10-30 21:09:44.237413495 -0300
++++ b/drivers/net/wireless/broadcom/b43/xmit.c	2026-10-30 21:09:44.287413495 -0300
+@@ -20,6 +20,17 @@
+ #include "dma.h"
+ #include "pio.h"
+ 
++/* TX chain masks (bits 6..8 of PhyTxControlWord_0): one spatial stream,
++ * two spatial streams. 1 / 3 are what the MacBook port used; the R7000 has
++ * three chains with an external PA each. */
++unsigned int b43_ac_txmask_1ss = 1;
++module_param_named(ac_txmask_1ss, b43_ac_txmask_1ss, uint, 0644);
++MODULE_PARM_DESC(ac_txmask_1ss, "AC-PHY: TX chain mask for 1-stream and legacy frames (1..7)");
++static unsigned int b43_ac_txmask_2ss = 3;
++module_param_named(ac_txmask_2ss, b43_ac_txmask_2ss, uint, 0644);
++MODULE_PARM_DESC(ac_txmask_2ss, "AC-PHY: TX chain mask for 2-stream frames (3, 5, 6 or 7)");
++#define B43_AC_TXM(two)	((((two) ? b43_ac_txmask_2ss : b43_ac_txmask_1ss) & 7) << 6)
++
+ static unsigned int b43_ac_ampdu_mpdus = 4;
+ module_param_named(ac_ampdu_mpdus, b43_ac_ampdu_mpdus, uint, 0644);
+ MODULE_PARM_DESC(ac_ampdu_mpdus, "AC-PHY: max MPDUs per A-MPDU in the TX header (the captured wl value was 4)");
+@@ -273,7 +284,7 @@
+ 	rinfo.bw = rate_bw[bw];
+ 
+ 	put_unaligned_le16(3 | 0x0004 |
+-			   ((nss > 1 ? 3 : 1) << 6) |
++			   B43_AC_TXM(nss > 1) |
+ 			   (bw << 14), ri + 0x00);
+ 	put_unaligned_le16(sb, ri + 0x02);
+ 	put_unaligned_le16((mcs & 0xf) | ((nss - 1) << 4), ri + 0x04);
+@@ -369,7 +380,7 @@
+ 		put_unaligned_le16(le16_to_cpu(wlhdr->seq_ctrl), h + 0x0e);
+ 
+ 	/* Rate entry 0: frame type, always-set bit 2, TX core 0 mask. */
+-	phy0 = (is_ofdm ? 1 : 0) | 0x0004 | (1 << 6);
++	phy0 = (is_ofdm ? 1 : 0) | 0x0004 | B43_AC_TXM(0);
+ 	if (!is_ofdm && rate != B43_CCK_RATE_1MB &&
+ 	    (info->control.rates[0].flags & IEEE80211_TX_RC_USE_SHORT_PREAMBLE))
+ 		phy0 |= 0x0010;
+@@ -390,7 +401,7 @@
+ 		u8 mcs = ht_mcs;
+ 		u8 *plcp = ri + 0x06;
+ 
+-		phy0 = 2 | 0x0004 | ((mcs > 7 ? 3 : 1) << 6);
++		phy0 = 2 | 0x0004 | B43_AC_TXM(mcs > 7);
+ 		put_unaligned_le16(phy0, ri + 0x00);
+ 		put_unaligned_le16(subband, ri + 0x02);
+ 		put_unaligned_le16(mcs, ri + 0x04);
+@@ -422,7 +433,7 @@
+ 
+ 		put_unaligned_le16(0, ri + 0x10);
+ 		ri += 0x14;
+-		put_unaligned_le16(2 | 0x0004 | ((mcs > 7 ? 3 : 1) << 6), ri + 0x00);
++		put_unaligned_le16(2 | 0x0004 | B43_AC_TXM(mcs > 7), ri + 0x00);
+ 		put_unaligned_le16(subband, ri + 0x02);
+ 		put_unaligned_le16(mcs, ri + 0x04);
+ 		ri[0x06] = mcs;
